@@ -1,0 +1,31 @@
+{
+  "name": "notation",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "turbo run dev",
+    "dev": "turbo run dev",
+    "format": "prettier --write .",
+    "release": "changeset publish",
+    "version": "turbo run build && changeset version && pnpm install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/notationhq/notation.git"
+  },
+  "author": "Daniel Grant",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/notationhq/notation/issues"
+  },
+  "homepage": "https://github.com/notationhq/notation#readme",
+  "dependencies": {
+    "@changesets/cli": "^2.26.2",
+    "@types/node": "^20.6.0",
+    "prettier": "^3.0.3",
+    "tsconfig": "workspace:*",
+    "tsup": "^7.2.0",
+    "turbo": "^1.10.13",
+    "typescript": "^5.2.2"
+  }
+}
