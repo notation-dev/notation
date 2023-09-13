@@ -21,7 +21,6 @@
   "homepage": "https://github.com/notationhq/notation#readme",
   "dependencies": {
     "@changesets/cli": "^2.26.2",
-    "@types/node": "^20.6.0",
     "prettier": "^3.0.3",
     "tsconfig": "workspace:*",
     "tsup": "^7.2.0",
