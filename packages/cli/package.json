@@ -4,11 +4,15 @@
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
+  "bin": {
+    "notation": "dist/index.js"
+  },
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "build": "tsup src/index.ts --format cjs",
     "dev": "npm run build -- --watch"
   },
   "dependencies": {
-    "@notation/core": "workspace:*"
+    "@notation/core": "workspace:*",
+    "commander": "^11.0.0"
   }
 }
