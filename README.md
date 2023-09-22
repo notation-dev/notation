@@ -45,6 +45,79 @@ Or, dive right in:
 npx create-notation-app
 ```
 
+## Concepts
+
+#### 1. Modules are provided for a selection of cloud services
+
+```ts
+import { lambda, api } from "@notation/aws";
+import { worker } from "@notation/cloudflare";
+import { cloudFunction, api } from "@notation/gcp";
+```
+
+#### 2. Code and configuration are co-located
+
+```ts
+import { lambda } from "@notation/aws";
+
+const DoSomething = lambda(() => {
+  /* your code goes here */
+});
+
+DoSomething.config({
+  arch: "arm",
+  memory: 64,
+  timeout: 5,
+});
+```
+
+#### 3. Equivalent services have compatible APIs
+
+```diff
+-import { lambda } from "@notation/aws";
++import { cloudFunction } from "@notation/gcp";
+
+-const DoSomething = lambda(() => {});
++const DoSomething = cloudFunction(() => {});
+```
+
+#### 4. Different cloud services can be connected together
+
+```ts
+import { lambda, api } from "@notation/aws";
+
+type Payload = {
+  count: number;
+};
+
+const DoSomething = lambda<Payload>((payload) => {
+  return payload.toString();
+});
+
+const Api = api();
+
+const PostRoute = api.route<Payload>({
+  method: "POST",
+  route: "/message",
+  handler: DoSomething,
+});
+```
+
+#### 5. Implicitly required resources are automatically inferred
+
+> In the example above, Notation infers that several additional resources are required in order to support the connection between the lambda and API Gateway: a [proxy integration](https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-set-up-simple-proxy.html), a [lambda permission](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-permission.html), an [IAM role](https://docs.aws.amazon.com/lambda/latest/dg/lambda-intro-execution-role.html), and a [policy attachment](https://docs.aws.amazon.com/aws-managed-policy/latest/reference/AWSLambdaBasicExecutionRole.html).
+
+#### 6. Runtime code is extracted, packaged and deployed to the provisioned services
+
+```js
+// the compiled JavaScript module deployed to the DoSomething lambda
+module.exports = {
+  DoSomething: lambdaAdapter((payload) => {
+    return payload.toString();
+  }),
+};
+```
+
 ## Community
 
 Join us on [GitHub Discussions](https://github.com/notationhq/notation/discussions) to:
