@@ -7,6 +7,7 @@
     "dev": "turbo run dev",
     "format": "prettier --write .",
     "release": "changeset publish",
+    "test": "vitest",
     "version": "turbo run build && changeset version && pnpm install"
   },
   "repository": {
@@ -21,10 +22,12 @@
   "homepage": "https://github.com/notationhq/notation#readme",
   "dependencies": {
     "@changesets/cli": "^2.26.2",
+    "@types/node": "^20.7.0",
     "prettier": "^3.0.3",
     "tsconfig": "workspace:*",
     "tsup": "^7.2.0",
-    "turbo": "^1.10.13",
-    "typescript": "^5.2.2"
+    "turbo": "^1.10.14",
+    "typescript": "^5.2.2",
+    "vitest": "^0.34.5"
   }
 }
