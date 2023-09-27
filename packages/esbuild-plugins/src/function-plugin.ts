@@ -35,23 +35,16 @@ export function functionPlugin(opts: {
         const reservedExports = ["preload", "config"];
         const userExports = exports.filter((e) => !reservedExports.includes(e));
 
-        if (userExports.length === 0) {
-          throw new Error(
-            "Cloud functions should export one user-named handler. Ensure a handler is being exported and make sure you have chosen a non-standard name.",
+        let infraCode = `import { createWorkflowNode } from "@notation/sdk"`;
+
+        for (const handlerName of userExports) {
+          infraCode = infraCode.concat(
+            `\nexport const ${handlerName} = createWorkflowNode("${handlerName}");`,
           );
         }
-
-        if (userExports.length > 1) {
-          throw new Error(
-            "Cloud functions should export one user-named handler. Remove any other non-standard exports.",
-          );
-        }
-
-        const handlerName = userExports[0];
-        const stubCode = `import { createWorkflowNode } from "@notation/sdk"; export const ${handlerName} = createWorkflowNode("${handlerName}");`;
 
         return {
-          contents: stubCode,
+          contents: infraCode,
           loader: "ts",
         };
       });
