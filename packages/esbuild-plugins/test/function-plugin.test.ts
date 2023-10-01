@@ -1,7 +1,7 @@
-import { expect, it } from "vitest";
 import { stripIndent } from "common-tags";
 import { functionPlugin } from "../src/function-plugin";
 import { createBuilder } from "./esbuild-test-utils";
+import { expect, it } from "bun:test";
 
 const build = createBuilder((input) => ({
   plugins: [

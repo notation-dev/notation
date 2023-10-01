@@ -5,9 +5,9 @@
   "scripts": {
     "build": "turbo run dev",
     "dev": "turbo run dev",
+    "test": ": 'run `$ bun test` instead'",
     "format": "prettier --write .",
     "release": "changeset publish",
-    "test": "vitest",
     "version": "turbo run build && changeset version && pnpm install"
   },
   "repository": {
@@ -23,11 +23,11 @@
   "dependencies": {
     "@changesets/cli": "^2.26.2",
     "@types/node": "^20.7.0",
+    "bun-types": "^1.0.3",
     "prettier": "^3.0.3",
     "tsconfig": "workspace:*",
     "tsup": "^7.2.0",
     "turbo": "^1.10.14",
-    "typescript": "^5.2.2",
-    "vitest": "^0.34.5"
+    "typescript": "^5.2.2"
   }
 }
