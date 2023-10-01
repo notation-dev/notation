@@ -2,20 +2,24 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "display": "Default",
   "compilerOptions": {
+    "lib": ["esnext"],
+    "module": "esnext",
+    "target": "esnext",
+
+    "moduleResolution": "bundler",
+    "noEmit": true,
+
     "composite": false,
     "declaration": true,
     "declarationMap": true,
-    "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "inlineSources": false,
     "isolatedModules": true,
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "preserveWatchOutput": true,
-    "skipLibCheck": true,
     "skipDefaultLibCheck": true,
+    "skipLibCheck": true,
     "strict": true,
     "strictNullChecks": true
   },
