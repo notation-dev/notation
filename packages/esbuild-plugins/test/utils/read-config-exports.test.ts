@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { readConfigExport } from "../src/read-config-export";
+import { readConfigExport } from "src/parsers/read-config-export";
 
 test("Valid config object", () => {
   const input = `

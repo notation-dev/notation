@@ -1,7 +1,7 @@
 import { expect, it } from "bun:test";
 import { stripIndent } from "common-tags";
-import { functionInfraPlugin } from "../src/function-infra-plugin";
-import { createBuilder } from "./esbuild-test-utils";
+import { functionInfraPlugin } from "src/plugins/function-infra-plugin";
+import { createBuilder } from "test/esbuild-test-utils";
 
 const buildInfra = createBuilder((input) => ({
   plugins: [functionInfraPlugin({ getFile: () => input })],

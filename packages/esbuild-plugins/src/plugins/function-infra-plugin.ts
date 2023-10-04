@@ -1,10 +1,6 @@
 import esbuild, { Plugin } from "esbuild";
-import { readConfigExport } from "./read-config-export";
+import { readConfigExport } from "src/parsers/read-config-export";
 
-/**
- * compiles cloud function modules
- * runs separate esbuild process to get exports metadata
- */
 export function functionInfraPlugin(opts: {
   getFile: (filePath: string) => string | Promise<string>;
   esbuildInstance?: typeof esbuild;
