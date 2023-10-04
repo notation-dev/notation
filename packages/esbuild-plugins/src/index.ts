@@ -1,1 +1,1 @@
-export * from "./function-plugin";
+export * from "./function-infra-plugin";

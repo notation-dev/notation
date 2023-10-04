@@ -9,7 +9,8 @@
     "dev": "npm run build -- --watch"
   },
   "dependencies": {
-    "esbuild": "^0.19.3"
+    "esbuild": "^0.19.3",
+    "typescript": "^5.2.2"
   },
   "devDependencies": {
     "@types/common-tags": "^1.8.2",
