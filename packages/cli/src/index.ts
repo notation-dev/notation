@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { program } from "commander";
+import { compile } from "./compile";
 
 program
   .command("init")
@@ -15,6 +16,7 @@ program
   .description("Compile Notation App")
   .action(async (entryPoint) => {
     console.log("Compiling", entryPoint);
+    await compile(entryPoint);
   });
 
 program
