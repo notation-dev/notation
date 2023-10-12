@@ -1,16 +1,20 @@
 import esbuild, { Plugin } from "esbuild";
 import { readConfigExport } from "src/parsers/read-config-export";
+import { GetFile, fsGetFile, withFileCheck } from "src/utils/get-file";
 
-export function functionInfraPlugin(opts: {
-  getFile: (filePath: string) => string | Promise<string>;
+type PluginOpts = {
+  getFile?: GetFile;
   esbuildInstance?: typeof esbuild;
-}): Plugin {
+};
+
+export function functionInfraPlugin(opts: PluginOpts = {}): Plugin {
   return {
     name: "function",
     setup(build) {
       build.onLoad({ filter: /.\.fn*/ }, async (args) => {
         const esbuild = opts.esbuildInstance || (await import("esbuild"));
-        const fileContent = await opts.getFile(args.path);
+        const getFile = withFileCheck(opts.getFile || fsGetFile);
+        const fileContent = await getFile(args.path);
 
         const compiled = await esbuild.build({
           metafile: true,

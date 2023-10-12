@@ -1,15 +1,18 @@
-import esbuild, { Plugin } from "esbuild";
+import { Plugin } from "esbuild";
 import { removeConfigExport } from "src/parsers/remove-config-export";
+import { GetFile, fsGetFile, withFileCheck } from "src/utils/get-file";
 
-export function functionRuntimePlugin(opts: {
-  getFile: (filePath: string) => string | Promise<string>;
-  esbuildInstance?: typeof esbuild;
-}): Plugin {
+type PluginOpts = {
+  getFile?: GetFile;
+};
+
+export function functionRuntimePlugin(opts: PluginOpts = {}): Plugin {
   return {
     name: "function",
     setup(build) {
       build.onLoad({ filter: /.\.fn*/ }, async (args) => {
-        const fileContent = await opts.getFile(args.path);
+        const getFile = withFileCheck(opts.getFile || fsGetFile);
+        const fileContent = await getFile(args.path);
         const runtimeCode = removeConfigExport(fileContent);
         return {
           loader: "ts",
