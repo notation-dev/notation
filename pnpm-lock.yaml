@@ -44,8 +44,10 @@ importers:
       '@types/common-tags': ^1.8.2
       common-tags: ^1.8.2
       esbuild: ^0.19.3
+      typescript: ^5.2.2
     dependencies:
       esbuild: 0.19.3
+      typescript: 5.2.2
     devDependencies:
       '@types/common-tags': 1.8.2
       common-tags: 1.8.2
