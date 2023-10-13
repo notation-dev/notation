@@ -23,27 +23,19 @@ importers:
       typescript: 5.2.2
 
   packages/aws:
-    specifiers:
-      '@notation/core': workspace:*
-    dependencies:
-      '@notation/core': link:../core
+    specifiers: {}
 
   packages/cli:
     specifiers:
-      '@notation/core': workspace:*
       '@notation/esbuild-plugins': workspace:*
       commander: ^11.0.0
       esbuild: ^0.19.3
       glob: ^10.3.10
     dependencies:
-      '@notation/core': link:../core
       '@notation/esbuild-plugins': link:../esbuild-plugins
       commander: 11.0.0
       esbuild: 0.19.3
       glob: 10.3.10
-
-  packages/core:
-    specifiers: {}
 
   packages/esbuild-plugins:
     specifiers:
@@ -57,6 +49,17 @@ importers:
     devDependencies:
       '@types/common-tags': 1.8.2
       common-tags: 1.8.2
+
+  packages/example-app:
+    specifiers:
+      '@notation/aws': workspace:*
+      '@notation/sdk': workspace:*
+    dependencies:
+      '@notation/aws': link:../aws
+      '@notation/sdk': link:../sdk
+
+  packages/sdk:
+    specifiers: {}
 
   packages/tsconfig:
     specifiers: {}
