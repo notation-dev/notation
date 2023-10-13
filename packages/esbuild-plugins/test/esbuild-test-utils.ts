@@ -23,7 +23,6 @@ export function createBuilder(
     const buildOptions = getBuildOptions(input);
 
     const result = await esbuild.build({
-      entryPoints: [".entry.fn.ts"],
       write: false,
       ...buildOptions,
       plugins: [...(buildOptions.plugins || []), virtualFilePlugin(input)],

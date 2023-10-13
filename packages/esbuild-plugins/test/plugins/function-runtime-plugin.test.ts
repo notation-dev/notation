@@ -4,6 +4,7 @@ import { functionRuntimePlugin } from "src/plugins/function-runtime-plugin";
 import { createBuilder } from "test/esbuild-test-utils";
 
 const buildRuntime = createBuilder((input) => ({
+  entryPoints: ["entry.fn.ts"],
   plugins: [functionRuntimePlugin({ getFile: () => input })],
 }));
 

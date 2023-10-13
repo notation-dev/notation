@@ -1,18 +1,17 @@
+import path from "node:path";
 import esbuild, { Plugin } from "esbuild";
 import { readConfigExport } from "src/parsers/read-config-export";
 import { GetFile, fsGetFile, withFileCheck } from "src/utils/get-file";
 
 type PluginOpts = {
   getFile?: GetFile;
-  esbuildInstance?: typeof esbuild;
 };
 
 export function functionInfraPlugin(opts: PluginOpts = {}): Plugin {
   return {
-    name: "function",
+    name: "function-infra",
     setup(build) {
       build.onLoad({ filter: /.\.fn*/ }, async (args) => {
-        const esbuild = opts.esbuildInstance || (await import("esbuild"));
         const getFile = withFileCheck(opts.getFile || fsGetFile);
         const fileContent = await getFile(args.path);
 
@@ -41,9 +40,11 @@ export function functionInfraPlugin(opts: PluginOpts = {}): Plugin {
           infraCode = infraCode.concat(`\nconst config = {};`);
         }
 
+        let fileName = path.relative(process.cwd(), args.path);
+
         for (const handlerName of userExports) {
           infraCode = infraCode.concat(
-            `\nexport const ${handlerName} = fn({ handler: "${handlerName}", ...config });`,
+            `\nexport const ${handlerName} = fn({ fileName: "${fileName}", handler: "${handlerName}", ...config });`,
           );
         }
 

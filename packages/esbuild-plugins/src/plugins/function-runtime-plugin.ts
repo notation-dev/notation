@@ -8,7 +8,7 @@ type PluginOpts = {
 
 export function functionRuntimePlugin(opts: PluginOpts = {}): Plugin {
   return {
-    name: "function",
+    name: "function-runtime",
     setup(build) {
       build.onLoad({ filter: /.\.fn*/ }, async (args) => {
         const getFile = withFileCheck(opts.getFile || fsGetFile);

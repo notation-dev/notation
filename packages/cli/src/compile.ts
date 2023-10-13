@@ -16,8 +16,11 @@ export async function compileInfra(entryPoint: string) {
   await esbuild.build({
     entryPoints: [entryPoint],
     plugins: [functionInfraPlugin()],
-    outdir: "dist",
+    outdir: "dist/infra",
+    outbase: ".",
     bundle: true,
+    format: "esm",
+    treeShaking: true,
   });
 }
 
@@ -25,6 +28,10 @@ export async function compileFns(entryPoints: string[]) {
   await esbuild.build({
     entryPoints: entryPoints,
     plugins: [functionRuntimePlugin()],
-    outdir: "dist/functions",
+    outdir: "dist/runtime",
+    outbase: ".",
+    bundle: true,
+    format: "esm",
+    treeShaking: true,
   });
 }
