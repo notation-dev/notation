@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { program } from "commander";
+import { compile } from "./compile";
 
 program
   .command("init")
@@ -11,14 +12,16 @@ program
 
 program
   .command("compile")
+  .argument("<entryPoint>", "entryPoint")
   .description("Compile Notation App")
-  .action(async () => {
-    console.log("Compiling app");
+  .action(async (entryPoint) => {
+    console.log("Compiling", entryPoint);
+    await compile(entryPoint);
   });
 
 program
   .command("deploy")
-  .argument("[environment]", "environment", "dev")
+  .argument("<environment>", "environment")
   .description("Deploy Notation App")
   .action(async (stackName) => {
     console.log(`Deploying stack ${stackName}...`);

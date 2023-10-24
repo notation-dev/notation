@@ -7,8 +7,5 @@
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts",
     "dev": "npm run build -- --watch"
-  },
-  "dependencies": {
-    "@notation/core": "workspace:*"
   }
 }

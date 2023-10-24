@@ -1,0 +1,13 @@
+{
+  "scripts": {
+    "compile": "notation compile src/api.ts"
+  },
+  "dependencies": {
+    "@notation/aws": "workspace:*",
+    "@notation/cli": "workspace:*",
+    "@notation/sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.8.4"
+  }
+}

@@ -12,7 +12,9 @@
     "dev": "npm run build -- --watch"
   },
   "dependencies": {
-    "@notation/core": "workspace:*",
-    "commander": "^11.0.0"
+    "@notation/esbuild-plugins": "workspace:*",
+    "commander": "^11.0.0",
+    "esbuild": "^0.19.3",
+    "glob": "^10.3.10"
   }
 }

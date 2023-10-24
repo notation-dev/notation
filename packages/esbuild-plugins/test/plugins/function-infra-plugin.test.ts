@@ -4,6 +4,7 @@ import { functionInfraPlugin } from "src/plugins/function-infra-plugin";
 import { createBuilder } from "test/esbuild-test-utils";
 
 const buildInfra = createBuilder((input) => ({
+  entryPoints: ["entry.fn.ts"],
   plugins: [functionInfraPlugin({ getFile: () => input })],
 }));
 
@@ -16,7 +17,7 @@ it("remaps exports", async () => {
   const expected = stripIndent`
     import { fn } from "@notation/sdk";
     const config = {};
-    export const getNum = fn({ handler: "getNum", ...config });
+    export const getNum = fn({ fileName: "entry.fn.ts", handler: "getNum", ...config });
   `;
 
   const output = await buildInfra(input);
@@ -34,7 +35,7 @@ it("merges config", async () => {
   const expected = stripIndent`
     import { fn } from "@notation/sdk";
     const config = { memory: 64 };
-    export const getNum = fn({ handler: "getNum", ...config });
+    export const getNum = fn({ fileName: "entry.fn.ts", handler: "getNum", ...config });
   `;
 
   const output = await buildInfra(input);
@@ -50,14 +51,13 @@ it("should strip runtime code", async () => {
     let num = lib.getNum();
 
     export const getNum = () => num;
-    export const getDoubleNum = () => num * 2;
-  `;
+    export const getDoubleNum = () => num * 2;`;
 
   const expected = stripIndent`
     import { fn } from "@notation/sdk";
     const config = {};
-    export const getDoubleNum = fn({ handler: "getDoubleNum", ...config });
-    export const getNum = fn({ handler: "getNum", ...config });
+    export const getDoubleNum = fn({ fileName: "entry.fn.ts", handler: "getDoubleNum", ...config });
+    export const getNum = fn({ fileName: "entry.fn.ts", handler: "getNum", ...config });
   `;
 
   const output = await buildInfra(input);

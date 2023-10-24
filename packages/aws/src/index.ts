@@ -1,4 +1,4 @@
-import { a } from "@notation/core";
+export const apiRoute = (...args: any) => {};
+export const handler = (...args: any) => {};
 
-export const c = 3;
-export const d = a;
+export type FnConfig = any;
