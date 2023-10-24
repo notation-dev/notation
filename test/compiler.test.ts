@@ -1,18 +1,14 @@
-import { afterAll, beforeAll, expect, it } from "bun:test";
+import { beforeAll, expect, it } from "bun:test";
 import { $ } from "execa";
 import path from "path";
 import { glob } from "glob";
 
-const cwd = path.join(__dirname, "fn-imports.test.app");
+const cwd = path.join(import.meta.dir, "compiler.test.app");
 const $$ = $({ cwd });
 
 beforeAll(async () => {
   await $$`rm -rf dist`;
   await $$`npm run compile`;
-});
-
-afterAll(async () => {
-  await $$`rm -rf dist`;
 });
 
 it("generates infra and runtime modules matching source file structure", async () => {
