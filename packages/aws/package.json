@@ -4,8 +4,21 @@
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
+  "exports": {
+    "./api-gateway": {
+      "require": "./dist/api-gateway.js",
+      "import": "./dist/api-gateway.mjs"
+    },
+    "./lambda": {
+      "require": "./dist/lambda.js",
+      "import": "./dist/lambda.mjs"
+    }
+  },
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "build": "tsup",
     "dev": "npm run build -- --watch"
+  },
+  "dependencies": {
+    "@types/aws-lambda": "^8.10.125"
   }
 }

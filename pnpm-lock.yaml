@@ -27,7 +27,10 @@ importers:
       typescript: 5.2.2
 
   packages/aws:
-    specifiers: {}
+    specifiers:
+      '@types/aws-lambda': ^8.10.125
+    dependencies:
+      '@types/aws-lambda': 8.10.125
 
   packages/cli:
     specifiers:
@@ -60,7 +63,7 @@ importers:
   packages/tsconfig:
     specifiers: {}
 
-  test/fn-imports.test.app:
+  test/compiler.test.app:
     specifiers:
       '@notation/aws': workspace:*
       '@notation/cli': workspace:*
@@ -773,6 +776,10 @@ packages:
     requiresBuild: true
     dev: false
     optional: true
+
+  /@types/aws-lambda/8.10.125:
+    resolution: {integrity: sha512-Vqw/WMlV4O1fJT6capim01v7VLDZkcX1n6Yhb52E7IfnMqYbNfwHfyDV8rRN42NLBtdDvfaqcCqs2K0fr5ljZw==}
+    dev: false
 
   /@types/common-tags/1.8.2:
     resolution: {integrity: sha512-Z5UcOnlqxFm0tCCTEhkcVOfSihWOMyKypIWHtQNSYh6fMdPUIVpNdLBYutDpDXVHsMUrYzI2IczUHXIzpUovmQ==}

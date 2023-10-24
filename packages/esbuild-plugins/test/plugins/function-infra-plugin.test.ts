@@ -10,12 +10,12 @@ const buildInfra = createBuilder((input) => ({
 
 it("remaps exports", async () => {
   const input = `
-    import { handler, FnConfig } from "@notation/sdk";
+    import { FnConfig } from "@notation/aws/lambda";
+    import { handler } from "@notation/aws/api-gateway";
     export const getNum = handler(() => 1);
   `;
 
   const expected = stripIndent`
-    import { fn } from "@notation/sdk";
     const config = {};
     export const getNum = fn({ fileName: "entry.fn.ts", handler: "getNum", ...config });
   `;
@@ -27,13 +27,13 @@ it("remaps exports", async () => {
 
 it("merges config", async () => {
   const input = `
-    import { handler, FnConfig } from "@notation/sdk";
+    import { FnConfig } from "@notation/aws/lambda";
+    import { handler } from "@notation/aws/api-gateway";
     export const getNum = handler(() => 1);
     export const config: FnConfig = { memory: 64 };
   `;
 
   const expected = stripIndent`
-    import { fn } from "@notation/sdk";
     const config = { memory: 64 };
     export const getNum = fn({ fileName: "entry.fn.ts", handler: "getNum", ...config });
   `;
@@ -45,7 +45,8 @@ it("merges config", async () => {
 
 it("should strip runtime code", async () => {
   const input = `
-    import { handler } from "@notation/sdk";
+    import { FnConfig } from "@notation/aws/lambda";
+    import { handler } from "@notation/aws/api-gateway";
     import lib from "lib";
 
     let num = lib.getNum();
@@ -54,7 +55,6 @@ it("should strip runtime code", async () => {
     export const getDoubleNum = () => num * 2;`;
 
   const expected = stripIndent`
-    import { fn } from "@notation/sdk";
     const config = {};
     export const getDoubleNum = fn({ fileName: "entry.fn.ts", handler: "getDoubleNum", ...config });
     export const getNum = fn({ fileName: "entry.fn.ts", handler: "getNum", ...config });
