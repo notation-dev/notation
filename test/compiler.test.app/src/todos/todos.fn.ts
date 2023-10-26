@@ -1,11 +1,10 @@
 import { FnConfig } from "@notation/aws/lambda";
 import { handler, json } from "@notation/aws/api-gateway";
+import { api } from "./utils";
 
-const todosRes = await fetch("https://jsonplaceholder.typicode.com/todos/1");
-const todos = (await todosRes.json()) as any[];
+const todos = await api.get<any[]>("/todos");
 
 export const getTodos = handler((event) => {
-  console.log(event);
   return json(todos);
 });
 
@@ -14,6 +13,7 @@ export const getTodoCount = handler(() => {
 });
 
 export const config: FnConfig = {
+  service: "aws/lambda",
   timeout: 5,
   memory: 64,
 };

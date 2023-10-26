@@ -8,7 +8,7 @@ const buildRuntime = createBuilder((input) => ({
   plugins: [functionRuntimePlugin({ getFile: () => input })],
 }));
 
-it("should strip infra code", async () => {
+it("strips infra code", async () => {
   const input = stripIndent`
     import { FnConfig } from "@notation/aws/lambda";
     import { handler } from "@notation/aws/api-gateway";

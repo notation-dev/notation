@@ -5,7 +5,7 @@
   "dependencies": {
     "@notation/aws": "workspace:*",
     "@notation/cli": "workspace:*",
-    "@notation/sdk": "workspace:*"
+    "@notation/core": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^20.8.4"

@@ -14,6 +14,7 @@
   },
   "devDependencies": {
     "@types/common-tags": "^1.8.2",
-    "common-tags": "^1.8.2"
+    "common-tags": "^1.8.2",
+    "@notation/aws": "workspace:*"
   }
 }

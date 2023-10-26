@@ -4,7 +4,11 @@ import type {
   APIGatewayProxyResultV2,
 } from "aws-lambda";
 
-export type FnConfig = any;
+export type FnConfig = {
+  service: "aws/lambda";
+  memory?: number;
+  timeout?: number;
+};
 
 export type ApiGatewayHandler = (
   event: APIGatewayProxyEvent,
