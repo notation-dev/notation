@@ -13,11 +13,11 @@ beforeAll(async () => {
 
 it("generates infra and runtime modules matching source file structure", async () => {
   const expected = [
-    "dist/infra/src/api.js",
+    "dist/infra/src/api.mjs",
     "dist/runtime/src/todos/todos.fn.js",
   ];
 
-  const actual = await glob("dist/**/*.js", { cwd });
+  const actual = await glob("dist/**/*.{js,mjs}", { cwd });
 
   expect(actual).toEqual(expected);
 });

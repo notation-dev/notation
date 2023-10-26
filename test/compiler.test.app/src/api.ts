@@ -1,12 +1,6 @@
-import { apiRoute } from "@notation/aws/api-gateway";
+import { api } from "@notation/aws/api-gateway";
 import { getTodos, getTodoCount } from "./todos/todos.fn";
 
-export const todoRoute = apiRoute({
-  path: "/todos",
-  handler: getTodos,
-});
-
-export const todoCountRoute = apiRoute({
-  path: "/todos/count",
-  handler: getTodoCount,
-});
+api.get("/todos", getTodos);
+api.get("/todos/count", getTodoCount);
+api.get("/todos/count2", getTodoCount);

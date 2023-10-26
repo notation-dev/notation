@@ -28,24 +28,32 @@ importers:
 
   packages/aws:
     specifiers:
+      '@notation/core': workspace:*
       '@types/aws-lambda': ^8.10.125
     dependencies:
+      '@notation/core': link:../core
       '@types/aws-lambda': 8.10.125
 
   packages/cli:
     specifiers:
+      '@notation/core': workspace:*
       '@notation/esbuild-plugins': workspace:*
       commander: ^11.0.0
       esbuild: ^0.19.3
       glob: ^10.3.10
     dependencies:
+      '@notation/core': link:../core
       '@notation/esbuild-plugins': link:../esbuild-plugins
       commander: 11.0.0
       esbuild: 0.19.3
       glob: 10.3.10
 
+  packages/core:
+    specifiers: {}
+
   packages/esbuild-plugins:
     specifiers:
+      '@notation/aws': workspace:*
       '@types/common-tags': ^1.8.2
       common-tags: ^1.8.2
       esbuild: ^0.19.3
@@ -54,11 +62,9 @@ importers:
       esbuild: 0.19.3
       typescript: 5.2.2
     devDependencies:
+      '@notation/aws': link:../aws
       '@types/common-tags': 1.8.2
       common-tags: 1.8.2
-
-  packages/sdk:
-    specifiers: {}
 
   packages/tsconfig:
     specifiers: {}
@@ -67,12 +73,12 @@ importers:
     specifiers:
       '@notation/aws': workspace:*
       '@notation/cli': workspace:*
-      '@notation/sdk': workspace:*
+      '@notation/core': workspace:*
       '@types/node': ^20.8.4
     dependencies:
       '@notation/aws': link:../../packages/aws
       '@notation/cli': link:../../packages/cli
-      '@notation/sdk': link:../../packages/sdk
+      '@notation/core': link:../../packages/core
     devDependencies:
       '@types/node': 20.8.8
 
