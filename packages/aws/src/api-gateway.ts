@@ -10,16 +10,24 @@ export type ApiGatewayHandler = (
   context: Context,
 ) => APIGatewayProxyResultV2 | Promise<APIGatewayProxyResultV2>;
 
-export const api = {
-  get: (path: string, handler: ApiGatewayHandler) => {
-    registerResource("api-route", {
-      service: "aws/api-gateway",
-      path,
-      method: "GET",
-      // @ts-ignore – property exists at runtime
-      handler: handler.id,
-    });
-  },
+export type ApiOptions = {
+  name: string;
+};
+
+export const api = (apiOpts: ApiOptions) => {
+  const apiResource = registerResource("api", apiOpts);
+  return {
+    get: (path: string, handler: ApiGatewayHandler) => {
+      registerResource("api-route", {
+        api: apiResource.id,
+        service: "aws/api-gateway",
+        path,
+        method: "GET",
+        // @ts-ignore – property exists at runtime
+        handler: handler.id,
+      });
+    },
+  };
 };
 
 export const handler = (handler: ApiGatewayHandler): ApiGatewayHandler =>
