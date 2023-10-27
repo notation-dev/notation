@@ -9,7 +9,8 @@
     "format": "prettier --write .",
     "changeset": "changeset",
     "version": "turbo run build && changeset version && pnpm install",
-    "release": "changeset publish"
+    "release": "changeset publish",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
@@ -27,6 +28,7 @@
     "bun-types": "^1.0.3",
     "execa": "^8.0.1",
     "glob": "^10.3.10",
+    "husky": "^8.0.3",
     "prettier": "^3.0.3",
     "tsconfig": "workspace:*",
     "tsup": "^7.2.0",
