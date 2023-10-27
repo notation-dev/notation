@@ -1,14 +1,5 @@
-import type {
-  Context,
-  APIGatewayProxyEvent,
-  APIGatewayProxyResultV2,
-} from "aws-lambda";
 import { registerResource } from "@notation/core";
-
-export type ApiGatewayHandler = (
-  event: APIGatewayProxyEvent,
-  context: Context,
-) => APIGatewayProxyResultV2 | Promise<APIGatewayProxyResultV2>;
+import { ApiGatewayHandler } from "./lambda";
 
 export type ApiOptions = {
   name: string;
@@ -29,9 +20,6 @@ export const api = (apiOpts: ApiOptions) => {
     },
   };
 };
-
-export const handler = (handler: ApiGatewayHandler): ApiGatewayHandler =>
-  handler;
 
 export const json = (result: any) => ({
   body: JSON.stringify(result),

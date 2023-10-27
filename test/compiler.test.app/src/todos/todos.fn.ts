@@ -1,14 +1,14 @@
-import { FnConfig } from "@notation/aws/lambda";
-import { handler, json } from "@notation/aws/api-gateway";
+import { FnConfig, handle } from "@notation/aws/lambda";
+import { json } from "@notation/aws/api-gateway";
 import { api } from "./utils";
 
 const todos = await api.get<any[]>("/todos");
 
-export const getTodos = handler((event) => {
+export const getTodos = handle.apiRequest(() => {
   return json(todos);
 });
 
-export const getTodoCount = handler(() => {
+export const getTodoCount = handle.apiRequest(() => {
   return json(todos.length);
 });
 
