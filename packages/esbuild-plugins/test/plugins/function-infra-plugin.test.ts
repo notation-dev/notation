@@ -11,12 +11,13 @@ const buildInfra = createBuilder((input) => ({
 it("remaps exports", async () => {
   const input = `
     import { handler } from "@notation/aws/api-gateway";
+    export const config = { service: "aws/lambda" };
     export const getNum = handler(() => 1);
   `;
 
   const expected = stripIndent`
-    import { fn } from "@notation/core";
-    const config = {};
+    import { fn } from "@notation/aws/lambda";
+    const config = { service: "aws/lambda" };
     export const getNum = fn({ fileName: "entry.fn.ts", handler: "getNum", ...config });
   `;
 
@@ -30,12 +31,12 @@ it("merges config", async () => {
     import { FnConfig } from "@notation/aws/lambda";
     import { handler } from "@notation/aws/api-gateway";
     export const getNum = handler(() => 1);
-    export const config: FnConfig = { memory: 64 };
+    export const config: FnConfig = { service: "aws/lambda", memory: 64 };
   `;
 
   const expected = stripIndent`
-    import { fn } from "@notation/core";
-    const config = { memory: 64 };
+    import { fn } from "@notation/aws/lambda";
+    const config = { service: "aws/lambda", memory: 64 };
     export const getNum = fn({ fileName: "entry.fn.ts", handler: "getNum", ...config });
   `;
 
@@ -53,11 +54,12 @@ it("should strip runtime code", async () => {
     let num = lib.getNum();
 
     export const getNum = () => num;
-    export const getDoubleNum = () => num * 2;`;
+    export const getDoubleNum = () => num * 2;
+    export const config = { service: "aws/lambda" };`;
 
   const expected = stripIndent`
-    import { fn } from "@notation/core";
-    const config = {};
+    import { fn } from "@notation/aws/lambda";
+    const config = { service: "aws/lambda" };
     export const getNum = fn({ fileName: "entry.fn.ts", handler: "getNum", ...config });
     export const getDoubleNum = fn({ fileName: "entry.fn.ts", handler: "getDoubleNum", ...config });
   `;
@@ -65,4 +67,14 @@ it("should strip runtime code", async () => {
   const output = await buildInfra(input);
 
   expect(output).toContain(expected);
+});
+
+// broken in bun 1.0.7
+it.skip("should fail if no config is exported", async () => {
+  const input = `
+    import { handler } from "@notation/aws/api-gateway";
+    export const getNum = handler(() => 1);
+  `;
+
+  expect(buildInfra(input)).rejects.toThrow(/No config object was exported/);
 });

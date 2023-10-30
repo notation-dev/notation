@@ -1,3 +1,4 @@
+import { AwsResourceGroup } from "./core";
 import type {
   Context,
   APIGatewayProxyEvent,
@@ -17,4 +18,7 @@ export type ApiGatewayHandler = (
 
 export const handle = {
   apiRequest: (handler: ApiGatewayHandler): ApiGatewayHandler => handler,
+};
+
+export const fn = (config: { handler: string }) => {
 };

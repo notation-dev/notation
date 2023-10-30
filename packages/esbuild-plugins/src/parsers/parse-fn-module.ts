@@ -16,12 +16,15 @@ export function parseFnModule(input: string) {
 
   const configExport = exports.find((exp) => exp.name === "config");
 
-  const configObjectStr = configExport
-    ? createSimpleObjectString(configExport.node)
-    : undefined;
+  if (!configExport) {
+    throw new Error("A config object was not exported");
+  }
+
+  const { config, configRaw } = createConfigObject(configExport.node);
 
   return {
-    config: configObjectStr,
+    config,
+    configRaw,
     exports: exports.map((exp) => exp.name),
   };
 }
@@ -73,11 +76,12 @@ function getExportsFromStatement(
   return exports;
 }
 
-function createSimpleObjectString(node: ts.Node) {
+function createConfigObject(node: ts.Node) {
   if (!ts.isObjectLiteralExpression(node)) {
     throw new Error("'config' is not an object literal.");
   }
-  let configObjectStr = "{ ";
+  let configRaw = "{ ";
+  let config: Record<string, string | number | boolean> = {};
   node.properties.forEach((prop, index, array) => {
     if (ts.isPropertyAssignment(prop)) {
       const key = prop.name.getText();
@@ -89,9 +93,9 @@ function createSimpleObjectString(node: ts.Node) {
         valueNode.kind === ts.SyntaxKind.FalseKeyword
       ) {
         const value = valueNode.getText();
-        configObjectStr += `${key}: ${value}${
-          index < array.length - 1 ? ", " : " "
-        }`;
+        configRaw += `${key}: ${value}`;
+        configRaw += index === array.length - 1 ? " }" : ", ";
+        config[key] = JSON.parse(value);
       } else {
         throw new Error(
           `Invalid value type for key '${key}': only numbers, strings, and booleans are allowed.`,
@@ -104,7 +108,5 @@ function createSimpleObjectString(node: ts.Node) {
     }
   });
 
-  configObjectStr += "}";
-
-  return configObjectStr;
+  return { config, configRaw };
 }

@@ -45,17 +45,6 @@ describe("parsing exports", () => {
 });
 
 describe("parsing config", () => {
-  it("allows no config to be exported", () => {
-    const input = `
-      export const getNum = handler(() => num);
-      const num = 123;
-    `;
-
-    const { config } = parseFnModule(input);
-
-    expect(config).toBeUndefined();
-  });
-
   it("parses primitive properties", () => {
     const input = `
     export const config = { 
@@ -68,9 +57,12 @@ describe("parsing config", () => {
 
     const { config } = parseFnModule(input);
 
-    expect(config).toBe(
-      '{ key1: "value1", key2: 123, key3: true, key4: false }',
-    );
+    expect(config).toEqual({
+      key1: "value1",
+      key2: 123,
+      key3: true,
+      key4: false,
+    });
   });
 
   it("does not allow complex property types", () => {
@@ -84,6 +76,32 @@ describe("parsing config", () => {
         /Invalid value type for key 'key1'/,
       );
     }
+  });
+
+  it("throws an error if no config is provided", async () => {
+    const input = `
+      import { handler } from "@notation/aws/api-gateway";
+      export const getNum = handler(() => 1);
+    `;
+    expect(() => parseFnModule(input)).toThrow(
+      /A config object was not exported/,
+    );
+  });
+
+  it("returns a raw config string", () => {
+    const input = `export const config = { 
+      key1: "value1", 
+      key2: 123, 
+      key3: true, 
+      key4: false 
+    };`;
+
+    const { configRaw } = parseFnModule(input);
+    console.log(configRaw);
+
+    expect(configRaw).toBe(
+      `{ key1: "value1", key2: 123, key3: true, key4: false }`,
+    );
   });
 
   describe("invalid config values", () => {
