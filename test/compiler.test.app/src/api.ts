@@ -1,8 +1,8 @@
-import { api } from "@notation/aws/api-gateway";
+import { api, router } from "@notation/aws/api-gateway";
 import { getTodos, getTodoCount } from "./todos/todos.fn";
 
 const todoApi = api({ name: "todo-api" });
+const todoRouter = router(todoApi);
 
-todoApi.get("/todos", getTodos);
-todoApi.get("/todos/count", getTodoCount);
-todoApi.get("/todos/count2", getTodoCount);
+todoRouter.get("/todos", getTodos);
+todoRouter.get("/todos/count", getTodoCount);
