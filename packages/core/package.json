@@ -7,5 +7,14 @@
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts",
     "dev": "npm run build -- --watch"
+  },
+  "dependencies": {
+    "@types/pako": "^2.0.2",
+    "js-base64": "^3.7.5",
+    "pako": "^2.1.0"
+  },
+  "devDependencies": {
+    "@types/common-tags": "^1.8.2",
+    "common-tags": "^1.8.2"
   }
 }

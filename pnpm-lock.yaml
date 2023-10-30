@@ -51,11 +51,22 @@ importers:
       glob: 10.3.10
 
   packages/core:
-    specifiers: {}
+    specifiers:
+      '@types/common-tags': ^1.8.2
+      '@types/pako': ^2.0.2
+      common-tags: ^1.8.2
+      js-base64: ^3.7.5
+      pako: ^2.1.0
+    dependencies:
+      '@types/pako': 2.0.2
+      js-base64: 3.7.5
+      pako: 2.1.0
+    devDependencies:
+      '@types/common-tags': 1.8.2
+      common-tags: 1.8.2
 
   packages/esbuild-plugins:
     specifiers:
-      '@notation/aws': workspace:*
       '@types/common-tags': ^1.8.2
       common-tags: ^1.8.2
       esbuild: ^0.19.3
@@ -64,7 +75,6 @@ importers:
       esbuild: 0.19.3
       typescript: 5.2.2
     devDependencies:
-      '@notation/aws': link:../aws
       '@types/common-tags': 1.8.2
       common-tags: 1.8.2
 
@@ -819,6 +829,10 @@ packages:
 
   /@types/normalize-package-data/2.4.1:
     resolution: {integrity: sha512-Gj7cI7z+98M282Tqmp2K5EIsoouUEzbBJhQQzDE3jSIRk6r9gsz0oUokqIUR4u1R3dMHo0pDHM7sNOHyhulypw==}
+    dev: false
+
+  /@types/pako/2.0.2:
+    resolution: {integrity: sha512-AtTbzIwhvLMTEUPudP3hxUwNK50DoX3amfVJmmL7WQH5iF3Kfqs8pG1tStsewHqmh75ULmjjldKn/B70D6DNcQ==}
     dev: false
 
   /@types/semver/7.5.1:
@@ -1907,6 +1921,10 @@ packages:
     engines: {node: '>=10'}
     dev: false
 
+  /js-base64/3.7.5:
+    resolution: {integrity: sha512-3MEt5DTINKqfScXKfJFrRbxkrnk2AxPWGBL/ycjz4dK8iqiSJ06UxD8jh8xuh6p10TX4t2+7FsBYVxxQbMg+qA==}
+    dev: false
+
   /js-tokens/4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
     dev: false
@@ -2231,6 +2249,10 @@ packages:
   /p-try/2.2.0:
     resolution: {integrity: sha512-R4nPAVTAU0B9D35/Gk3uJf/7XYbQcyohSKdvAxIRSNghFl4e71hVoGnBNQz9cWaXxO2I10KTC+3jMdvvoKw6dQ==}
     engines: {node: '>=6'}
+    dev: false
+
+  /pako/2.1.0:
+    resolution: {integrity: sha512-w+eufiZ1WuJYgPXbV/PO3NCMEc3xqylkKHzp8bxp1uW4qaSNQUkwmLLEc3kKsfz8lpV1F8Ht3U1Cm+9Srog2ug==}
     dev: false
 
   /parse-json/5.2.0:
