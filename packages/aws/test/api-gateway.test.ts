@@ -1,5 +1,4 @@
 import { test, expect } from "bun:test";
-import { json } from "src/api-gateway";
 import { api, route, router, json } from "src/api-gateway";
 import { fn } from "src/lambda";
 
@@ -42,3 +41,14 @@ test("route resource group idempotency snapshot", () => {
   expect(fnResourceGroupSnapshot).toEqual(fnResourceGroupSnapshot2);
 });
 
+test("router provides methods for each HTTP verb", () => {
+  const apiResourceGroup = api({ name: "api" });
+  const apiRouter = router(apiResourceGroup);
+  const handler = fn({ handler: "handler.fn.js" });
+
+  for (const method of ["GET", "POST", "PUT", "DELETE", "PATCH"]) {
+    const route = (apiRouter as any)[method.toLowerCase()]("/hello", handler);
+    expect(route.config.method).toEqual(method);
+    expect(route.config.path).toEqual("/hello");
+  }
+});
