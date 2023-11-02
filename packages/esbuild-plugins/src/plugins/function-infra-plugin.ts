@@ -15,11 +15,12 @@ export function functionInfraPlugin(opts: PluginOpts = {}): Plugin {
         const getFile = withFileCheck(opts.getFile || fsGetFile);
         const fileContent = await getFile(args.path);
         const fileName = path.relative(process.cwd(), args.path);
-        const { config, exports } = parseFnModule(fileContent);
+        const { config, configRaw, exports } = parseFnModule(fileContent);
+
         const reservedNames = ["preload", "config"];
 
-        let infraCode = `import { fn } from "@notation/core"`;
-        infraCode = infraCode.concat(`\nconst config = ${config || "{}"};`);
+        let infraCode = `import { fn } from "@notation/${config.service}"`;
+        infraCode = infraCode.concat(`\nconst config = ${configRaw};`);
 
         for (const handlerName of exports) {
           if (reservedNames.includes(handlerName)) continue;
