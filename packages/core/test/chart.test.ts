@@ -1,7 +1,8 @@
 import { expect, it } from "bun:test";
 import { stripIndent } from "common-tags";
 import { createMermaidFlowChart, createMermaidLiveUrl } from "src/chart";
-import { ResourceGroup, Resource } from "src/resource-group";
+import { ResourceGroup } from "src/resource-group";
+import { Resource } from "src/resource";
 
 it("should create a mermaid flowchart string", () => {
   const { resourceGroups, resources } = getFixture();
@@ -49,7 +50,15 @@ function getFixture() {
           groupId: 0,
           config: {},
           type: "ResourceTypeB",
-          dependencies: { dep1: 0 },
+          dependencies: {
+            dep1: {
+              id: 0,
+              groupId: 0,
+              config: {},
+              type: "ResourceTypeA",
+              dependencies: {},
+            },
+          },
         },
       ],
     },
@@ -67,7 +76,7 @@ function getFixture() {
         },
       ],
     },
-  ] as ResourceGroup<{}>[];
+  ] as ResourceGroup[];
 
   const resources = [
     {
@@ -82,7 +91,15 @@ function getFixture() {
       groupId: 0,
       config: {},
       type: "ResourceTypeB",
-      dependencies: { dep1: 0 },
+      dependencies: {
+        dep1: {
+          id: 0,
+          groupId: 0,
+          config: {},
+          type: "ResourceTypeA",
+          dependencies: {},
+        },
+      },
     },
     {
       id: 2,
@@ -91,7 +108,7 @@ function getFixture() {
       type: "ResourceTypeC",
       dependencies: {},
     },
-  ] as Resource<{}>[];
+  ] as Resource[];
 
   return { resourceGroups, resources };
 }
