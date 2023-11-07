@@ -5,299 +5,47 @@ AwsResourceGroup {
   "config": {
     "name": "api",
   },
-  "createResource": [Function],
   "dependencies": {},
-  "findResourceByType": [Function],
-  "id": 1,
+  "id": 0,
   "platform": "aws",
   "resources": [
     {
-      "config": {},
+      "config": {
+        "Name": "api",
+        "ProtocolType": "HTTP",
+      },
       "dependencies": {},
-      "groupId": 1,
-      "id": 3,
-      "type": "api-gateway",
+      "deploy": [Function: AsyncFunction],
+      "groupId": 0,
+      "id": 0,
+      "output": null,
+      "type": "aws/api-gateway",
     },
     {
-      "config": {},
-      "dependencies": {
-        "routerId": 3,
+      "config": {
+        "StageName": "dev",
       },
-      "groupId": 1,
-      "id": 4,
-      "type": "api-gateway/stage",
+      "dependencies": {
+        "router": {
+          "config": {
+            "Name": "api",
+            "ProtocolType": "HTTP",
+          },
+          "dependencies": {},
+          "deploy": [Function: AsyncFunction],
+          "groupId": 0,
+          "id": 0,
+          "output": null,
+          "type": "aws/api-gateway",
+        },
+      },
+      "deploy": [Function: AsyncFunction],
+      "groupId": 0,
+      "id": 1,
+      "output": null,
+      "type": "aws/api-gateway/stage",
     },
   ],
   "type": "api",
-}
-`;
-
-exports[`route resource group snapshot 1`] = `
-AwsResourceGroup {
-  "config": {
-    "method": "GET",
-    "path": "/hello",
-    "service": "aws/api-gateway",
-  },
-  "createResource": [Function],
-  "dependencies": {
-    "fn": 3,
-    "router": 2,
-  },
-  "findResourceByType": [Function],
-  "id": 4,
-  "platform": "aws",
-  "resources": [
-    {
-      "config": {},
-      "dependencies": {
-        "apiGatewayId": 5,
-        "integrationId": 10,
-      },
-      "groupId": 4,
-      "id": 12,
-      "type": "api-gateway/route",
-    },
-  ],
-  "type": "route",
-}
-`;
-
-exports[`route resource group snapshot 2`] = `
-AwsResourceGroup {
-  "config": {
-    "handler": "handler.fn.js",
-  },
-  "createResource": [Function],
-  "dependencies": {},
-  "findResourceByType": [Function],
-  "id": 3,
-  "platform": "aws",
-  "resources": [
-    {
-      "config": {},
-      "dependencies": {},
-      "groupId": 3,
-      "id": 7,
-      "type": "iam/role",
-    },
-    {
-      "config": {},
-      "dependencies": {
-        "roleId": 7,
-      },
-      "groupId": 3,
-      "id": 8,
-      "type": "iam/policy-attachment",
-    },
-    {
-      "config": {},
-      "dependencies": {
-        "policyId": 8,
-      },
-      "groupId": 3,
-      "id": 9,
-      "type": "lambda",
-    },
-    {
-      "config": {},
-      "dependencies": {
-        "apiGatewayId": 5,
-        "lambdaId": 9,
-      },
-      "groupId": 3,
-      "id": 10,
-      "type": "lambda/integration",
-    },
-    {
-      "config": {},
-      "dependencies": {
-        "apiGatewayId": 5,
-        "lambdaId": 9,
-      },
-      "groupId": 3,
-      "id": 11,
-      "type": "lambda/permission",
-    },
-  ],
-  "type": "function",
-}
-`;
-
-exports[`route resource group idempotency snapshot 1`] = `
-AwsResourceGroup {
-  "config": {
-    "handler": "handler.fn.js",
-  },
-  "createResource": [Function],
-  "dependencies": {},
-  "findResourceByType": [Function],
-  "id": 6,
-  "platform": "aws",
-  "resources": [
-    {
-      "config": {},
-      "dependencies": {},
-      "groupId": 6,
-      "id": 15,
-      "type": "iam/role",
-    },
-    {
-      "config": {},
-      "dependencies": {
-        "roleId": 15,
-      },
-      "groupId": 6,
-      "id": 16,
-      "type": "iam/policy-attachment",
-    },
-    {
-      "config": {},
-      "dependencies": {
-        "policyId": 16,
-      },
-      "groupId": 6,
-      "id": 17,
-      "type": "lambda",
-    },
-    {
-      "config": {},
-      "dependencies": {},
-      "groupId": 6,
-      "id": 18,
-      "type": "lambda/integration",
-    },
-    {
-      "config": {},
-      "dependencies": {},
-      "groupId": 6,
-      "id": 19,
-      "type": "lambda/permission",
-    },
-  ],
-  "type": "function",
-}
-`;
-
-exports[`route resource group idempotency snapshot 2`] = `
-AwsResourceGroup {
-  "config": {
-    "method": "GET",
-    "path": "/hello",
-    "service": "aws/api-gateway",
-  },
-  "createResource": [Function],
-  "dependencies": {
-    "fn": 6,
-    "router": 5,
-  },
-  "findResourceByType": [Function],
-  "id": 7,
-  "platform": "aws",
-  "resources": [
-    {
-      "config": {},
-      "dependencies": {
-        "apiGatewayId": 13,
-        "integrationId": 18,
-      },
-      "groupId": 7,
-      "id": 20,
-      "type": "api-gateway/route",
-    },
-  ],
-  "type": "route",
-}
-`;
-
-exports[`route resource group snapshot 3`] = `
-AwsResourceGroup {
-  "config": {
-    "method": "GET",
-    "path": "/hello",
-    "service": "aws/api-gateway",
-  },
-  "createResource": [Function],
-  "dependencies": {
-    "fn": 6,
-    "router": 5,
-  },
-  "findResourceByType": [Function],
-  "id": 7,
-  "platform": "aws",
-  "resources": [
-    {
-      "config": {},
-      "dependencies": {
-        "apiGatewayId": 13,
-        "integrationId": 18,
-      },
-      "groupId": 7,
-      "id": 20,
-      "type": "api-gateway/route",
-    },
-  ],
-  "type": "route",
-}
-`;
-
-exports[`route resource group snapshot 4`] = `
-AwsResourceGroup {
-  "config": {
-    "handler": "handler.fn.js",
-  },
-  "createResource": [Function],
-  "dependencies": {},
-  "findResourceByType": [Function],
-  "id": 6,
-  "platform": "aws",
-  "resources": [
-    {
-      "config": {},
-      "dependencies": {},
-      "groupId": 6,
-      "id": 15,
-      "type": "iam/role",
-    },
-    {
-      "config": {},
-      "dependencies": {
-        "roleId": 15,
-      },
-      "groupId": 6,
-      "id": 16,
-      "type": "iam/policy-attachment",
-    },
-    {
-      "config": {},
-      "dependencies": {
-        "policyId": 16,
-      },
-      "groupId": 6,
-      "id": 17,
-      "type": "lambda",
-    },
-    {
-      "config": {},
-      "dependencies": {
-        "apiGatewayId": 13,
-        "lambdaId": 17,
-      },
-      "groupId": 6,
-      "id": 18,
-      "type": "lambda/integration",
-    },
-    {
-      "config": {},
-      "dependencies": {
-        "apiGatewayId": 13,
-        "lambdaId": 17,
-      },
-      "groupId": 6,
-      "id": 19,
-      "type": "lambda/permission",
-    },
-  ],
-  "type": "function",
 }
 `;
