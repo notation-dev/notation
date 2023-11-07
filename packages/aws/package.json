@@ -19,6 +19,7 @@
     "dev": "npm run build -- --watch"
   },
   "dependencies": {
+    "@notation/aws.iac": "workspace:*",
     "@notation/core": "workspace:*",
     "@types/aws-lambda": "^8.10.125"
   }

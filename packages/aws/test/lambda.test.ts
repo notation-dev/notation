@@ -10,6 +10,9 @@ test("handlers are identity functions", async () => {
 });
 
 test("fn resource group snapshot", async () => {
-  const fnResourceGroup = fn({ handler: "handler.fn.js" });
+  const fnResourceGroup = fn({
+    fileName: "src/fns/handler.fn/index.js",
+    handler: "handler",
+  });
   expect(fnResourceGroup).toMatchSnapshot();
 });

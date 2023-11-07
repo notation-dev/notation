@@ -30,9 +30,14 @@ importers:
 
   packages/aws:
     specifiers:
+      '@notation/aws.iac': workspace:*
       '@notation/core': workspace:*
       '@types/aws-lambda': ^8.10.125
     dependencies:
+      '@notation/aws.iac': link:../aws.iac
+      '@notation/core': link:../core
+      '@types/aws-lambda': 8.10.125
+
   packages/aws.iac:
     specifiers:
       '@aws-sdk/client-apigatewayv2': ^3.441.0
