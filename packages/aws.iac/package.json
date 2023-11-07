@@ -1,0 +1,26 @@
+{
+  "name": "@notation/aws.iac",
+  "version": "0.0.1",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsup src/resources.ts src/client.ts --format cjs,esm --dts --clean",
+    "dev": "npm run build -- --watch"
+  },
+  "exports": {
+    "./*": {
+      "require": "./dist/*.js",
+      "import": "./dist/*.mjs",
+      "types": "./dist/*.d.ts"
+    }
+  },
+  "dependencies": {
+    "@aws-sdk/client-apigatewayv2": "^3.441.0",
+    "@aws-sdk/client-lambda": "^3.441.0",
+    "@aws-sdk/client-iam": "^3.441.0",
+    "@aws-sdk/client-cloudwatch-logs": "^3.441.0",
+    "@notation/core": "workspace:*",
+    "@types/aws-lambda": "^8.10.125"
+  }
+}
