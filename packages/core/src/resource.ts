@@ -24,6 +24,11 @@ export abstract class Resource<
 
   abstract getDeployInput(): Input;
   abstract deploy(input: Input): Promise<Output>;
+
+  async runDeploy() {
+    const input = this.getDeployInput();
+    this.output = await this.deploy(input);
+  }
 }
 
 export function createResourceFactory<

@@ -73,3 +73,35 @@ it("passes dependencies to getIntrinsicConfig", () => {
     { dep1: childResource },
   ]);
 });
+
+it('passes merged config to "deploy"', async () => {
+  const deployMock = mock(() => Promise.resolve({}));
+
+  const factory = createResourceFactory<{ name: string; a: 1 }>();
+
+  const TestResource = factory({
+    type: "testType",
+    deploy: deployMock,
+    getIntrinsicConfig: () => ({ a: 1 }),
+  });
+
+  const resource = new TestResource({ config: { name: "testName" } });
+
+  await resource.runDeploy();
+  expect(deployMock.mock.calls[0]).toEqual([{ a: 1, name: "testName" }]);
+});
+
+it("assigns outputs after deploy", async () => {
+  const factory = createResourceFactory<{ name: string }, { id: number }>();
+
+  const TestResource = factory({
+    type: "testType",
+    deploy: () => Promise.resolve({ id: 123 }),
+  });
+
+  const resource = new TestResource({ config: { name: "testName" } });
+  expect(resource.output).toBe(null);
+
+  await resource.runDeploy();
+  expect(resource.output).toEqual({ id: 123 });
+});
