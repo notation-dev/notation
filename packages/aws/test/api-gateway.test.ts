@@ -1,8 +1,8 @@
 import { test, expect } from "bun:test";
 import { apiGateway } from "@notation/aws.iac/resources";
-import { api, route } from "src/api-gateway.infra";
-import { router, json } from "src/api-gateway.utils";
-import { fn } from "src/lambda";
+import { api, route, router } from "src/api-gateway";
+import { json } from "src/api-gateway.runtime";
+import { lambda } from "src/lambda";
 
 test("json returns a JSON string and a 200 status code", () => {
   const payload = { message: "Hello, world!" };
@@ -18,7 +18,7 @@ test("api resource group snapshot", () => {
 
 test("route resource group snapshot", () => {
   const apiResourceGroup = api({ name: "api" });
-  const fnResourceGroup = fn({
+  const fnResourceGroup = lambda({
     fileName: "src/fns/handler.fn.js",
     handler: "handler.fn.js",
   });
@@ -36,7 +36,7 @@ test("route resource group snapshot", () => {
 
 test("route resource group idempotency snapshot", () => {
   const apiResourceGroup = api({ name: "api" });
-  const fnResourceGroup = fn({
+  const fnResourceGroup = lambda({
     fileName: "src/fns/handler.fn.js",
     handler: "handler.fn.js",
   });
@@ -52,7 +52,7 @@ test("route resource group idempotency snapshot", () => {
 test("router provides methods for each HTTP verb", () => {
   const apiResourceGroup = api({ name: "api" });
   const apiRouter = router(apiResourceGroup);
-  const handler = fn({
+  const handler = lambda({
     fileName: "src/fns/handler.fn.js",
     handler: "handler.fn.js",
   });

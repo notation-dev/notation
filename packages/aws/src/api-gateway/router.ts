@@ -1,5 +1,5 @@
-import { ApiGatewayHandler } from "./lambda";
-import { api, route } from "./api-gateway.infra";
+import type { ApiGatewayHandler } from "src/shared";
+import { api, route } from ".";
 
 export const router = (apiGroup: ReturnType<typeof api>) => {
   const createRouteCallback =
@@ -15,8 +15,3 @@ export const router = (apiGroup: ReturnType<typeof api>) => {
     delete: createRouteCallback("DELETE"),
   };
 };
-
-export const json = (result: any) => ({
-  body: JSON.stringify(result),
-  statusCode: 200,
-});

@@ -3,13 +3,9 @@
   "name": "@notation/aws",
   "version": "0.0.1",
   "exports": {
-    "./api-gateway": {
-      "import": "./dist/api-gateway.js",
-      "types": "./dist/api-gateway.d.ts"
-    },
-    "./lambda": {
-      "import": "./dist/lambda.js",
-      "types": "./dist/lambda.d.ts"
+    "./*": {
+      "import": "./dist/*/index.js",
+      "types": "./dist/*/index.d.ts"
     }
   },
   "scripts": {

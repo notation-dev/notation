@@ -1,5 +1,5 @@
-import { FnConfig, handle } from "@notation/aws/lambda";
-import { json } from "@notation/aws/api-gateway";
+import type { LambdaConfig } from "@notation/aws/lambda.fn";
+import { handle, json } from "@notation/aws/lambda.fn";
 import { api } from "./utils";
 
 const todos = await api.get<any[]>("/todos");
@@ -12,7 +12,7 @@ export const getTodoCount = handle.apiRequest(() => {
   return json(todos.length);
 });
 
-export const config: FnConfig = {
+export const config: LambdaConfig = {
   service: "aws/lambda",
   timeout: 5,
   memory: 64,
