@@ -44,6 +44,7 @@ importers:
       '@aws-sdk/client-cloudwatch-logs': ^3.441.0
       '@aws-sdk/client-iam': ^3.441.0
       '@aws-sdk/client-lambda': ^3.441.0
+      '@aws-sdk/client-sts': ^3.441.0
       '@notation/core': workspace:*
       '@types/aws-lambda': ^8.10.125
     dependencies:
@@ -51,6 +52,7 @@ importers:
       '@aws-sdk/client-cloudwatch-logs': 3.445.0
       '@aws-sdk/client-iam': 3.441.0
       '@aws-sdk/client-lambda': 3.441.0
+      '@aws-sdk/client-sts': 3.445.0
       '@notation/core': link:../core
       '@types/aws-lambda': 8.10.125
 
