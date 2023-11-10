@@ -9,7 +9,6 @@ export default defineConfig({
   ],
   splitting: false,
   dts: true,
-  clean: true,
   format: ["esm"],
   platform: "node",
 });
