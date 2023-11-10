@@ -1,8 +1,7 @@
 import { defineConfig } from "tsup";
 
 export default defineConfig({
-  entry: ["src/lambda.ts", "src/api-gateway.ts"],
-  splitting: false,
+  entry: ["src/resources.ts", "src/client.ts"],
   dts: true,
   clean: true,
   format: ["esm"],
