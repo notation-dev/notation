@@ -1,2 +1,11 @@
-export const region = "us-west-2";
-export const accountId = "123456789012";
+import { GetCallerIdentityCommand } from "@aws-sdk/client-sts";
+import { stsClient } from "src/utils/aws-clients";
+
+const command = new GetCallerIdentityCommand({});
+
+const getAwsAccountId = async () => {
+  const response = await stsClient.send(command);
+  return response.Account;
+};
+
+export const accountId = await getAwsAccountId();
