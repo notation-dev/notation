@@ -1,5 +1,6 @@
 import { test, expect } from "bun:test";
-import { handle, fn } from "src/lambda";
+import { handle } from "src/lambda.fn";
+import { lambda } from "src/lambda";
 
 test("handlers are identity functions", async () => {
   const fn = () => ({});
@@ -9,8 +10,8 @@ test("handlers are identity functions", async () => {
   }
 });
 
-test("fn resource group snapshot", async () => {
-  const fnResourceGroup = fn({
+test("lambda resource group snapshot", async () => {
+  const fnResourceGroup = lambda({
     fileName: "src/fns/handler.fn/index.js",
     handler: "handler",
   });

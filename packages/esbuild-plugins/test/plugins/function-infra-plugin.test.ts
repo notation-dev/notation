@@ -16,9 +16,9 @@ it("remaps exports", async () => {
   `;
 
   const expected = stripIndent`
-    import { fn } from "@notation/aws/lambda";
+    import { lambda } from "@notation/aws/lambda";
     const config = { service: "aws/lambda" };
-    export const getNum = fn({ fileName: "entry.fn.ts", handler: "getNum", ...config });
+    export const getNum = lambda({ fileName: "dist/runtime/entry.fn/index.js", handler: "getNum", ...config });
   `;
 
   const output = await buildInfra(input);
@@ -28,16 +28,16 @@ it("remaps exports", async () => {
 
 it("merges config", async () => {
   const input = `
-    import { FnConfig } from "@notation/aws/lambda";
+    import { LambdaConfig } from "@notation/aws/lambda";
     import { handler } from "@notation/aws/api-gateway";
     export const getNum = handler(() => 1);
-    export const config: FnConfig = { service: "aws/lambda", memory: 64 };
+    export const config: LambdaConfig = { service: "aws/lambda", memory: 64 };
   `;
 
   const expected = stripIndent`
-    import { fn } from "@notation/aws/lambda";
+    import { lambda } from "@notation/aws/lambda";
     const config = { service: "aws/lambda", memory: 64 };
-    export const getNum = fn({ fileName: "entry.fn.ts", handler: "getNum", ...config });
+    export const getNum = lambda({ fileName: "dist/runtime/entry.fn/index.js", handler: "getNum", ...config });
   `;
 
   const output = await buildInfra(input);
@@ -47,7 +47,7 @@ it("merges config", async () => {
 
 it("should strip runtime code", async () => {
   const input = `
-    import { FnConfig } from "@notation/aws/lambda";
+    import { LambdaConfig } from "@notation/aws/lambda";
     import { handler } from "@notation/aws/api-gateway";
     import lib from "lib";
 
@@ -58,10 +58,10 @@ it("should strip runtime code", async () => {
     export const config = { service: "aws/lambda" };`;
 
   const expected = stripIndent`
-    import { fn } from "@notation/aws/lambda";
+    import { lambda } from "@notation/aws/lambda";
     const config = { service: "aws/lambda" };
-    export const getNum = fn({ fileName: "entry.fn.ts", handler: "getNum", ...config });
-    export const getDoubleNum = fn({ fileName: "entry.fn.ts", handler: "getDoubleNum", ...config });
+    export const getNum = lambda({ fileName: "dist/runtime/entry.fn/index.js", handler: "getNum", ...config });
+    export const getDoubleNum = lambda({ fileName: "dist/runtime/entry.fn/index.js", handler: "getDoubleNum", ...config });
   `;
 
   const output = await buildInfra(input);

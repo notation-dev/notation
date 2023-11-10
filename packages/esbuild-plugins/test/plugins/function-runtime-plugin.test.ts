@@ -10,7 +10,7 @@ const buildRuntime = createBuilder((input) => ({
 
 it("strips infra code", async () => {
   const input = stripIndent`
-    import { FnConfig } from "@notation/aws/lambda";
+    import { LambdaConfig } from "@notation/aws/lambda";
     import { handler } from "@notation/aws/api-gateway";
 
     const num = await fetch("http://api.com/num").then((res) => res.json());
@@ -18,7 +18,7 @@ it("strips infra code", async () => {
     export const getNum = handler(() => num);
     export const getDoubleNum = handler(() => num * 2);
     
-    export const config: FnConfig = {
+    export const config: LambdaConfig = {
       memory: 64,
       timeout: 5,
       environment: "node:16",
