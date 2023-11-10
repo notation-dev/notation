@@ -1,18 +1,19 @@
 {
+  "type": "module",
   "name": "@notation/aws.iac",
   "version": "0.0.1",
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "tsup src/resources.ts src/client.ts --format cjs,esm --dts --clean",
+    "build": "tsup",
     "dev": "npm run build -- --watch"
   },
   "exports": {
-    "./*": {
-      "require": "./dist/*.js",
-      "import": "./dist/*.mjs",
-      "types": "./dist/*.d.ts"
+    "./client": {
+      "import": "./dist/client.js",
+      "types": "./dist/client.d.ts"
+    },
+    "./resources": {
+      "import": "./dist/resources.js",
+      "types": "./dist/resources.d.ts"
     }
   },
   "dependencies": {

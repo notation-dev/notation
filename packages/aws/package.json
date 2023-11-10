@@ -1,17 +1,15 @@
 {
+  "type": "module",
   "name": "@notation/aws",
   "version": "0.0.1",
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
   "exports": {
     "./api-gateway": {
-      "require": "./dist/api-gateway.js",
-      "import": "./dist/api-gateway.mjs"
+      "import": "./dist/api-gateway.js",
+      "types": "./dist/api-gateway.d.ts"
     },
     "./lambda": {
-      "require": "./dist/lambda.js",
-      "import": "./dist/lambda.mjs"
+      "import": "./dist/lambda.js",
+      "types": "./dist/lambda.d.ts"
     }
   },
   "scripts": {

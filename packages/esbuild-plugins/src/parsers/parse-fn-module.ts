@@ -1,4 +1,4 @@
-import * as ts from "typescript";
+import ts from "typescript";
 
 export function parseFnModule(input: string) {
   const sourceFile = ts.createSourceFile(

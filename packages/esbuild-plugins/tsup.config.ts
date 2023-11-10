@@ -1,10 +1,8 @@
 import { defineConfig } from "tsup";
 
 export default defineConfig({
-  entry: ["src/lambda.ts", "src/api-gateway.ts"],
-  splitting: false,
+  entry: ["src/index.ts"],
   dts: true,
   clean: true,
   format: ["esm"],
-  platform: "node",
 });
