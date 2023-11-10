@@ -10,6 +10,7 @@ export abstract class Resource<
   Dependencies extends Record<string, Resource> = {},
 > {
   abstract type: string;
+  abstract retryOn: string[] | undefined;
   config: Config;
   dependencies: Dependencies;
   id: number = -1;
@@ -26,8 +27,20 @@ export abstract class Resource<
   abstract deploy(input: Input): Promise<Output>;
 
   async runDeploy() {
-    const input = this.getDeployInput();
-    this.output = await this.deploy(input);
+    let backoff = 1000;
+    try {
+      const input = this.getDeployInput();
+      this.output = await this.deploy(input);
+    } catch (err: any) {
+      if (this.retryOn?.includes(err.name)) {
+        console.log(`Retrying ${this.type} ${this.id}`);
+        await new Promise((resolve) => setTimeout(resolve, backoff));
+        backoff *= 1.5;
+        await this.runDeploy();
+      } else {
+        throw err;
+      }
+    }
   }
 }
 
@@ -42,13 +55,12 @@ export function createResourceFactory<
 
   function factory<
     DefaultConfig extends Partial<Input> = Partial<Input>,
-    Config = Omit<Input, keyof DefaultConfig> & {
-      [P in keyof DefaultConfig]?: never;
-    },
+    Config = Omit<Input, keyof DefaultConfig>,
   >(opts: {
     type: string;
     getIntrinsicConfig: (dependencies: Dependencies) => DefaultConfig;
     deploy: (input: Input) => Promise<Output>;
+    retryOn?: string[];
   }): DerivedResourceConstructor<Config>;
 
   function factory<Config = Input>(opts: {
@@ -59,6 +71,7 @@ export function createResourceFactory<
   function factory<Config>(opts: any) {
     return class extends Resource<Input, Output, Config, Dependencies> {
       type = opts.type;
+      retryOn = opts.retryOn;
 
       getDeployInput() {
         if ("getIntrinsicConfig" in opts) {
