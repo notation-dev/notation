@@ -14,6 +14,7 @@ export async function compile(entryPoint: string) {
   // @todo: fnEntryPoints could be an output of compileInfra
   const fnEntryPoints = await glob("**/*.fn.ts");
   await compileFns(fnEntryPoints);
+  await zipFns(fnEntryPoints);
 }
 
 export async function compileInfra(entryPoint: string) {
@@ -49,4 +50,17 @@ export async function compileFns(entryPoints: string[]) {
     });
   }
 }
+
+export async function zipFns(entryPoints: string[]) {
+  log("Compiling deployable packages");
+
+  for (const entryPoint of entryPoints) {
+    const inputFilePath = getRuntimeOutFilePath(entryPoint);
+    const inputFile = fs.readFileSync(inputFilePath);
+
+    const zipFilePath = `${inputFilePath}.zip`;
+    const archive = fflate.zipSync({ "index.mjs": inputFile }, { level: 9 });
+
+    fs.writeFileSync(zipFilePath, archive);
+  }
 }
