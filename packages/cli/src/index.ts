@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 import { program } from "commander";
 import { compile } from "./compile";
+import { deploy } from "./deploy";
+import { visualise } from "./visualise";
 
 program
   .command("init")
@@ -15,16 +17,23 @@ program
   .argument("<entryPoint>", "entryPoint")
   .description("Compile Notation App")
   .action(async (entryPoint) => {
-    console.log("Compiling", entryPoint);
     await compile(entryPoint);
   });
 
 program
+  .command("viz")
+  .argument("<entryPoint>", "entryPoint")
+  .description("Visualise Notation App")
+  .action(async (entryPoint) => {
+    await visualise(entryPoint);
+  });
+
+program
   .command("deploy")
-  .argument("<environment>", "environment")
+  .argument("<entryPoint>", "entryPoint")
   .description("Deploy Notation App")
-  .action(async (stackName) => {
-    console.log(`Deploying stack ${stackName}...`);
+  .action(async (entryPoint) => {
+    await deploy(entryPoint);
   });
 
 program.parse(process.argv);
