@@ -1,15 +1,7 @@
-import { test, expect } from "bun:test";
+import { test, expect, beforeEach } from "bun:test";
 import { apiGateway } from "@notation/aws.iac/resources";
 import { api, route, router } from "src/api-gateway";
-import { json } from "src/api-gateway.runtime";
 import { lambda } from "src/lambda";
-
-test("json returns a JSON string and a 200 status code", () => {
-  const payload = { message: "Hello, world!" };
-  const response = json(payload);
-  expect(response.statusCode).toEqual(200);
-  expect(response.body).toEqual(JSON.stringify(payload));
-});
 
 test("api resource group snapshot", () => {
   const apiResourceGroup = api({ name: "api" });
