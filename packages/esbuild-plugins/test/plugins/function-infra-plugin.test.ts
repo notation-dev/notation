@@ -18,7 +18,7 @@ it("remaps exports", async () => {
   const expected = stripIndent`
     import { lambda } from "@notation/aws/lambda";
     const config = { service: "aws/lambda" };
-    export const getNum = lambda({ fileName: "dist/runtime/entry.fn/index.js", handler: "getNum", ...config });
+    export const getNum = lambda({ fileName: "dist/runtime/entry.fn/index.mjs", handler: "getNum", ...config });
   `;
 
   const output = await buildInfra(input);
@@ -37,7 +37,7 @@ it("merges config", async () => {
   const expected = stripIndent`
     import { lambda } from "@notation/aws/lambda";
     const config = { service: "aws/lambda", memory: 64 };
-    export const getNum = lambda({ fileName: "dist/runtime/entry.fn/index.js", handler: "getNum", ...config });
+    export const getNum = lambda({ fileName: "dist/runtime/entry.fn/index.mjs", handler: "getNum", ...config });
   `;
 
   const output = await buildInfra(input);
@@ -60,8 +60,8 @@ it("should strip runtime code", async () => {
   const expected = stripIndent`
     import { lambda } from "@notation/aws/lambda";
     const config = { service: "aws/lambda" };
-    export const getNum = lambda({ fileName: "dist/runtime/entry.fn/index.js", handler: "getNum", ...config });
-    export const getDoubleNum = lambda({ fileName: "dist/runtime/entry.fn/index.js", handler: "getDoubleNum", ...config });
+    export const getNum = lambda({ fileName: "dist/runtime/entry.fn/index.mjs", handler: "getNum", ...config });
+    export const getDoubleNum = lambda({ fileName: "dist/runtime/entry.fn/index.mjs", handler: "getDoubleNum", ...config });
   `;
 
   const output = await buildInfra(input);
