@@ -32,10 +32,12 @@ importers:
     specifiers:
       '@notation/aws.iac': workspace:*
       '@notation/core': workspace:*
+      '@notation/std.iac': workspace:*
       '@types/aws-lambda': ^8.10.125
     dependencies:
       '@notation/aws.iac': link:../aws.iac
       '@notation/core': link:../core
+      '@notation/std.iac': link:../std.iac
       '@types/aws-lambda': 8.10.125
 
   packages/aws.iac:
@@ -46,6 +48,7 @@ importers:
       '@aws-sdk/client-lambda': ^3.441.0
       '@aws-sdk/client-sts': ^3.441.0
       '@notation/core': workspace:*
+      '@notation/std.iac': workspace:*
       '@types/aws-lambda': ^8.10.125
     dependencies:
       '@aws-sdk/client-apigatewayv2': 3.441.0
@@ -54,6 +57,7 @@ importers:
       '@aws-sdk/client-lambda': 3.441.0
       '@aws-sdk/client-sts': 3.445.0
       '@notation/core': link:../core
+      '@notation/std.iac': link:../std.iac
       '@types/aws-lambda': 8.10.125
 
   packages/cli:
@@ -99,6 +103,12 @@ importers:
     devDependencies:
       '@types/common-tags': 1.8.2
       common-tags: 1.8.2
+
+  packages/std.iac:
+    specifiers:
+      '@notation/core': workspace:*
+    dependencies:
+      '@notation/core': link:../core
 
   packages/tsconfig:
     specifiers: {}
