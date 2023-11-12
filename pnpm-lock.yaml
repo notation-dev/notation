@@ -50,6 +50,9 @@ importers:
       '@notation/core':
         specifier: workspace:*
         version: link:../core
+      '@notation/std.iac':
+        specifier: workspace:*
+        version: link:../std.iac
       '@types/aws-lambda':
         specifier: ^8.10.125
         version: 8.10.125
@@ -74,6 +77,9 @@ importers:
       '@notation/core':
         specifier: workspace:*
         version: link:../core
+      '@notation/std.iac':
+        specifier: workspace:*
+        version: link:../std.iac
       '@types/aws-lambda':
         specifier: ^8.10.125
         version: 8.10.125
@@ -133,6 +139,12 @@ importers:
       common-tags:
         specifier: ^1.8.2
         version: 1.8.2
+
+  packages/std.iac:
+    dependencies:
+      '@notation/core':
+        specifier: workspace:*
+        version: link:../core
 
   packages/tsconfig: {}
 

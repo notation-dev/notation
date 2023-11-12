@@ -1,14 +1,15 @@
-import path from "node:path";
-import fs from "node:fs";
 import * as aws from "@notation/aws.iac/resources";
+import * as std from "@notation/std.iac";
 import { AwsResourceGroup } from "@notation/aws.iac/client";
 
 export const lambda = (config: { fileName: string; handler: string }) => {
-  // @todo: make this a zip resource (maybe with a deploySync method)
-  const zipPath = path.join(process.cwd(), `${config.fileName}.zip`);
-  const zipContents = fs.readFileSync(zipPath);
-
   const functionGroup = new AwsResourceGroup("aws/function", { config });
+
+  const zipFile = functionGroup.add(
+    new std.Zip({
+      config: { fileName: config.fileName },
+    }),
+  );
 
   const role = functionGroup.add(
     new aws.lambda.LambdaIamRole({
@@ -30,13 +31,15 @@ export const lambda = (config: { fileName: string; handler: string }) => {
   const lambdaResource = functionGroup.add(
     new aws.lambda.Lambda({
       config: {
-        Code: { ZipFile: zipContents },
-        PackageType: "Zip",
         FunctionName: `function-${functionGroup.id}`,
         Handler: `index.${config.handler}`,
         Runtime: "nodejs18.x",
       },
-      dependencies: { role, policyAttachment },
+      dependencies: {
+        role,
+        policyAttachment,
+        zipFile,
+      },
     }),
   );
 

@@ -5,26 +5,33 @@ import {
   CreateFunctionCommandOutput,
 } from "@aws-sdk/client-lambda";
 import { LambdaIamRoleInstance, LambdaRolePolicyAttachmentInstance } from "./";
+import { ZipFileInstance } from "@notation/std.iac";
 import { lambdaClient } from "src/utils/aws-clients";
 
 export type LambdaInput = CreateFunctionCommandInput;
 export type LambdaOutput = CreateFunctionCommandOutput;
-export type LambdaDeps = { role: LambdaIamRoleInstance } & LambdaImplicitDeps;
 
 type LambdaImplicitDeps = {
   policyAttachment: LambdaRolePolicyAttachmentInstance;
 };
 
+export type LambdaDeps = {
+  role: LambdaIamRoleInstance;
+  zipFile: ZipFileInstance;
+};
+
 const createLambdaClass = createResourceFactory<
   LambdaInput,
   LambdaOutput,
-  LambdaDeps
+  LambdaDeps & LambdaImplicitDeps
 >();
 
 export const Lambda = createLambdaClass({
   type: "aws/lambda",
 
   getIntrinsicConfig: (dependencies) => ({
+    PackageType: "Zip",
+    Code: { ZipFile: dependencies.zipFile.output.contents },
     Role: dependencies.role.output.Role!.Arn,
   }),
 
