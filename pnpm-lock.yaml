@@ -80,11 +80,11 @@ importers:
       js-base64: ^3.7.5
       pako: ^2.1.0
     dependencies:
-      '@types/pako': 2.0.2
       js-base64: 3.7.5
       pako: 2.1.0
     devDependencies:
       '@types/common-tags': 1.8.2
+      '@types/pako': 2.0.3
       common-tags: 1.8.2
 
   packages/esbuild-plugins:
@@ -2005,9 +2005,9 @@ packages:
     resolution: {integrity: sha512-Gj7cI7z+98M282Tqmp2K5EIsoouUEzbBJhQQzDE3jSIRk6r9gsz0oUokqIUR4u1R3dMHo0pDHM7sNOHyhulypw==}
     dev: false
 
-  /@types/pako/2.0.2:
-    resolution: {integrity: sha512-AtTbzIwhvLMTEUPudP3hxUwNK50DoX3amfVJmmL7WQH5iF3Kfqs8pG1tStsewHqmh75ULmjjldKn/B70D6DNcQ==}
-    dev: false
+  /@types/pako/2.0.3:
+    resolution: {integrity: sha512-bq0hMV9opAcrmE0Byyo0fY3Ew4tgOevJmQ9grUhpXQhYfyLJ1Kqg3P33JT5fdbT2AjeAjR51zqqVjAL/HMkx7Q==}
+    dev: true
 
   /@types/semver/7.5.1:
     resolution: {integrity: sha512-cJRQXpObxfNKkFAZbJl2yjWtJCqELQIdShsogr1d2MilP8dKD9TE/nEKHkJgUNHdGKCQaf9HbIynuV2csLGVLg==}
