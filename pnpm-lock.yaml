@@ -92,15 +92,15 @@ importers:
       esbuild:
         specifier: ^0.19.3
         version: 0.19.3
+      fflate:
+        specifier: 0.8.1
+        version: 0.8.1
       glob:
         specifier: ^10.3.10
         version: 10.3.10
 
   packages/core:
     dependencies:
-      '@types/pako':
-        specifier: ^2.0.2
-        version: 2.0.2
       js-base64:
         specifier: ^3.7.5
         version: 3.7.5
@@ -111,6 +111,9 @@ importers:
       '@types/common-tags':
         specifier: ^1.8.2
         version: 1.8.2
+      '@types/pako':
+        specifier: ^2.0.2
+        version: 2.0.2
       common-tags:
         specifier: ^1.8.2
         version: 1.8.2
@@ -1889,7 +1892,7 @@ packages:
 
   /@types/pako@2.0.2:
     resolution: {integrity: sha512-AtTbzIwhvLMTEUPudP3hxUwNK50DoX3amfVJmmL7WQH5iF3Kfqs8pG1tStsewHqmh75ULmjjldKn/B70D6DNcQ==}
-    dev: false
+    dev: true
 
   /@types/semver@7.5.1:
     resolution: {integrity: sha512-cJRQXpObxfNKkFAZbJl2yjWtJCqELQIdShsogr1d2MilP8dKD9TE/nEKHkJgUNHdGKCQaf9HbIynuV2csLGVLg==}
@@ -2507,6 +2510,10 @@ packages:
     resolution: {integrity: sha512-wBrocU2LCXXa+lWBt8RoIRD89Fi8OdABODa/kEnyeyjS5aZO5/GNvI5sEINADqP/h8M29UHTHUb53sUu5Ihqdw==}
     dependencies:
       reusify: 1.0.4
+    dev: false
+
+  /fflate@0.8.1:
+    resolution: {integrity: sha512-/exOvEuc+/iaUm105QIiOt4LpBdMTWsXxqR0HDF35vx3fmaKzw7354gTilCh5rkzEt8WYyG//ku3h3nRmd7CHQ==}
     dev: false
 
   /fill-range@7.0.1:
