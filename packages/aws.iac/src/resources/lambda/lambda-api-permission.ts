@@ -26,12 +26,14 @@ export const LambdaApiGatewayPermission = createLambdaApiGatewayPermissionClass(
   {
     type: "aws/lambda/permission/api-gateway",
 
-    getIntrinsicConfig: (dependencies) => ({
+    getIntrinsicConfig: async (dependencies) => ({
       StatementId: "AllowExecutionFromAPIGateway",
       Principal: "apigateway.amazonaws.com",
       FunctionName: dependencies.lambda.output.FunctionName,
       Action: "lambda:InvokeFunction",
-      SourceArn: generateApiGatewaySourceArn(dependencies.api.output.ApiId!),
+      SourceArn: await generateApiGatewaySourceArn(
+        dependencies.api.output.ApiId!,
+      ),
     }),
 
     deploy: async (config: LambdaApiGatewayPermissionInput) => {

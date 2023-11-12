@@ -20,7 +20,7 @@ it("creates a resource class factory", () => {
   expect(resource.type).toBe("test");
 });
 
-test("merges config and intrinsic config", () => {
+test("merges config and intrinsic config", async () => {
   const factory = createResourceFactory<{ name: string }>();
 
   const TestResource = factory({
@@ -29,9 +29,8 @@ test("merges config and intrinsic config", () => {
     deploy: () => Promise.resolve({}),
   });
 
-  // @ts-expect-error
   const resource = new TestResource({ config: { name: "overrideName" } });
-  expect(resource.getDeployInput().name).toBe("intrinsicName");
+  expect((await resource.getDeployInput()).name).toBe("intrinsicName");
 });
 
 it("passes dependencies to getIntrinsicConfig", () => {
