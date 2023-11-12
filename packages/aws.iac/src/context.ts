@@ -3,9 +3,7 @@ import { stsClient } from "src/utils/aws-clients";
 
 const command = new GetCallerIdentityCommand({});
 
-const getAwsAccountId = async () => {
+export const getAwsAccountId = async () => {
   const response = await stsClient.send(command);
   return response.Account;
 };
-
-export const accountId = await getAwsAccountId();

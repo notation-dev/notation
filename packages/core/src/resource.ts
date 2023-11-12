@@ -23,13 +23,13 @@ export abstract class Resource<
     return this;
   }
 
-  abstract getDeployInput(): Input;
+  abstract getDeployInput(): Promise<Input> | Input;
   abstract deploy(input: Input): Promise<Output>;
 
   async runDeploy() {
     let backoff = 1000;
     try {
-      const input = this.getDeployInput();
+      const input = await this.getDeployInput();
       this.output = await this.deploy(input);
     } catch (err: any) {
       if (this.retryOn?.includes(err.name)) {
@@ -58,7 +58,9 @@ export function createResourceFactory<
     Config = Omit<Input, keyof DefaultConfig>,
   >(opts: {
     type: string;
-    getIntrinsicConfig: (dependencies: Dependencies) => DefaultConfig;
+    getIntrinsicConfig: (
+      dependencies: Dependencies,
+    ) => Promise<DefaultConfig> | DefaultConfig;
     deploy: (input: Input) => Promise<Output>;
     retryOn?: string[];
   }): DerivedResourceConstructor<Config>;
@@ -73,11 +75,11 @@ export function createResourceFactory<
       type = opts.type;
       retryOn = opts.retryOn;
 
-      getDeployInput() {
+      async getDeployInput() {
         if ("getIntrinsicConfig" in opts) {
           return {
             ...this.config,
-            ...opts.getIntrinsicConfig(this.dependencies),
+            ...(await opts.getIntrinsicConfig(this.dependencies)),
           } as Input;
         }
         return this.config as any as Input;
