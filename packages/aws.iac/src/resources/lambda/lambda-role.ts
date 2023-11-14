@@ -3,6 +3,7 @@ import {
   CreateRoleCommand,
   CreateRoleCommandInput,
   CreateRoleCommandOutput,
+  DeleteRoleCommand,
 } from "@aws-sdk/client-iam";
 import { iamClient } from "src/utils/aws-clients";
 import { lambdaTrustPolicy } from "src/templates/iam.policy";
@@ -22,8 +23,14 @@ export const LambdaIamRole = createLambdaIamRoleClass({
     AssumeRolePolicyDocument: JSON.stringify(lambdaTrustPolicy),
   }),
 
-  deploy: async (props: LambdaIamRoleInput) => {
-    const command = new CreateRoleCommand(props);
+  deploy: async (config: LambdaIamRoleInput) => {
+    const command = new CreateRoleCommand(config);
+    return iamClient.send(command);
+  },
+
+  destroy: async (config: LambdaIamRoleInput) => {
+    const { RoleName } = config;
+    const command = new DeleteRoleCommand({ RoleName });
     return iamClient.send(command);
   },
 });

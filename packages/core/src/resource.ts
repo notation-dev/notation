@@ -25,6 +25,7 @@ export abstract class Resource<
 
   abstract getDeployInput(): Promise<Input> | Input;
   abstract deploy(input: Input): Promise<Output>;
+  abstract destroy(input: Input): void;
 
   async runDeploy() {
     let backoff = 1000;
@@ -62,6 +63,7 @@ export function createResourceFactory<
       dependencies: Dependencies,
     ) => Promise<DefaultConfig> | DefaultConfig;
     deploy: (input: Input) => Promise<Output>;
+    destroy?: (input: Input) => void;
     retryOn?: string[];
   }): DerivedResourceConstructor<Config>;
 
@@ -74,6 +76,8 @@ export function createResourceFactory<
     return class extends Resource<Input, Output, Config, Dependencies> {
       type = opts.type;
       retryOn = opts.retryOn;
+      deploy = opts.deploy;
+      destroy = opts.destroy || (async () => {});
 
       async getDeployInput() {
         if ("getIntrinsicConfig" in opts) {
@@ -84,8 +88,6 @@ export function createResourceFactory<
         }
         return this.config as any as Input;
       }
-
-      deploy = opts.deploy;
     };
   }
 
