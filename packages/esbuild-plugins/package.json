@@ -9,6 +9,7 @@
     "dev": "npm run build -- --watch"
   },
   "dependencies": {
+    "@notation/core": "workspace:*",
     "esbuild": "^0.19.3",
     "typescript": "^5.2.2"
   },

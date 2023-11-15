@@ -2,6 +2,7 @@ import path from "node:path";
 import { Plugin } from "esbuild";
 import { parseFnModule } from "src/parsers/parse-fn-module";
 import { GetFile, fsGetFile, withFileCheck } from "src/utils/get-file";
+import { filePaths } from "@notation/core";
 
 type PluginOpts = {
   getFile?: GetFile;
@@ -15,7 +16,7 @@ export function functionInfraPlugin(opts: PluginOpts = {}): Plugin {
         const getFile = withFileCheck(opts.getFile || fsGetFile);
         const fileContent = await getFile(args.path);
         const fileName = path.relative(process.cwd(), args.path);
-        const outFileName = getOutFilePath(fileName);
+        const outFileName = filePaths.dist.runtime.index(fileName);
         const { config, configRaw, exports } = parseFnModule(fileContent);
 
         const reservedNames = ["preload", "config"];
@@ -39,5 +40,3 @@ export function functionInfraPlugin(opts: PluginOpts = {}): Plugin {
     },
   };
 }
-const getOutFilePath = (entryPoint: string) =>
-  `dist/runtime/${entryPoint.replace(".ts", "/index.mjs")}`;

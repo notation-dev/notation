@@ -1,8 +1,8 @@
 import path from "path";
-import { getResources, getResourceGroups } from "@notation/core";
+import { getResources, getResourceGroups, filePaths } from "@notation/core";
 
 export async function getResourceGraph(entryPoint: string) {
-  const outFilePath = getInfraOutFilePath(entryPoint);
+  const outFilePath = filePaths.dist.infra.index(entryPoint);
   await import(path.join(process.cwd(), outFilePath));
 
   const resourceGroups = getResourceGroups();
@@ -10,9 +10,3 @@ export async function getResourceGraph(entryPoint: string) {
 
   return { resourceGroups, resources };
 }
-
-export const getInfraOutFilePath = (entryPoint: string) =>
-  `dist/infra/${entryPoint.replace(/.ts$/, ".mjs")}`;
-
-export const getRuntimeOutFilePath = (entryPoint: string) =>
-  `dist/runtime/${entryPoint.replace(/.ts$/, "/index.mjs")}`;

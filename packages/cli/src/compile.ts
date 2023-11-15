@@ -1,13 +1,13 @@
 import fs from "fs";
 import * as fflate from "fflate";
 import { glob } from "glob";
+import { log } from "console";
 import esbuild from "esbuild";
 import {
   functionInfraPlugin,
   functionRuntimePlugin,
 } from "@notation/esbuild-plugins";
-import { getRuntimeOutFilePath } from "./utils";
-import { log } from "console";
+import { filePaths } from "@notation/core";
 
 export async function compile(entryPoint: string) {
   await compileInfra(entryPoint);
@@ -41,7 +41,7 @@ export async function compileFns(entryPoints: string[]) {
     await esbuild.build({
       entryPoints: [entryPoint],
       plugins: [functionRuntimePlugin()],
-      outfile: getRuntimeOutFilePath(entryPoint),
+      outfile: filePaths.dist.runtime.index(entryPoint),
       outExtension: { ".js": ".mjs" },
       bundle: true,
       format: "esm",
@@ -55,7 +55,7 @@ export async function zipFns(entryPoints: string[]) {
   log("Compiling deployable packages");
 
   for (const entryPoint of entryPoints) {
-    const inputFilePath = getRuntimeOutFilePath(entryPoint);
+    const inputFilePath = filePaths.dist.runtime.index(entryPoint);
     const inputFile = fs.readFileSync(inputFilePath);
 
     const zipFilePath = `${inputFilePath}.zip`;

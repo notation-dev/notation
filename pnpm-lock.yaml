@@ -126,6 +126,9 @@ importers:
 
   packages/esbuild-plugins:
     dependencies:
+      '@notation/core':
+        specifier: workspace:*
+        version: link:../core
       esbuild:
         specifier: ^0.19.3
         version: 0.19.3
