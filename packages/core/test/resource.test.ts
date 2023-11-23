@@ -4,6 +4,7 @@ import { Resource, createResourceFactory } from "src";
 it("creates a resource class factory", () => {
   class TestResource extends Resource<{ name: string }, { id: number }> {
     type = "test";
+    retryOn = [];
     getDeployInput() {
       return { name: "testName" };
     }

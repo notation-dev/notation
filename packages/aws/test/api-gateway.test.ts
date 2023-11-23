@@ -1,7 +1,12 @@
-import { test, expect } from "bun:test";
+import { test, expect, beforeEach } from "bun:test";
+import { resetResourceGroupCounters } from "@notation/core";
 import { apiGateway } from "@notation/aws.iac/resources";
 import { api, route, router } from "src/api-gateway";
 import { lambda } from "src/lambda";
+
+beforeEach(() => {
+  resetResourceGroupCounters();
+});
 
 test("api resource group snapshot", () => {
   const apiResourceGroup = api({ name: "api" });
@@ -52,7 +57,7 @@ test("router provides methods for each HTTP verb", () => {
   for (const method of ["GET", "POST", "PUT", "DELETE", "PATCH"]) {
     const routerKey = method.toLowerCase() as keyof typeof apiRouter;
     const routeGroup = apiRouter[routerKey]("/hello", handler as any);
-    const route = routeGroup.findResource(apiGateway.Route);
+    const route = routeGroup.findResource(apiGateway.Route)!;
     expect(route.config.RouteKey).toEqual(`${method} /hello`);
   }
 });
