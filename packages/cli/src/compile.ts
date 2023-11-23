@@ -1,25 +1,25 @@
+import fs from "fs";
+import * as fflate from "fflate";
+import { glob } from "glob";
+import { log } from "console";
 import esbuild from "esbuild";
 import {
   functionInfraPlugin,
   functionRuntimePlugin,
 } from "@notation/esbuild-plugins";
-import {
-  getResourceGroups,
-  getResources,
-  createMermaidFlowChart,
-  createMermaidLiveUrl,
-} from "@notation/core";
-import { glob } from "glob";
-import path from "path";
+import { filePaths } from "@notation/core";
 
-export async function compile(infraEntryPoint: string) {
-  await compileInfra(infraEntryPoint);
+export async function compile(entryPoint: string) {
+  await compileInfra(entryPoint);
   // @todo: fnEntryPoints could be an output of compileInfra
   const fnEntryPoints = await glob("**/*.fn.ts");
   await compileFns(fnEntryPoints);
+  await zipFns(fnEntryPoints);
 }
 
 export async function compileInfra(entryPoint: string) {
+  log("Compiling infrastructure", entryPoint);
+
   await esbuild.build({
     entryPoints: [entryPoint],
     plugins: [functionInfraPlugin()],
@@ -28,27 +28,39 @@ export async function compileInfra(entryPoint: string) {
     outExtension: { ".js": ".mjs" },
     bundle: true,
     format: "esm",
+    platform: "node",
     treeShaking: true,
-    external: ["@notation/core"],
+    packages: "external",
   });
-  const outFilePath = `dist/infra/${entryPoint.replace("ts", "mjs")}`;
-  await import(path.join(process.cwd(), outFilePath));
-  const resourceGroups = getResourceGroups();
-  const resources = getResources();
-  const chart = createMermaidFlowChart(resourceGroups, resources);
-  const chartUrl = createMermaidLiveUrl(chart);
-  console.log("\nGenerated infrastructure chart:\n");
-  console.log(chartUrl);
 }
 
 export async function compileFns(entryPoints: string[]) {
-  await esbuild.build({
-    entryPoints: entryPoints,
-    plugins: [functionRuntimePlugin()],
-    outdir: "dist/runtime",
-    outbase: ".",
-    bundle: true,
-    format: "esm",
-    treeShaking: true,
-  });
+  log("Compiling functions");
+
+  for (const entryPoint of entryPoints) {
+    await esbuild.build({
+      entryPoints: [entryPoint],
+      plugins: [functionRuntimePlugin()],
+      outfile: filePaths.dist.runtime.index(entryPoint),
+      outExtension: { ".js": ".mjs" },
+      bundle: true,
+      format: "esm",
+      platform: "node",
+      treeShaking: true,
+    });
+  }
+}
+
+export async function zipFns(entryPoints: string[]) {
+  log("Compiling deployable packages");
+
+  for (const entryPoint of entryPoints) {
+    const inputFilePath = filePaths.dist.runtime.index(entryPoint);
+    const inputFile = fs.readFileSync(inputFilePath);
+
+    const zipFilePath = `${inputFilePath}.zip`;
+    const archive = fflate.zipSync({ "index.mjs": inputFile }, { level: 9 });
+
+    fs.writeFileSync(zipFilePath, archive);
+  }
 }

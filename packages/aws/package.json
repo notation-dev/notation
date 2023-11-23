@@ -1,17 +1,11 @@
 {
+  "type": "module",
   "name": "@notation/aws",
   "version": "0.0.1",
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
   "exports": {
-    "./api-gateway": {
-      "require": "./dist/api-gateway.js",
-      "import": "./dist/api-gateway.mjs"
-    },
-    "./lambda": {
-      "require": "./dist/lambda.js",
-      "import": "./dist/lambda.mjs"
+    "./*": {
+      "import": "./dist/*/index.js",
+      "types": "./dist/*/index.d.ts"
     }
   },
   "scripts": {
@@ -19,7 +13,9 @@
     "dev": "npm run build -- --watch"
   },
   "dependencies": {
+    "@notation/aws.iac": "workspace:*",
     "@notation/core": "workspace:*",
+    "@notation/std.iac": "workspace:*",
     "@types/aws-lambda": "^8.10.125"
   }
 }

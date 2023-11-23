@@ -1,20 +1,20 @@
 {
+  "type": "module",
   "name": "@notation/core",
   "version": "0.0.1",
   "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "build": "tsup",
     "dev": "npm run build -- --watch"
   },
   "dependencies": {
-    "@types/pako": "^2.0.2",
     "js-base64": "^3.7.5",
     "pako": "^2.1.0"
   },
   "devDependencies": {
     "@types/common-tags": "^1.8.2",
+    "@types/pako": "^2.0.2",
     "common-tags": "^1.8.2"
   }
 }

@@ -5,27 +5,49 @@ AwsResourceGroup {
   "config": {
     "name": "api",
   },
-  "createResource": [Function],
   "dependencies": {},
-  "findResourceByType": [Function],
-  "id": 1,
+  "id": 0,
   "platform": "aws",
   "resources": [
     {
-      "config": {},
+      "config": {
+        "Name": "api",
+        "ProtocolType": "HTTP",
+      },
       "dependencies": {},
-      "groupId": 1,
-      "id": 3,
-      "type": "api-gateway",
+      "deploy": [Function: AsyncFunction],
+      "groupId": 0,
+      "id": 0,
+      "output": null,
+      "retryOn": undefined,
+      "type": "aws/api-gateway",
     },
     {
-      "config": {},
-      "dependencies": {
-        "routerId": 3,
+      "config": {
+        "AutoDeploy": true,
+        "StageName": "$default",
       },
-      "groupId": 1,
-      "id": 4,
-      "type": "api-gateway/stage",
+      "dependencies": {
+        "router": {
+          "config": {
+            "Name": "api",
+            "ProtocolType": "HTTP",
+          },
+          "dependencies": {},
+          "deploy": [Function: AsyncFunction],
+          "groupId": 0,
+          "id": 0,
+          "output": null,
+          "retryOn": undefined,
+          "type": "aws/api-gateway",
+        },
+      },
+      "deploy": [Function: AsyncFunction],
+      "groupId": 0,
+      "id": 1,
+      "output": null,
+      "retryOn": undefined,
+      "type": "aws/api-gateway/stage",
     },
   ],
   "type": "api",
@@ -34,270 +56,520 @@ AwsResourceGroup {
 
 exports[`route resource group snapshot 1`] = `
 AwsResourceGroup {
-  "config": {
-    "method": "GET",
-    "path": "/hello",
-    "service": "aws/api-gateway",
-  },
-  "createResource": [Function],
+  "config": {},
   "dependencies": {
-    "fn": 3,
-    "router": 2,
+    "fn": 1,
+    "router": 0,
   },
-  "findResourceByType": [Function],
-  "id": 4,
+  "id": 2,
   "platform": "aws",
   "resources": [
     {
-      "config": {},
-      "dependencies": {
-        "apiGatewayId": 5,
-        "integrationId": 10,
+      "config": {
+        "RouteKey": "GET /hello",
       },
-      "groupId": 4,
-      "id": 12,
-      "type": "api-gateway/route",
+      "dependencies": {
+        "api": {
+          "config": {
+            "Name": "api",
+            "ProtocolType": "HTTP",
+          },
+          "dependencies": {},
+          "deploy": [Function: AsyncFunction],
+          "groupId": 0,
+          "id": 0,
+          "output": null,
+          "retryOn": undefined,
+          "type": "aws/api-gateway",
+        },
+        "lambdaIntegration": {
+          "config": {},
+          "dependencies": {
+            "api": {
+              "config": {
+                "Name": "api",
+                "ProtocolType": "HTTP",
+              },
+              "dependencies": {},
+              "deploy": [Function: AsyncFunction],
+              "groupId": 0,
+              "id": 0,
+              "output": null,
+              "retryOn": undefined,
+              "type": "aws/api-gateway",
+            },
+            "lambda": {
+              "config": {
+                "FunctionName": "function-1",
+                "Handler": "index.handler.fn.js",
+                "Runtime": "nodejs18.x",
+              },
+              "dependencies": {
+                "policyAttachment": {
+                  "config": {
+                    "PolicyArn": "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+                  },
+                  "dependencies": {
+                    "role": {
+                      "config": {
+                        "RoleName": "1-role",
+                      },
+                      "dependencies": {},
+                      "deploy": [Function: AsyncFunction],
+                      "groupId": 1,
+                      "id": 3,
+                      "output": null,
+                      "retryOn": undefined,
+                      "type": "aws/lambda/role",
+                    },
+                  },
+                  "deploy": [Function: AsyncFunction],
+                  "groupId": 1,
+                  "id": 4,
+                  "output": null,
+                  "retryOn": undefined,
+                  "type": "aws/lambda/policy-attachment",
+                },
+                "role": {
+                  "config": {
+                    "RoleName": "1-role",
+                  },
+                  "dependencies": {},
+                  "deploy": [Function: AsyncFunction],
+                  "groupId": 1,
+                  "id": 3,
+                  "output": null,
+                  "retryOn": undefined,
+                  "type": "aws/lambda/role",
+                },
+                "zipFile": {
+                  "config": {
+                    "fileName": "src/fns/handler.fn.js",
+                  },
+                  "dependencies": {},
+                  "deploy": [Function: AsyncFunction],
+                  "groupId": 1,
+                  "id": 2,
+                  "output": null,
+                  "retryOn": undefined,
+                  "type": "std/zip",
+                },
+              },
+              "deploy": [Function: AsyncFunction],
+              "groupId": 1,
+              "id": 5,
+              "output": null,
+              "retryOn": [
+                "InvalidParameterValueException",
+              ],
+              "type": "aws/lambda",
+            },
+          },
+          "deploy": [Function: AsyncFunction],
+          "groupId": 1,
+          "id": 8,
+          "output": null,
+          "retryOn": undefined,
+          "type": "aws/api-gateway/integration/lambda",
+        },
+      },
+      "deploy": [Function: AsyncFunction],
+      "groupId": 2,
+      "id": 9,
+      "output": null,
+      "retryOn": undefined,
+      "type": "aws/api-gateway/route",
     },
   ],
-  "type": "route",
+  "type": "api/route",
 }
 `;
 
 exports[`route resource group snapshot 2`] = `
 AwsResourceGroup {
   "config": {
-    "handler": "handler.fn.js",
+    "config": {
+      "fileName": "src/fns/handler.fn.js",
+      "handler": "handler.fn.js",
+    },
   },
-  "createResource": [Function],
   "dependencies": {},
-  "findResourceByType": [Function],
-  "id": 3,
+  "id": 1,
   "platform": "aws",
   "resources": [
     {
-      "config": {},
+      "config": {
+        "fileName": "src/fns/handler.fn.js",
+      },
       "dependencies": {},
-      "groupId": 3,
+      "deploy": [Function: AsyncFunction],
+      "groupId": 1,
+      "id": 2,
+      "output": null,
+      "retryOn": undefined,
+      "type": "std/zip",
+    },
+    {
+      "config": {
+        "RoleName": "1-role",
+      },
+      "dependencies": {},
+      "deploy": [Function: AsyncFunction],
+      "groupId": 1,
+      "id": 3,
+      "output": null,
+      "retryOn": undefined,
+      "type": "aws/lambda/role",
+    },
+    {
+      "config": {
+        "PolicyArn": "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+      },
+      "dependencies": {
+        "role": {
+          "config": {
+            "RoleName": "1-role",
+          },
+          "dependencies": {},
+          "deploy": [Function: AsyncFunction],
+          "groupId": 1,
+          "id": 3,
+          "output": null,
+          "retryOn": undefined,
+          "type": "aws/lambda/role",
+        },
+      },
+      "deploy": [Function: AsyncFunction],
+      "groupId": 1,
+      "id": 4,
+      "output": null,
+      "retryOn": undefined,
+      "type": "aws/lambda/policy-attachment",
+    },
+    {
+      "config": {
+        "FunctionName": "function-1",
+        "Handler": "index.handler.fn.js",
+        "Runtime": "nodejs18.x",
+      },
+      "dependencies": {
+        "policyAttachment": {
+          "config": {
+            "PolicyArn": "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+          },
+          "dependencies": {
+            "role": {
+              "config": {
+                "RoleName": "1-role",
+              },
+              "dependencies": {},
+              "deploy": [Function: AsyncFunction],
+              "groupId": 1,
+              "id": 3,
+              "output": null,
+              "retryOn": undefined,
+              "type": "aws/lambda/role",
+            },
+          },
+          "deploy": [Function: AsyncFunction],
+          "groupId": 1,
+          "id": 4,
+          "output": null,
+          "retryOn": undefined,
+          "type": "aws/lambda/policy-attachment",
+        },
+        "role": {
+          "config": {
+            "RoleName": "1-role",
+          },
+          "dependencies": {},
+          "deploy": [Function: AsyncFunction],
+          "groupId": 1,
+          "id": 3,
+          "output": null,
+          "retryOn": undefined,
+          "type": "aws/lambda/role",
+        },
+        "zipFile": {
+          "config": {
+            "fileName": "src/fns/handler.fn.js",
+          },
+          "dependencies": {},
+          "deploy": [Function: AsyncFunction],
+          "groupId": 1,
+          "id": 2,
+          "output": null,
+          "retryOn": undefined,
+          "type": "std/zip",
+        },
+      },
+      "deploy": [Function: AsyncFunction],
+      "groupId": 1,
+      "id": 5,
+      "output": null,
+      "retryOn": [
+        "InvalidParameterValueException",
+      ],
+      "type": "aws/lambda",
+    },
+    {
+      "config": {},
+      "dependencies": {
+        "lambda": {
+          "config": {
+            "FunctionName": "function-1",
+            "Handler": "index.handler.fn.js",
+            "Runtime": "nodejs18.x",
+          },
+          "dependencies": {
+            "policyAttachment": {
+              "config": {
+                "PolicyArn": "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              },
+              "dependencies": {
+                "role": {
+                  "config": {
+                    "RoleName": "1-role",
+                  },
+                  "dependencies": {},
+                  "deploy": [Function: AsyncFunction],
+                  "groupId": 1,
+                  "id": 3,
+                  "output": null,
+                  "retryOn": undefined,
+                  "type": "aws/lambda/role",
+                },
+              },
+              "deploy": [Function: AsyncFunction],
+              "groupId": 1,
+              "id": 4,
+              "output": null,
+              "retryOn": undefined,
+              "type": "aws/lambda/policy-attachment",
+            },
+            "role": {
+              "config": {
+                "RoleName": "1-role",
+              },
+              "dependencies": {},
+              "deploy": [Function: AsyncFunction],
+              "groupId": 1,
+              "id": 3,
+              "output": null,
+              "retryOn": undefined,
+              "type": "aws/lambda/role",
+            },
+            "zipFile": {
+              "config": {
+                "fileName": "src/fns/handler.fn.js",
+              },
+              "dependencies": {},
+              "deploy": [Function: AsyncFunction],
+              "groupId": 1,
+              "id": 2,
+              "output": null,
+              "retryOn": undefined,
+              "type": "std/zip",
+            },
+          },
+          "deploy": [Function: AsyncFunction],
+          "groupId": 1,
+          "id": 5,
+          "output": null,
+          "retryOn": [
+            "InvalidParameterValueException",
+          ],
+          "type": "aws/lambda",
+        },
+      },
+      "deploy": [Function: AsyncFunction],
+      "groupId": 1,
+      "id": 6,
+      "output": null,
+      "retryOn": undefined,
+      "type": "aws/lambda/log-group",
+    },
+    {
+      "config": {},
+      "dependencies": {
+        "api": {
+          "config": {
+            "Name": "api",
+            "ProtocolType": "HTTP",
+          },
+          "dependencies": {},
+          "deploy": [Function: AsyncFunction],
+          "groupId": 0,
+          "id": 0,
+          "output": null,
+          "retryOn": undefined,
+          "type": "aws/api-gateway",
+        },
+        "lambda": {
+          "config": {
+            "FunctionName": "function-1",
+            "Handler": "index.handler.fn.js",
+            "Runtime": "nodejs18.x",
+          },
+          "dependencies": {
+            "policyAttachment": {
+              "config": {
+                "PolicyArn": "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              },
+              "dependencies": {
+                "role": {
+                  "config": {
+                    "RoleName": "1-role",
+                  },
+                  "dependencies": {},
+                  "deploy": [Function: AsyncFunction],
+                  "groupId": 1,
+                  "id": 3,
+                  "output": null,
+                  "retryOn": undefined,
+                  "type": "aws/lambda/role",
+                },
+              },
+              "deploy": [Function: AsyncFunction],
+              "groupId": 1,
+              "id": 4,
+              "output": null,
+              "retryOn": undefined,
+              "type": "aws/lambda/policy-attachment",
+            },
+            "role": {
+              "config": {
+                "RoleName": "1-role",
+              },
+              "dependencies": {},
+              "deploy": [Function: AsyncFunction],
+              "groupId": 1,
+              "id": 3,
+              "output": null,
+              "retryOn": undefined,
+              "type": "aws/lambda/role",
+            },
+            "zipFile": {
+              "config": {
+                "fileName": "src/fns/handler.fn.js",
+              },
+              "dependencies": {},
+              "deploy": [Function: AsyncFunction],
+              "groupId": 1,
+              "id": 2,
+              "output": null,
+              "retryOn": undefined,
+              "type": "std/zip",
+            },
+          },
+          "deploy": [Function: AsyncFunction],
+          "groupId": 1,
+          "id": 5,
+          "output": null,
+          "retryOn": [
+            "InvalidParameterValueException",
+          ],
+          "type": "aws/lambda",
+        },
+      },
+      "deploy": [Function: AsyncFunction],
+      "groupId": 1,
       "id": 7,
-      "type": "iam/role",
+      "output": null,
+      "retryOn": undefined,
+      "type": "aws/lambda/permission/api-gateway",
     },
     {
       "config": {},
       "dependencies": {
-        "roleId": 7,
+        "api": {
+          "config": {
+            "Name": "api",
+            "ProtocolType": "HTTP",
+          },
+          "dependencies": {},
+          "deploy": [Function: AsyncFunction],
+          "groupId": 0,
+          "id": 0,
+          "output": null,
+          "retryOn": undefined,
+          "type": "aws/api-gateway",
+        },
+        "lambda": {
+          "config": {
+            "FunctionName": "function-1",
+            "Handler": "index.handler.fn.js",
+            "Runtime": "nodejs18.x",
+          },
+          "dependencies": {
+            "policyAttachment": {
+              "config": {
+                "PolicyArn": "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              },
+              "dependencies": {
+                "role": {
+                  "config": {
+                    "RoleName": "1-role",
+                  },
+                  "dependencies": {},
+                  "deploy": [Function: AsyncFunction],
+                  "groupId": 1,
+                  "id": 3,
+                  "output": null,
+                  "retryOn": undefined,
+                  "type": "aws/lambda/role",
+                },
+              },
+              "deploy": [Function: AsyncFunction],
+              "groupId": 1,
+              "id": 4,
+              "output": null,
+              "retryOn": undefined,
+              "type": "aws/lambda/policy-attachment",
+            },
+            "role": {
+              "config": {
+                "RoleName": "1-role",
+              },
+              "dependencies": {},
+              "deploy": [Function: AsyncFunction],
+              "groupId": 1,
+              "id": 3,
+              "output": null,
+              "retryOn": undefined,
+              "type": "aws/lambda/role",
+            },
+            "zipFile": {
+              "config": {
+                "fileName": "src/fns/handler.fn.js",
+              },
+              "dependencies": {},
+              "deploy": [Function: AsyncFunction],
+              "groupId": 1,
+              "id": 2,
+              "output": null,
+              "retryOn": undefined,
+              "type": "std/zip",
+            },
+          },
+          "deploy": [Function: AsyncFunction],
+          "groupId": 1,
+          "id": 5,
+          "output": null,
+          "retryOn": [
+            "InvalidParameterValueException",
+          ],
+          "type": "aws/lambda",
+        },
       },
-      "groupId": 3,
+      "deploy": [Function: AsyncFunction],
+      "groupId": 1,
       "id": 8,
-      "type": "iam/policy-attachment",
-    },
-    {
-      "config": {},
-      "dependencies": {
-        "policyId": 8,
-      },
-      "groupId": 3,
-      "id": 9,
-      "type": "lambda",
-    },
-    {
-      "config": {},
-      "dependencies": {
-        "apiGatewayId": 5,
-        "lambdaId": 9,
-      },
-      "groupId": 3,
-      "id": 10,
-      "type": "lambda/integration",
-    },
-    {
-      "config": {},
-      "dependencies": {
-        "apiGatewayId": 5,
-        "lambdaId": 9,
-      },
-      "groupId": 3,
-      "id": 11,
-      "type": "lambda/permission",
+      "output": null,
+      "retryOn": undefined,
+      "type": "aws/api-gateway/integration/lambda",
     },
   ],
-  "type": "function",
-}
-`;
-
-exports[`route resource group idempotency snapshot 1`] = `
-AwsResourceGroup {
-  "config": {
-    "handler": "handler.fn.js",
-  },
-  "createResource": [Function],
-  "dependencies": {},
-  "findResourceByType": [Function],
-  "id": 6,
-  "platform": "aws",
-  "resources": [
-    {
-      "config": {},
-      "dependencies": {},
-      "groupId": 6,
-      "id": 15,
-      "type": "iam/role",
-    },
-    {
-      "config": {},
-      "dependencies": {
-        "roleId": 15,
-      },
-      "groupId": 6,
-      "id": 16,
-      "type": "iam/policy-attachment",
-    },
-    {
-      "config": {},
-      "dependencies": {
-        "policyId": 16,
-      },
-      "groupId": 6,
-      "id": 17,
-      "type": "lambda",
-    },
-    {
-      "config": {},
-      "dependencies": {},
-      "groupId": 6,
-      "id": 18,
-      "type": "lambda/integration",
-    },
-    {
-      "config": {},
-      "dependencies": {},
-      "groupId": 6,
-      "id": 19,
-      "type": "lambda/permission",
-    },
-  ],
-  "type": "function",
-}
-`;
-
-exports[`route resource group idempotency snapshot 2`] = `
-AwsResourceGroup {
-  "config": {
-    "method": "GET",
-    "path": "/hello",
-    "service": "aws/api-gateway",
-  },
-  "createResource": [Function],
-  "dependencies": {
-    "fn": 6,
-    "router": 5,
-  },
-  "findResourceByType": [Function],
-  "id": 7,
-  "platform": "aws",
-  "resources": [
-    {
-      "config": {},
-      "dependencies": {
-        "apiGatewayId": 13,
-        "integrationId": 18,
-      },
-      "groupId": 7,
-      "id": 20,
-      "type": "api-gateway/route",
-    },
-  ],
-  "type": "route",
-}
-`;
-
-exports[`route resource group snapshot 3`] = `
-AwsResourceGroup {
-  "config": {
-    "method": "GET",
-    "path": "/hello",
-    "service": "aws/api-gateway",
-  },
-  "createResource": [Function],
-  "dependencies": {
-    "fn": 6,
-    "router": 5,
-  },
-  "findResourceByType": [Function],
-  "id": 7,
-  "platform": "aws",
-  "resources": [
-    {
-      "config": {},
-      "dependencies": {
-        "apiGatewayId": 13,
-        "integrationId": 18,
-      },
-      "groupId": 7,
-      "id": 20,
-      "type": "api-gateway/route",
-    },
-  ],
-  "type": "route",
-}
-`;
-
-exports[`route resource group snapshot 4`] = `
-AwsResourceGroup {
-  "config": {
-    "handler": "handler.fn.js",
-  },
-  "createResource": [Function],
-  "dependencies": {},
-  "findResourceByType": [Function],
-  "id": 6,
-  "platform": "aws",
-  "resources": [
-    {
-      "config": {},
-      "dependencies": {},
-      "groupId": 6,
-      "id": 15,
-      "type": "iam/role",
-    },
-    {
-      "config": {},
-      "dependencies": {
-        "roleId": 15,
-      },
-      "groupId": 6,
-      "id": 16,
-      "type": "iam/policy-attachment",
-    },
-    {
-      "config": {},
-      "dependencies": {
-        "policyId": 16,
-      },
-      "groupId": 6,
-      "id": 17,
-      "type": "lambda",
-    },
-    {
-      "config": {},
-      "dependencies": {
-        "apiGatewayId": 13,
-        "lambdaId": 17,
-      },
-      "groupId": 6,
-      "id": 18,
-      "type": "lambda/integration",
-    },
-    {
-      "config": {},
-      "dependencies": {
-        "apiGatewayId": 13,
-        "lambdaId": 17,
-      },
-      "groupId": 6,
-      "id": 19,
-      "type": "lambda/permission",
-    },
-  ],
-  "type": "function",
+  "type": "aws/function",
 }
 `;

@@ -1,14 +1,15 @@
 {
+  "type": "module",
   "name": "@notation/esbuild-plugins",
   "version": "0.0.1",
   "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "build": "tsup",
     "dev": "npm run build -- --watch"
   },
   "dependencies": {
+    "@notation/core": "workspace:*",
     "esbuild": "^0.19.3",
     "typescript": "^5.2.2"
   },

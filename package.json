@@ -3,7 +3,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "turbo run dev",
+    "build": "turbo run build",
     "dev": "turbo run dev",
     "test": ": 'run `$ bun test` instead'",
     "format": "prettier --write .",
