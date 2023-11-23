@@ -10,9 +10,7 @@ export const route = (
   path: `/${string}`,
   handler: ApiGatewayHandler,
 ) => {
-  const apiResource = apiGroup.findResource(
-    "aws/api-gateway",
-  ) as aws.apiGateway.ApiInstance;
+  const apiResource = apiGroup.findResource(aws.apiGateway.Api)!;
 
   // at compile time becomes infra module
   const lambdaGroup = handler as any as ReturnType<typeof lambda>;
@@ -23,17 +21,13 @@ export const route = (
 
   let integration;
 
-  const lambdaResource = lambdaGroup.findResource(
-    "aws/lambda",
-  )! as aws.lambda.LambdaInstance;
+  const lambdaResource = lambdaGroup.findResource(aws.lambda.Lambda)!;
 
   const permission = lambdaGroup.findResource(
-    "aws/lambda/permission/api-gateway",
+    aws.lambda.LambdaApiGatewayPermission,
   );
 
-  integration = lambdaGroup.findResource(
-    "aws/api-gateway/integration/lambda",
-  ) as aws.apiGateway.LambdaIntegrationInstance;
+  integration = lambdaGroup.findResource(aws.apiGateway.LambdaIntegration);
 
   if (!permission) {
     lambdaGroup.add(

@@ -22,8 +22,15 @@ const TestResource = createResourceFactory<{ a: number }, {}>()({
   },
 });
 
+const TestResource2 = createResourceFactory<{ a: number }, {}>()({
+  type: "test-resource-2",
+  deploy() {
+    throw new Error("Method not implemented.");
+  },
+});
+
 const testResource = new TestResource({ config: { a: 1 } });
-const testResource2 = new TestResource({ config: { a: 2 } });
+const testResource2 = new TestResource2({ config: { a: 2 } });
 
 it("creates a resource group", () => {
   const resourceGroup = new TestResourceGroup("test-group", { a: 1 });
@@ -71,12 +78,12 @@ it("increments resource group IDs", () => {
   expect(rg2.id).toBe(1);
 });
 
-it("finds a resource by type within a group", () => {
+it("finds a resource within a group", () => {
   const resourceGroup = new TestResourceGroup("test-group", { type: "group1" });
   const resource = resourceGroup.add(testResource);
 
-  expect(resourceGroup.findResource("test-resource")).toBe(resource);
-  expect(resourceGroup.findResource("nonExistentType")).toBeUndefined();
+  expect(resourceGroup.findResource(TestResource)).toBe(resource);
+  expect(resourceGroup.findResource(TestResource2)).toBe(undefined);
 });
 
 it("references resources within groups", () => {

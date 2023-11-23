@@ -40,7 +40,9 @@ export abstract class ResourceGroup {
     return resource;
   }
 
-  findResource(type: string) {
-    return this.resources.find((r) => r.type === type);
+  findResource<T extends new (...opts: any[]) => Resource>(ResourceClass: T) {
+    return this.resources.find((r) => r instanceof ResourceClass) as
+      | InstanceType<T>
+      | undefined;
   }
 }
