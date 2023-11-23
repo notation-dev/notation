@@ -20,5 +20,5 @@ it("generates infra and runtime modules matching source file structure", async (
 
   const actual = await glob("dist/**/*.{js,mjs,zip}", { cwd });
 
-  expect(actual).toEqual(expected);
+  expect(actual.sort()).toEqual(expected);
 });
