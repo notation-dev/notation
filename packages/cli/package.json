@@ -1,7 +1,10 @@
 {
   "type": "module",
   "name": "@notation/cli",
-  "version": "0.0.1",
+  "version": "0.3.0",
+  "files": [
+    "dist"
+  ],
   "bin": {
     "notation": "dist/index.js"
   },

@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "@notation/aws.iac",
-  "version": "0.0.1",
+  "version": "0.3.0",
   "scripts": {
     "build": "tsup",
     "dev": "npm run build -- --watch"
@@ -16,6 +16,9 @@
       "types": "./dist/resources.d.ts"
     }
   },
+  "files": [
+    "dist"
+  ],
   "dependencies": {
     "@aws-sdk/client-sts": "^3.441.0",
     "@aws-sdk/client-apigatewayv2": "^3.441.0",

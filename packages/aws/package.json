@@ -1,13 +1,16 @@
 {
   "type": "module",
   "name": "@notation/aws",
-  "version": "0.0.1",
+  "version": "0.3.0",
   "exports": {
     "./*": {
       "import": "./dist/*/index.js",
       "types": "./dist/*/index.d.ts"
     }
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup",
     "dev": "npm run build -- --watch"

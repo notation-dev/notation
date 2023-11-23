@@ -1,4 +1,6 @@
 {
+  "private": true,
+  "name": "compiler-test-app",
   "scripts": {
     "compile": "notation compile src/api.ts"
   },
