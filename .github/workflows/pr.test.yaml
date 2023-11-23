@@ -41,7 +41,13 @@ jobs:
         run: pnpm install bun -g
 
       - name: Install
-        run: pnpm install --frozen-lockfile --strict-peer-dependencies
+        run: pnpm install
+
+      - name: Build
+        run: bun run build
+
+      - name: Install local bin scripts
+        run: pnpm install
 
       - name: Test
         run: bun test
