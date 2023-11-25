@@ -1,5 +1,11 @@
 # @notation/cli
 
+## 0.4.2
+
+### Patch Changes
+
+- Fix tsconfig and getting started instruction
+
 ## 0.4.1
 
 ### Patch Changes

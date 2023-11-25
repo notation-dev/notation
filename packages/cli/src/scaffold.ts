@@ -48,7 +48,7 @@ export async function scaffoldApp(appName: string) {
 
   console.log("\nApp ready! To get started run:\n");
   console.log(`➜ cd ${appName}`);
-  console.log(`➜ npx notation compile`);
+  console.log(`➜ ${getPmRunCommand(packageManager)} viz`);
 }
 
 function getPmInstallCommand(pm: string) {
@@ -61,5 +61,18 @@ function getPmInstallCommand(pm: string) {
       return "bun add";
     default:
       return "npm install";
+  }
+}
+
+function getPmRunCommand(pm: string) {
+  switch (pm) {
+    case "yarn":
+      return "yarn";
+    case "pnpm":
+      return "pnpm";
+    case "bun":
+      return "bun";
+    default:
+      return "npm run";
   }
 }
