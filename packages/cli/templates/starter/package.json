@@ -1,0 +1,7 @@
+{
+  "private": true,
+  "name": "notation-starter",
+  "scripts": {
+    "compile": "notation compile src/api.ts"
+  }
+}

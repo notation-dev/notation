@@ -3,13 +3,14 @@ import { program } from "commander";
 import { compile } from "./compile";
 import { deploy } from "./deploy";
 import { visualise } from "./visualise";
+import { scaffoldApp } from "./scaffold";
 
 program
-  .command("init")
+  .command("create")
   .argument("[appName]", "app name", "notation-starter")
   .description("Create Notation App")
   .action(async (appName) => {
-    console.log(`Creating app in ./${appName}`);
+    await scaffoldApp(appName);
   });
 
 program
