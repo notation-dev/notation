@@ -1,5 +1,11 @@
 # @notation/cli
 
+## 0.4.1
+
+### Patch Changes
+
+- 3b82ef1: Include templates in package bundle
+
 ## 0.4.0
 
 ### Minor Changes
