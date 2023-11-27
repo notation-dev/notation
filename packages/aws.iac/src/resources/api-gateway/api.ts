@@ -14,7 +14,7 @@ const createApiClass = createResourceFactory<ApiInput, ApiOutput>();
 export const Api = createApiClass({
   type: "aws/api-gateway",
 
-  async deploy(props: ApiInput) {
+  async create(props: ApiInput) {
     const command = new CreateApiCommand(props);
     return apiGatewayClient.send(command);
   },

@@ -24,7 +24,7 @@ export const Stage = createStageClass({
     ApiId: dependencies.router.output.ApiId,
   }),
 
-  async deploy(props: StageInput) {
+  async create(props: StageInput) {
     const command = new CreateStageCommand(props);
     return apiGatewayClient.send(command);
   },

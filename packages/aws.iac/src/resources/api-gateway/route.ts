@@ -28,7 +28,7 @@ export const Route = createRouteClass({
     Target: `integrations/${dependencies.lambdaIntegration.output.IntegrationId}`,
   }),
 
-  deploy: async (props: RouteInput) => {
+  create: async (props: RouteInput) => {
     const command = new CreateRouteCommand(props);
     return apiGatewayClient.send(command);
   },

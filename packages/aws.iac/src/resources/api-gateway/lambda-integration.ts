@@ -37,7 +37,7 @@ export const LambdaIntegration = createLambdaIntegrationClass({
     ConnectionType: "INTERNET",
   }),
 
-  deploy: async (input) => {
+  create: async (input) => {
     const command = new CreateIntegrationCommand(input);
     return apiGatewayClient.send(command);
   },

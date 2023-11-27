@@ -24,7 +24,7 @@ export const LambdaLogGroup = createLambdaLogGroupClass({
     logGroupName: `/aws/lambda/${dependencies.lambda.output.FunctionName}`,
   }),
 
-  deploy: async (props: LambdaLogGroupInput) => {
+  create: async (props: LambdaLogGroupInput) => {
     const command = new CreateLogGroupCommand(props);
     return cloudWatchLogsClient.send(command);
   },

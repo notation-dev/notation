@@ -35,7 +35,7 @@ export const Lambda = createLambdaClass({
     Role: dependencies.role.output.Role!.Arn,
   }),
 
-  deploy: async (props: LambdaInput) => {
+  create: async (props: LambdaInput) => {
     const command = new CreateFunctionCommand(props);
     return lambdaClient.send(command);
   },

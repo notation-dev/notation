@@ -25,7 +25,7 @@ export const LambdaRolePolicyAttachment = createLambdaRolePolicyAttachmentClass(
       RoleName: dependencies.role.output.Role!.RoleName,
     }),
 
-    deploy: async (props: LambdaRolePolicyAttachmentInput) => {
+    create: async (props: LambdaRolePolicyAttachmentInput) => {
       const command = new AttachRolePolicyCommand(props);
       return iamClient.send(command);
     },

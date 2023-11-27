@@ -1,63 +1,86 @@
 import { expect, it, mock, test } from "bun:test";
 import { Resource, createResourceFactory } from "src";
 
+type Schema = {
+  create: {
+    input: { name: string };
+    output: { id: number; name: string };
+  };
+  read: {
+    input: { id: number };
+    output: { id: number; name: string };
+  };
+  update: {
+    input: { id: number; name: string };
+    output: { id: number; name: string };
+  };
+  delete: {
+    input: { id: number };
+    output: {};
+  };
+};
 it("creates a resource class factory", () => {
-  class TestResource extends Resource<{ name: string }, { id: number }> {
-    type = "test";
-    retryOn = [];
-    getDeployInput() {
-      return { name: "testName" };
-    }
-    deploy() {
-      return Promise.resolve({ id: 123 });
-    }
-  }
+  const factory = createResourceFactory<Schema>();
+
+  const TestResource = factory({
+    type: "test-resource",
+    idKey: "id",
+    create: () => Promise.resolve({ id: 1, name: "name" }),
+    read: () => Promise.resolve({ id: 1, name: "name" }),
+    update: () => Promise.resolve({ id: 1, name: "name" }),
+    delete: () => Promise.resolve({}),
+  });
 
   const resource = new TestResource({
     config: { name: "sampleName" },
   });
 
   expect(resource.config.name).toBe("sampleName");
-  expect(resource.type).toBe("test");
+  expect(resource.type).toBe("test-resource");
 });
 
 test("merges config and intrinsic config", async () => {
-  const factory = createResourceFactory<{ name: string }>();
+  const factory = createResourceFactory<Schema>();
 
   const TestResource = factory({
-    type: "testTypeWithOverride",
+    type: "test-resource",
+    idKey: "id",
     getIntrinsicConfig: () => ({ name: "intrinsicName" }),
-    deploy: () => Promise.resolve({}),
+    create: () => Promise.resolve({ id: 1, name: "name" }),
+    read: () => Promise.resolve({ id: 1, name: "name" }),
+    update: () => Promise.resolve({ id: 1, name: "name" }),
+    delete: () => Promise.resolve({}),
   });
 
   const resource = new TestResource({ config: { name: "overrideName" } });
-  expect((await resource.getDeployInput()).name).toBe("intrinsicName");
+  expect((await resource.getCreateInput()).name).toBe("intrinsicName");
 });
 
 it("passes dependencies to getIntrinsicConfig", () => {
   const getIntrinsicConfigMock = mock((deps) => deps.dep1);
 
-  const childFactory = createResourceFactory<
-    { name: string },
-    { id: number }
-  >();
+  const childFactory = createResourceFactory<Schema>();
 
   const ChildResource = childFactory({
     type: "childType",
-    deploy: () => Promise.resolve({ id: 123 }),
+    idKey: "id",
+    create: () => Promise.resolve({ id: 1, name: "name" }),
+    read: () => Promise.resolve({ id: 1, name: "name" }),
+    update: () => Promise.resolve({ id: 1, name: "name" }),
+    delete: () => Promise.resolve({}),
   });
 
   const childResource = new ChildResource({ config: { name: "child-name" } });
 
-  const factory = createResourceFactory<
-    { name: string },
-    { id: number },
-    { dep1: Resource }
-  >();
+  const factory = createResourceFactory<Schema, { dep1: Resource }>();
 
   const Resource = factory({
     type: "testTypeWithDeps",
-    deploy: () => Promise.resolve({ id: 123 }),
+    idKey: "id",
+    create: () => Promise.resolve({ id: 1, name: "name" }),
+    read: () => Promise.resolve({ id: 1, name: "name" }),
+    update: () => Promise.resolve({ id: 1, name: "name" }),
+    delete: () => Promise.resolve({}),
     getIntrinsicConfig: getIntrinsicConfigMock,
   });
 
@@ -67,41 +90,9 @@ it("passes dependencies to getIntrinsicConfig", () => {
     },
   });
 
-  resource.getDeployInput();
+  resource.getCreateInput();
 
   expect(getIntrinsicConfigMock.mock.calls[0]).toEqual([
     { dep1: childResource },
   ]);
-});
-
-it('passes merged config to "deploy"', async () => {
-  const deployMock = mock(() => Promise.resolve({}));
-
-  const factory = createResourceFactory<{ name: string; a: 1 }>();
-
-  const TestResource = factory({
-    type: "testType",
-    deploy: deployMock,
-    getIntrinsicConfig: () => ({ a: 1 }),
-  });
-
-  const resource = new TestResource({ config: { name: "testName" } });
-
-  await resource.runDeploy();
-  expect(deployMock.mock.calls[0]).toEqual([{ a: 1, name: "testName" }]);
-});
-
-it("assigns outputs after deploy", async () => {
-  const factory = createResourceFactory<{ name: string }, { id: number }>();
-
-  const TestResource = factory({
-    type: "testType",
-    deploy: () => Promise.resolve({ id: 123 }),
-  });
-
-  const resource = new TestResource({ config: { name: "testName" } });
-  expect(resource.output).toBe(null);
-
-  await resource.runDeploy();
-  expect(resource.output).toEqual({ id: 123 });
 });

@@ -36,7 +36,7 @@ export const LambdaApiGatewayPermission = createLambdaApiGatewayPermissionClass(
       ),
     }),
 
-    deploy: async (config: LambdaApiGatewayPermissionInput) => {
+    create: async (config: LambdaApiGatewayPermissionInput) => {
       const command = new AddPermissionCommand(config);
       return lambdaClient.send(command);
     },

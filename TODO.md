@@ -1,6 +1,5 @@
 **Focus one: add CRUD methods to resources**
 
-- Add method definitions to resource class
 - Add dummy methods to resources
 - Add read method to resources
 - Add mutation methods to resources

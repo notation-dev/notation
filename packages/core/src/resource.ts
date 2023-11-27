@@ -1,21 +1,42 @@
 import { OptionalIfAllPropertiesOptional } from "./types";
 
+type BaseSchema = {
+  create: { input: any; output: any };
+  read: { input: any; output: any };
+  update: { input: any; output: any };
+  delete: { input: any; output: any };
+};
+
+type OperationFn<
+  Schema extends BaseSchema,
+  Operation extends keyof BaseSchema,
+> = (input: Schema[Operation]["input"]) => Promise<Schema[Operation]["output"]>;
+
+type CreateFn<Schema extends BaseSchema> = OperationFn<Schema, "create">;
+type ReadFn<Schema extends BaseSchema> = OperationFn<Schema, "read">;
+type UpdateFn<Schema extends BaseSchema> = OperationFn<Schema, "update">;
+type DeleteFn<Schema extends BaseSchema> = OperationFn<Schema, "delete">;
+
+type CreateInput<Schema extends BaseSchema> = Schema["create"]["input"];
+type ReadOutput<Schema extends BaseSchema> = Schema["read"]["output"];
+
 type ResourceOpts<C, D> = OptionalIfAllPropertiesOptional<"config", C> &
   OptionalIfAllPropertiesOptional<"dependencies", D>;
 
 export abstract class Resource<
-  Input = {},
-  Output = {},
-  Config = Input,
+  Schema extends BaseSchema = BaseSchema,
+  Config = CreateInput<Schema>,
   Dependencies extends Record<string, Resource> = {},
 > {
   abstract type: string;
+  abstract idKey: string;
   abstract retryOn: string[] | undefined;
+
   config: Config;
   dependencies: Dependencies;
   id: number = -1;
   groupId: number = -1;
-  output: Output = null as Output;
+  output: ReadOutput<Schema> = null as ReadOutput<Schema>;
 
   constructor(opts: ResourceOpts<Config, Dependencies>) {
     this.config = opts.config || ({} as Config);
@@ -23,69 +44,71 @@ export abstract class Resource<
     return this;
   }
 
-  abstract getDeployInput(): Promise<Input> | Input;
-  abstract deploy(input: Input): Promise<Output>;
+  abstract getCreateInput(): Promise<CreateInput<Schema>> | CreateInput<Schema>;
 
-  async runDeploy() {
-    let backoff = 1000;
-    try {
-      const input = await this.getDeployInput();
-      this.output = await this.deploy(input);
-    } catch (err: any) {
-      if (this.retryOn?.includes(err.name)) {
-        console.log(`Retrying ${this.type} ${this.id}`);
-        await new Promise((resolve) => setTimeout(resolve, backoff));
-        backoff *= 1.5;
-        await this.runDeploy();
-      } else {
-        throw err;
-      }
-    }
-  }
+  abstract create: CreateFn<Schema>;
+  abstract read: ReadFn<Schema>;
+  abstract update: UpdateFn<Schema>;
+  abstract delete: DeleteFn<Schema>;
 }
 
 export function createResourceFactory<
-  Input = {},
-  Output = {},
+  Schema extends BaseSchema = BaseSchema,
   Dependencies extends Record<string, Resource> = {},
+  IdKey = keyof Schema["delete"]["input"],
 >() {
   type DerivedResourceConstructor<Config> = new (
     opts: ResourceOpts<Config, Dependencies>,
-  ) => Resource<Input, Output, Config, Dependencies>;
+  ) => Resource<Schema, Config, Dependencies>;
 
   function factory<
-    DefaultConfig extends Partial<Input> = Partial<Input>,
-    Config = Omit<Input, keyof DefaultConfig>,
+    DefaultConfig extends Partial<CreateInput<Schema>> = Partial<
+      CreateInput<Schema>
+    >,
+    Config = Omit<CreateInput<Schema>, keyof DefaultConfig>,
   >(opts: {
     type: string;
+    idKey: IdKey;
+    retryOn?: string[];
+    create: CreateFn<Schema>;
+    read: ReadFn<Schema>;
+    update: UpdateFn<Schema>;
+    delete: DeleteFn<Schema>;
     getIntrinsicConfig: (
       dependencies: Dependencies,
     ) => Promise<DefaultConfig> | DefaultConfig;
-    deploy: (input: Input) => Promise<Output>;
-    retryOn?: string[];
   }): DerivedResourceConstructor<Config>;
 
-  function factory<Config = Input>(opts: {
+  function factory<Config = CreateInput<Schema>>(opts: {
     type: string;
-    deploy: (input: Input) => Promise<Output>;
+    idKey: IdKey;
+    retryOn?: string[];
+    create: CreateFn<Schema>;
+    read: ReadFn<Schema>;
+    update: UpdateFn<Schema>;
+    delete: DeleteFn<Schema>;
   }): DerivedResourceConstructor<Config>;
 
   function factory<Config>(opts: any) {
-    return class extends Resource<Input, Output, Config, Dependencies> {
+    return class extends Resource<Schema, Config, Dependencies> {
       type = opts.type;
+      idKey = opts.idKey;
       retryOn = opts.retryOn;
 
-      async getDeployInput() {
+      async getCreateInput() {
         if ("getIntrinsicConfig" in opts) {
           return {
             ...this.config,
             ...(await opts.getIntrinsicConfig(this.dependencies)),
-          } as Input;
+          } as CreateInput<Schema>;
         }
-        return this.config as any as Input;
+        return this.config as CreateInput<Schema>;
       }
 
-      deploy = opts.deploy;
+      create = opts.create;
+      update = opts.update;
+      read = opts.read;
+      delete = opts.delete;
     };
   }
 

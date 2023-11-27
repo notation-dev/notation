@@ -22,7 +22,7 @@ export const LambdaIamRole = createLambdaIamRoleClass({
     AssumeRolePolicyDocument: JSON.stringify(lambdaTrustPolicy),
   }),
 
-  deploy: async (props: LambdaIamRoleInput) => {
+  create: async (props: LambdaIamRoleInput) => {
     const command = new CreateRoleCommand(props);
     return iamClient.send(command);
   },
