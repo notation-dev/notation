@@ -1,31 +1,59 @@
 import { createResourceFactory } from "@notation/core";
-import {
-  CreateStageCommand,
-  CreateStageCommandInput,
-  CreateStageCommandOutput,
-} from "@aws-sdk/client-apigatewayv2";
+import * as sdk from "@aws-sdk/client-apigatewayv2";
 import { apiGatewayClient } from "src/utils/aws-clients";
-import { Api } from "./api";
+import { ApiInstance } from "./api";
 
-export type StageInput = CreateStageCommandInput;
-export type StageOutput = CreateStageCommandOutput;
-export type StageDependencies = { router: InstanceType<typeof Api> };
+export type StageSchema = {
+  create: {
+    input: sdk.CreateStageCommandInput;
+    output: sdk.CreateStageCommandOutput;
+  };
+  read: {
+    input: sdk.GetStageCommandInput;
+    output: sdk.GetStageCommandOutput;
+  };
+  update: {
+    input: sdk.UpdateStageCommandInput;
+    output: sdk.UpdateStageCommandOutput;
+  };
+  delete: {
+    input: sdk.DeleteStageCommandInput;
+    output: sdk.DeleteStageCommandOutput;
+  };
+};
+
+export type StageDependencies = { api: ApiInstance };
 
 const createStageClass = createResourceFactory<
-  StageInput,
-  StageOutput,
+  StageSchema,
   StageDependencies
 >();
 
 export const Stage = createStageClass({
   type: "aws/api-gateway/stage",
+  idKey: "StageName",
 
   getIntrinsicConfig: (dependencies) => ({
-    ApiId: dependencies.router.output.ApiId,
+    ApiId: dependencies.api.output.ApiId,
   }),
 
-  async create(props: StageInput) {
-    const command = new CreateStageCommand(props);
+  create: async (input) => {
+    const command = new sdk.CreateStageCommand(input);
+    return apiGatewayClient.send(command);
+  },
+
+  read: async (input) => {
+    const command = new sdk.GetStageCommand(input);
+    return apiGatewayClient.send(command);
+  },
+
+  update: async (input) => {
+    const command = new sdk.UpdateStageCommand(input);
+    return apiGatewayClient.send(command);
+  },
+
+  delete: async (input) => {
+    const command = new sdk.DeleteStageCommand(input);
     return apiGatewayClient.send(command);
   },
 });

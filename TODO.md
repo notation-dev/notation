@@ -1,9 +1,3 @@
-**Focus one: add CRUD methods to resources**
-
-- Add dummy methods to resources
-- Add read method to resources
-- Add mutation methods to resources
-
 **Focus two: deploy command**
 
 - If state file doesn't exit, create it

@@ -25,8 +25,8 @@ type ResourceOpts<C, D> = OptionalIfAllPropertiesOptional<"config", C> &
 
 export abstract class Resource<
   Schema extends BaseSchema = BaseSchema,
-  Config = CreateInput<Schema>,
   Dependencies extends Record<string, Resource> = {},
+  Config = CreateInput<Schema>,
 > {
   abstract type: string;
   abstract idKey: string;
@@ -59,7 +59,7 @@ export function createResourceFactory<
 >() {
   type DerivedResourceConstructor<Config> = new (
     opts: ResourceOpts<Config, Dependencies>,
-  ) => Resource<Schema, Config, Dependencies>;
+  ) => Resource<Schema, Dependencies, Config>;
 
   function factory<
     DefaultConfig extends Partial<CreateInput<Schema>> = Partial<
@@ -90,7 +90,7 @@ export function createResourceFactory<
   }): DerivedResourceConstructor<Config>;
 
   function factory<Config>(opts: any) {
-    return class extends Resource<Schema, Config, Dependencies> {
+    return class extends Resource<Schema, Dependencies> {
       type = opts.type;
       idKey = opts.idKey;
       retryOn = opts.retryOn;
