@@ -1,7 +1,5 @@
 **Focus two: deploy command**
 
-- If state file doesn't exit, create it
-- Create interface for state file (in core?)
 - Implement deploy workflow within CLI
 - Implement destroy workflow within CLI
 
@@ -29,25 +27,25 @@
 **Deploy Workflow**
 
 ```
-if dry run
-	plan = read state file
-
 for each resource in orchestration graph:
-	get corresponding resource in state file
+	state_node = find resource in state
 
+  // refresh state
   if exists
-    current_state = read live resource
+    latest_state_node = read live resource
 
     if changed
       log: report drift
+      update state with latest_state_node, marking as drifted
 
-      if dry run
-        update state file with current_state, marking as drifted
+  if refresh
+    return
 
-  calculate diff between resource and current_state
+  // reconcile infra
+  calculate diff between resource and latest_state_node
   calculate reconciliation operation
 
-	if dry run
+	if dry-run
 		log intended operation
 
 	else
@@ -60,7 +58,9 @@ for each resource in orchestration graph:
 **Destroy Workflow**
 
 ```
-for each resource:
+deploy --refresh
+
+for each resource in state:
 	read live resource -> update state
 
 	if resource exists
