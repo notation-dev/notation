@@ -1,5 +1,5 @@
 import { expect, it, mock } from "bun:test";
-import { createResourceFactory } from "src/resource";
+import { createResourceFactory } from "src/orchestrator/resource";
 import { createResource } from "src/provisioner/operation.create";
 
 type Schema = {

@@ -1,8 +1,8 @@
 export * from "./provisioner";
-export * from "./graph";
-export * from "./paths";
-export * from "./chart";
-export * from "./resource";
-export * from "./resource-group";
-export * from "./state-getters";
-export { resetResourceGroupCounters } from "./state";
+export * from "./orchestrator/graph";
+export * from "./utils/paths";
+export * from "./visualiser/chart";
+export * from "./orchestrator/resource";
+export * from "./orchestrator/resource-group";
+export * from "./orchestrator/state-getters";
+export { resetResourceGroupCounters } from "./orchestrator/state";

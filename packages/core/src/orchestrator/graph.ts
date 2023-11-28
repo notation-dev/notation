@@ -1,6 +1,9 @@
 import path from "path";
-import { getResources, getResourceGroups } from "src/state-getters";
-import { filePaths } from "src/paths";
+import {
+  getResources,
+  getResourceGroups,
+} from "src/orchestrator/state-getters";
+import { filePaths } from "src/utils/paths";
 
 export async function getResourceGraph(entryPoint: string) {
   const outFilePath = filePaths.dist.infra(entryPoint);

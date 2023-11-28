@@ -1,4 +1,4 @@
-import { getResourceGraph } from "src/graph";
+import { getResourceGraph } from "src/orchestrator/graph";
 import { createResource } from "./operation.create";
 import { readState, writeState } from "./state";
 

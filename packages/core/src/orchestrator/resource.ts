@@ -1,4 +1,4 @@
-import { OptionalIfAllPropertiesOptional } from "./types";
+import { OptionalIfAllPropertiesOptional } from "../utils/types";
 
 type BaseSchema = {
   input: any;

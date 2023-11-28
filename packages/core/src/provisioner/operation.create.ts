@@ -1,4 +1,4 @@
-import { Resource } from "src/resource";
+import { Resource } from "src/orchestrator/resource";
 import { State } from "./state";
 
 export async function createResource(resource: Resource, state: State) {
