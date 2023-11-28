@@ -37,6 +37,7 @@ function getFixture() {
       id: 0,
       type: "GroupTypeA",
       config: {},
+      dependencies: {},
       resources: [
         {
           id: 0,
@@ -54,7 +55,7 @@ function getFixture() {
             dep1: {
               id: 0,
               groupId: 0,
-              config: {},
+              input: {},
               type: "ResourceTypeA",
               dependencies: {},
             },
@@ -66,11 +67,12 @@ function getFixture() {
       id: 1,
       type: "GroupTypeB",
       config: {},
+      dependencies: {},
       resources: [
         {
           id: 2,
           groupId: 1,
-          config: {},
+          input: {},
           type: "ResourceTypeC",
           dependencies: {},
         },
@@ -95,7 +97,7 @@ function getFixture() {
         dep1: {
           id: 0,
           groupId: 0,
-          config: {},
+          input: {},
           type: "ResourceTypeA",
           dependencies: {},
         },

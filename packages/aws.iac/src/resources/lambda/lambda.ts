@@ -5,22 +5,9 @@ import { ZipFileInstance } from "@notation/std.iac";
 import { lambdaClient } from "src/utils/aws-clients";
 
 export type LambdaSchema = {
-  create: {
-    input: sdk.CreateFunctionCommandInput;
-    output: sdk.CreateFunctionCommandOutput;
-  };
-  read: {
-    input: sdk.GetFunctionCommandInput;
-    output: NonNullable<sdk.GetFunctionCommandOutput["Configuration"]>;
-  };
-  update: {
-    input: sdk.UpdateFunctionCodeCommandInput;
-    output: sdk.UpdateFunctionCodeCommandOutput;
-  };
-  delete: {
-    input: sdk.DeleteFunctionCommandInput;
-    output: sdk.DeleteFunctionCommandOutput;
-  };
+  input: sdk.CreateFunctionCommandInput;
+  output: NonNullable<sdk.GetFunctionCommandOutput["Configuration"]>;
+  primaryKey: sdk.DeleteFunctionCommandInput;
 };
 
 type LambdaImplicitDeps = {
@@ -39,13 +26,19 @@ const createLambdaClass = createResourceFactory<
 
 export const Lambda = createLambdaClass({
   type: "aws/lambda",
-  idKey: "FunctionName",
-  retryOn: ["InvalidParameterValueException"],
 
-  getIntrinsicConfig: (dependencies) => ({
+  retryOn: [
+    "InvalidParameterValueException: The role defined for the function cannot be assumed by Lambda",
+  ],
+
+  getPrimaryKey: (input) => ({
+    FunctionName: input.FunctionName,
+  }),
+
+  getIntrinsicInput: (dependencies) => ({
     PackageType: "Zip",
     Code: { ZipFile: dependencies.zipFile.output.contents },
-    Role: dependencies.role.output.Role!.Arn,
+    Role: dependencies.role.output.Arn,
   }),
 
   create: async (input) => {
@@ -53,19 +46,19 @@ export const Lambda = createLambdaClass({
     return lambdaClient.send(command);
   },
 
-  read: async (input) => {
-    const command = new sdk.GetFunctionCommand(input);
+  read: async (pk) => {
+    const command = new sdk.GetFunctionCommand(pk);
     const result = await lambdaClient.send(command);
     return result.Configuration!;
   },
 
-  update: async (input) => {
-    const command = new sdk.UpdateFunctionCodeCommand(input);
+  update: async (patch) => {
+    const command = new sdk.UpdateFunctionCodeCommand(patch);
     return lambdaClient.send(command);
   },
 
-  delete: async (input) => {
-    const command = new sdk.DeleteFunctionCommand(input);
+  delete: async (pk) => {
+    const command = new sdk.DeleteFunctionCommand(pk);
     return lambdaClient.send(command);
   },
 });

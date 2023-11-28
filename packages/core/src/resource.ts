@@ -1,24 +1,29 @@
 import { OptionalIfAllPropertiesOptional } from "./types";
 
 type BaseSchema = {
-  create: { input: any; output: any };
-  read: { input: any; output: any };
-  update: { input: any; output: any };
-  delete: { input: any; output: any };
+  input: any;
+  output: any;
+  primaryKey: any;
 };
 
-type OperationFn<
-  Schema extends BaseSchema,
-  Operation extends keyof BaseSchema,
-> = (input: Schema[Operation]["input"]) => Promise<Schema[Operation]["output"]>;
+type Create<Schema extends BaseSchema> = (
+  input: Schema["input"],
+) => Promise<Schema["output"]>;
 
-type CreateFn<Schema extends BaseSchema> = OperationFn<Schema, "create">;
-type ReadFn<Schema extends BaseSchema> = OperationFn<Schema, "read">;
-type UpdateFn<Schema extends BaseSchema> = OperationFn<Schema, "update">;
-type DeleteFn<Schema extends BaseSchema> = OperationFn<Schema, "delete">;
+type Read<Schema extends BaseSchema> = (
+  input: Schema["primaryKey"],
+) => Promise<Schema["output"]>;
 
-type CreateInput<Schema extends BaseSchema> = Schema["create"]["input"];
-type ReadOutput<Schema extends BaseSchema> = Schema["read"]["output"];
+type Update<Schema extends BaseSchema> = (
+  input: Schema["primaryKey"] & Partial<Schema["input"]>,
+) => Promise<Schema["output"] | void>;
+
+type Delete<Schema extends BaseSchema> = (input: Schema["primaryKey"]) => void;
+
+type GetPrimaryKey<Schema extends BaseSchema> = (
+  input: Schema["input"],
+  output: Schema["output"],
+) => Schema["primaryKey"];
 
 type ResourceOpts<C, D> = OptionalIfAllPropertiesOptional<"config", C> &
   OptionalIfAllPropertiesOptional<"dependencies", D>;
@@ -26,89 +31,86 @@ type ResourceOpts<C, D> = OptionalIfAllPropertiesOptional<"config", C> &
 export abstract class Resource<
   Schema extends BaseSchema = BaseSchema,
   Dependencies extends Record<string, Resource> = {},
-  Config = CreateInput<Schema>,
+  config = Schema["input"],
 > {
   abstract type: string;
-  abstract idKey: string;
   abstract retryOn: string[] | undefined;
 
-  config: Config;
+  config: config;
   dependencies: Dependencies;
   id: number = -1;
   groupId: number = -1;
-  output: ReadOutput<Schema> = null as ReadOutput<Schema>;
+  output: Schema["output"] = null as any as Schema["output"];
 
-  constructor(opts: ResourceOpts<Config, Dependencies>) {
-    this.config = opts.config || ({} as Config);
+  constructor(opts: ResourceOpts<config, Dependencies>) {
+    this.config = opts.config || ({} as config);
     this.dependencies = opts.dependencies || ({} as Dependencies);
     return this;
   }
 
-  abstract getCreateInput(): Promise<CreateInput<Schema>> | CreateInput<Schema>;
+  abstract getInput(): Promise<config> | config;
+  abstract getPrimaryKey: GetPrimaryKey<Schema>;
 
-  abstract create: CreateFn<Schema>;
-  abstract read: ReadFn<Schema>;
-  abstract update: UpdateFn<Schema>;
-  abstract delete: DeleteFn<Schema>;
+  abstract create: Create<Schema>;
+  abstract read: Read<Schema> | void;
+  abstract update: Update<Schema> | void;
+  abstract delete: Delete<Schema>;
 }
 
 export function createResourceFactory<
   Schema extends BaseSchema = BaseSchema,
   Dependencies extends Record<string, Resource> = {},
-  IdKey = keyof Schema["delete"]["input"],
 >() {
-  type DerivedResourceConstructor<Config> = new (
-    opts: ResourceOpts<Config, Dependencies>,
-  ) => Resource<Schema, Dependencies, Config>;
+  type DerivedResourceConstructor<Input> = new (
+    opts: ResourceOpts<Input, Dependencies>,
+  ) => Resource<Schema, Dependencies, Input>;
 
   function factory<
-    DefaultConfig extends Partial<CreateInput<Schema>> = Partial<
-      CreateInput<Schema>
-    >,
-    Config = Omit<CreateInput<Schema>, keyof DefaultConfig>,
+    IntrinsicInput extends Partial<Schema["input"]> = Partial<Schema["input"]>,
+    Input = Omit<Schema["input"], keyof IntrinsicInput>,
   >(opts: {
     type: string;
-    idKey: IdKey;
     retryOn?: string[];
-    create: CreateFn<Schema>;
-    read: ReadFn<Schema>;
-    update: UpdateFn<Schema>;
-    delete: DeleteFn<Schema>;
-    getIntrinsicConfig: (
+    create: Create<Schema>;
+    read?: Read<Schema>;
+    update?: Update<Schema>;
+    delete: Delete<Schema>;
+    getPrimaryKey: GetPrimaryKey<Schema>;
+    getIntrinsicInput: (
       dependencies: Dependencies,
-    ) => Promise<DefaultConfig> | DefaultConfig;
-  }): DerivedResourceConstructor<Config>;
+    ) => Promise<IntrinsicInput> | IntrinsicInput;
+  }): DerivedResourceConstructor<Input>;
 
-  function factory<Config = CreateInput<Schema>>(opts: {
+  // No intrinsic input
+  function factory(opts: {
     type: string;
-    idKey: IdKey;
     retryOn?: string[];
-    create: CreateFn<Schema>;
-    read: ReadFn<Schema>;
-    update: UpdateFn<Schema>;
-    delete: DeleteFn<Schema>;
-  }): DerivedResourceConstructor<Config>;
+    create: Create<Schema>;
+    read?: Read<Schema>;
+    update?: Update<Schema>;
+    delete: Delete<Schema>;
+    getPrimaryKey: GetPrimaryKey<Schema>;
+  }): DerivedResourceConstructor<Schema["input"]>;
 
-  function factory<Config>(opts: any) {
+  function factory(opts: any) {
     return class extends Resource<Schema, Dependencies> {
       type = opts.type;
-      idKey = opts.idKey;
       retryOn = opts.retryOn;
+      getPrimaryKey = opts.getPrimaryKey;
+      create = opts.create;
+      read = opts.read;
+      update = opts.update;
+      delete = opts.delete;
 
-      async getCreateInput() {
-        if ("getIntrinsicConfig" in opts) {
+      async getInput() {
+        if ("getIntrinsicInput" in opts) {
           return {
             ...this.config,
-            ...(await opts.getIntrinsicConfig(this.dependencies)),
-          } as CreateInput<Schema>;
+            ...(await opts.getIntrinsicInput(this.dependencies)),
+          } as Schema["input"];
         }
-        return this.config as CreateInput<Schema>;
+        return this.config as Schema["input"];
       }
-
-      create = opts.create;
-      update = opts.update;
-      read = opts.read;
-      delete = opts.delete;
     };
   }
 

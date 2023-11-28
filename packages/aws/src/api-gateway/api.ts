@@ -16,7 +16,7 @@ export const api = (rgConfig: { name: string }) => {
   apiGroup.add(
     new aws.apiGateway.Stage({
       config: { StageName: "$default", AutoDeploy: true },
-      dependencies: { router: apiResource },
+      dependencies: { api: apiResource },
     }),
   );
 

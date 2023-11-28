@@ -1,24 +1,11 @@
-import { expect, it, mock, test } from "bun:test";
+import { expect, it, mock } from "bun:test";
 import { createResourceFactory } from "@notation/core";
 import { runDeploy } from "../src/deploy";
 
 type Schema = {
-  create: {
-    input: { name: string };
-    output: { id: number; name: string };
-  };
-  read: {
-    input: { id: number };
-    output: { id: number; name: string };
-  };
-  update: {
-    input: { id: number; name: string };
-    output: { id: number; name: string };
-  };
-  delete: {
-    input: { id: number };
-    output: {};
-  };
+  input: { name: string };
+  output: { id: number; name: string };
+  primaryKey: { id: number };
 };
 
 it("passes computed input to resource.create", async () => {
@@ -28,12 +15,12 @@ it("passes computed input to resource.create", async () => {
 
   const TestResource = factory({
     type: "testType",
-    idKey: "id",
+    getPrimaryKey: () => ({ id: 1 }),
     create: createMock,
     read: () => Promise.resolve({ id: 1, name: "name" }),
     update: () => Promise.resolve({ id: 1, name: "name" }),
     delete: () => Promise.resolve({}),
-    getIntrinsicConfig: () => ({ name: "name" }),
+    getIntrinsicInput: () => ({ name: "name" }),
   });
 
   const resource = new TestResource({});
@@ -47,7 +34,7 @@ it("assigns outputs after deploy", async () => {
 
   const TestResource = factory({
     type: "testType",
-    idKey: "id",
+    getPrimaryKey: () => ({ id: 1 }),
     create: () => Promise.resolve({ id: 1, name: "name" }),
     read: () => Promise.resolve({ id: 1, name: "name" }),
     update: () => Promise.resolve({ id: 1, name: "name" }),

@@ -2,29 +2,17 @@ import { expect, it, mock, test } from "bun:test";
 import { Resource, createResourceFactory } from "src";
 
 type Schema = {
-  create: {
-    input: { name: string };
-    output: { id: number; name: string };
-  };
-  read: {
-    input: { id: number };
-    output: { id: number; name: string };
-  };
-  update: {
-    input: { id: number; name: string };
-    output: { id: number; name: string };
-  };
-  delete: {
-    input: { id: number };
-    output: {};
-  };
+  input: { name: string };
+  output: { id: number; name: string };
+  primaryKey: { id: number };
 };
+
 it("creates a resource class factory", () => {
   const factory = createResourceFactory<Schema>();
 
   const TestResource = factory({
     type: "test-resource",
-    idKey: "id",
+    getPrimaryKey: () => ({ id: 1 }),
     create: () => Promise.resolve({ id: 1, name: "name" }),
     read: () => Promise.resolve({ id: 1, name: "name" }),
     update: () => Promise.resolve({ id: 1, name: "name" }),
@@ -44,8 +32,8 @@ test("merges config and intrinsic config", async () => {
 
   const TestResource = factory({
     type: "test-resource",
-    idKey: "id",
-    getIntrinsicConfig: () => ({ name: "intrinsicName" }),
+    getPrimaryKey: () => ({ id: 1 }),
+    getIntrinsicInput: () => ({ name: "intrinsicName" }),
     create: () => Promise.resolve({ id: 1, name: "name" }),
     read: () => Promise.resolve({ id: 1, name: "name" }),
     update: () => Promise.resolve({ id: 1, name: "name" }),
@@ -53,17 +41,18 @@ test("merges config and intrinsic config", async () => {
   });
 
   const resource = new TestResource({ config: { name: "overrideName" } });
-  expect((await resource.getCreateInput()).name).toBe("intrinsicName");
+  // @ts-expect-error
+  expect((await resource.getInput()).name).toBe("intrinsicName");
 });
 
 it("passes dependencies to getIntrinsicConfig", () => {
-  const getIntrinsicConfigMock = mock((deps) => deps.dep1);
+  const getIntrinsicInputMock = mock((deps) => deps.dep1);
 
   const childFactory = createResourceFactory<Schema>();
 
   const ChildResource = childFactory({
     type: "childType",
-    idKey: "id",
+    getPrimaryKey: () => ({ id: 1 }),
     create: () => Promise.resolve({ id: 1, name: "name" }),
     read: () => Promise.resolve({ id: 1, name: "name" }),
     update: () => Promise.resolve({ id: 1, name: "name" }),
@@ -76,12 +65,12 @@ it("passes dependencies to getIntrinsicConfig", () => {
 
   const Resource = factory({
     type: "testTypeWithDeps",
-    idKey: "id",
+    getPrimaryKey: () => ({ id: 1 }),
     create: () => Promise.resolve({ id: 1, name: "name" }),
     read: () => Promise.resolve({ id: 1, name: "name" }),
     update: () => Promise.resolve({ id: 1, name: "name" }),
     delete: () => Promise.resolve({}),
-    getIntrinsicConfig: getIntrinsicConfigMock,
+    getIntrinsicInput: getIntrinsicInputMock,
   });
 
   const resource = new Resource({
@@ -90,9 +79,9 @@ it("passes dependencies to getIntrinsicConfig", () => {
     },
   });
 
-  resource.getCreateInput();
+  resource.getInput();
 
-  expect(getIntrinsicConfigMock.mock.calls[0]).toEqual([
+  expect(getIntrinsicInputMock.mock.calls[0]).toEqual([
     { dep1: childResource },
   ]);
 });

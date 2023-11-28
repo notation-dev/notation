@@ -4,22 +4,9 @@ import { apiGatewayClient } from "src/utils/aws-clients";
 import { ApiInstance } from "./api";
 
 export type StageSchema = {
-  create: {
-    input: sdk.CreateStageCommandInput;
-    output: sdk.CreateStageCommandOutput;
-  };
-  read: {
-    input: sdk.GetStageCommandInput;
-    output: sdk.GetStageCommandOutput;
-  };
-  update: {
-    input: sdk.UpdateStageCommandInput;
-    output: sdk.UpdateStageCommandOutput;
-  };
-  delete: {
-    input: sdk.DeleteStageCommandInput;
-    output: sdk.DeleteStageCommandOutput;
-  };
+  input: sdk.CreateStageCommandInput;
+  output: sdk.GetStageCommandOutput;
+  primaryKey: sdk.DeleteStageCommandInput;
 };
 
 export type StageDependencies = { api: ApiInstance };
@@ -31,9 +18,13 @@ const createStageClass = createResourceFactory<
 
 export const Stage = createStageClass({
   type: "aws/api-gateway/stage",
-  idKey: "StageName",
 
-  getIntrinsicConfig: (dependencies) => ({
+  getPrimaryKey: (input, output) => ({
+    ApiId: input.ApiId,
+    StageName: output.StageName,
+  }),
+
+  getIntrinsicInput: (dependencies) => ({
     ApiId: dependencies.api.output.ApiId,
   }),
 

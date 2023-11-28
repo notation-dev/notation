@@ -104,9 +104,6 @@ importers:
       esbuild:
         specifier: ^0.19.3
         version: 0.19.3
-      fflate:
-        specifier: 0.8.1
-        version: 0.8.1
       fs-extra:
         specifier: ^11.1.1
         version: 11.1.1
@@ -160,6 +157,9 @@ importers:
       '@notation/core':
         specifier: workspace:*
         version: link:../core
+      fflate:
+        specifier: 0.8.1
+        version: 0.8.1
 
   packages/tsconfig: {}
 

@@ -6,22 +6,9 @@ import { getLambdaInvocationUri } from "src/templates/arn";
 import { apiGatewayClient } from "src/utils/aws-clients";
 
 export type LambdaIntegrationSchema = {
-  create: {
-    input: sdk.CreateIntegrationCommandInput;
-    output: sdk.CreateIntegrationCommandOutput;
-  };
-  read: {
-    input: sdk.GetIntegrationCommandInput;
-    output: sdk.GetIntegrationCommandOutput;
-  };
-  update: {
-    input: sdk.UpdateIntegrationCommandInput;
-    output: sdk.UpdateIntegrationCommandOutput;
-  };
-  delete: {
-    input: sdk.DeleteIntegrationCommandInput;
-    output: sdk.DeleteIntegrationCommandOutput;
-  };
+  input: sdk.CreateIntegrationCommandInput;
+  output: sdk.GetIntegrationCommandOutput;
+  primaryKey: sdk.DeleteIntegrationCommandInput;
 };
 
 export type LambdaIntegrationDependencies = {
@@ -36,9 +23,13 @@ const createLambdaIntegrationClass = createResourceFactory<
 
 export const LambdaIntegration = createLambdaIntegrationClass({
   type: "aws/api-gateway/integration/lambda",
-  idKey: "IntegrationId",
 
-  getIntrinsicConfig: (dependencies) => ({
+  getPrimaryKey: (config, output) => ({
+    ApiId: config.ApiId,
+    IntegrationId: output.IntegrationId,
+  }),
+
+  getIntrinsicInput: (dependencies) => ({
     ApiId: dependencies.api.output.ApiId,
     IntegrationType: "AWS_PROXY",
     IntegrationMethod: "POST",
@@ -55,18 +46,18 @@ export const LambdaIntegration = createLambdaIntegrationClass({
     return apiGatewayClient.send(command);
   },
 
-  read: async (input) => {
-    const command = new sdk.GetIntegrationCommand(input);
+  read: async (pk) => {
+    const command = new sdk.GetIntegrationCommand(pk);
     return apiGatewayClient.send(command);
   },
 
-  update: async (input) => {
-    const command = new sdk.UpdateIntegrationCommand(input);
+  update: async (patch) => {
+    const command = new sdk.UpdateIntegrationCommand(patch);
     return apiGatewayClient.send(command);
   },
 
-  delete: async (input) => {
-    const command = new sdk.DeleteIntegrationCommand(input);
+  delete: async (pk) => {
+    const command = new sdk.DeleteIntegrationCommand(pk);
     return apiGatewayClient.send(command);
   },
 });

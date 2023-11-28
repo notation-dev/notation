@@ -15,19 +15,21 @@ class TestResourceGroup extends ResourceGroup {
   platform = "test-platform";
 }
 
-const TestResource = createResourceFactory<{ a: number }, {}>()({
-  type: "test-resource",
-  deploy() {
-    throw new Error("Method not implemented.");
-  },
-});
+type TestSchema = {
+  input: { a: number };
+  output: any;
+  primaryKey: number;
+};
 
-const TestResource2 = createResourceFactory<{ a: number }, {}>()({
-  type: "test-resource-2",
-  deploy() {
-    throw new Error("Method not implemented.");
-  },
-});
+const resourceConfig = {
+  type: "test-resource",
+  create: () => Promise.resolve({ a: 1 }),
+  delete() {},
+  getPrimaryKey: () => 0,
+};
+
+const TestResource = createResourceFactory<TestSchema>()(resourceConfig);
+const TestResource2 = createResourceFactory<TestSchema>()(resourceConfig);
 
 const testResource = new TestResource({ config: { a: 1 } });
 const testResource2 = new TestResource2({ config: { a: 2 } });

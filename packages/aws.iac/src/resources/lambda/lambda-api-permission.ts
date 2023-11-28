@@ -6,22 +6,9 @@ import { ApiInstance } from "src/resources/api-gateway/api";
 import { LambdaInstance } from "./lambda";
 
 export type LambdaApiGatewayPermissionSchema = {
-  create: {
-    input: sdk.AddPermissionCommandInput;
-    output: sdk.AddPermissionCommandOutput;
-  };
-  read: {
-    input: void;
-    output: void;
-  };
-  update: {
-    input: void;
-    output: void;
-  };
-  delete: {
-    input: sdk.RemovePermissionCommandInput;
-    output: sdk.RemovePermissionCommandOutput;
-  };
+  input: sdk.AddPermissionCommandInput;
+  output: sdk.AddPermissionCommandOutput;
+  primaryKey: sdk.RemovePermissionCommandInput;
 };
 
 export type LambdaApiGatewayPermissionDependencies = {
@@ -37,9 +24,13 @@ const createLambdaApiGatewayPermissionClass = createResourceFactory<
 export const LambdaApiGatewayPermission = createLambdaApiGatewayPermissionClass(
   {
     type: "aws/lambda/permission/api-gateway",
-    idKey: "StatementId", // or another suitable key
 
-    getIntrinsicConfig: async (dependencies) => ({
+    getPrimaryKey: (input) => ({
+      StatementId: input.StatementId,
+      FunctionName: input.FunctionName,
+    }),
+
+    getIntrinsicInput: async (dependencies) => ({
       StatementId: "AllowExecutionFromAPIGateway",
       Principal: "apigateway.amazonaws.com",
       FunctionName: dependencies.lambda.output.FunctionName,
@@ -54,11 +45,8 @@ export const LambdaApiGatewayPermission = createLambdaApiGatewayPermissionClass(
       return lambdaClient.send(command);
     },
 
-    read: async () => {},
-    update: async () => {},
-
-    delete: async (input) => {
-      const command = new sdk.RemovePermissionCommand(input);
+    delete: async (pk) => {
+      const command = new sdk.RemovePermissionCommand(pk);
       return lambdaClient.send(command);
     },
   },

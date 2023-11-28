@@ -4,22 +4,9 @@ import { cloudWatchLogsClient } from "src/utils/aws-clients";
 import { LambdaInstance } from "./lambda";
 
 export type LambdaLogGroupSchema = {
-  create: {
-    input: sdk.CreateLogGroupCommandInput;
-    output: sdk.CreateLogGroupCommandOutput;
-  };
-  read: {
-    input: void;
-    output: void;
-  };
-  update: {
-    input: void;
-    output: void;
-  };
-  delete: {
-    input: sdk.DeleteLogGroupCommandInput;
-    output: sdk.DeleteLogGroupCommandOutput;
-  };
+  input: sdk.CreateLogGroupCommandInput;
+  output: sdk.CreateLogGroupCommandOutput;
+  primaryKey: sdk.DeleteLogGroupCommandInput;
 };
 
 export type LambdaLogGroupDeps = { lambda: LambdaInstance };
@@ -31,9 +18,12 @@ const createLambdaLogGroupClass = createResourceFactory<
 
 export const LambdaLogGroup = createLambdaLogGroupClass({
   type: "aws/lambda/log-group",
-  idKey: "logGroupName",
 
-  getIntrinsicConfig: (dependencies) => ({
+  getPrimaryKey: (input) => ({
+    logGroupName: input.logGroupName,
+  }),
+
+  getIntrinsicInput: (dependencies) => ({
     logGroupName: `/aws/lambda/${dependencies.lambda.output.FunctionName}`,
   }),
 
@@ -42,11 +32,8 @@ export const LambdaLogGroup = createLambdaLogGroupClass({
     return cloudWatchLogsClient.send(command);
   },
 
-  read: async () => {},
-  update: async () => {},
-
-  delete: async (input) => {
-    const command = new sdk.DeleteLogGroupCommand(input);
+  delete: async (pk) => {
+    const command = new sdk.DeleteLogGroupCommand(pk);
     return cloudWatchLogsClient.send(command);
   },
 });

@@ -4,51 +4,47 @@ import { iamClient } from "src/utils/aws-clients";
 import { lambdaTrustPolicy } from "src/templates/iam.policy";
 
 export type LambdaIamRoleSchema = {
-  create: {
-    input: sdk.CreateRoleCommandInput;
-    output: sdk.CreateRoleCommandOutput;
-  };
-  read: {
-    input: sdk.GetRoleCommandInput;
-    output: sdk.GetRoleCommandOutput;
-  };
-  update: {
-    input: sdk.UpdateRoleCommandInput;
-    output: sdk.UpdateRoleCommandOutput;
-  };
-  delete: {
-    input: sdk.DeleteRoleCommandInput;
-    output: sdk.DeleteRoleCommandOutput;
-  };
+  input: sdk.CreateRoleCommandInput;
+  output: NonNullable<sdk.GetRoleCommandOutput["Role"]>;
+  primaryKey: sdk.DeleteRoleCommandInput;
 };
 
 const createLambdaIamRoleClass = createResourceFactory<LambdaIamRoleSchema>();
 
 export const LambdaIamRole = createLambdaIamRoleClass({
   type: "aws/lambda/role",
-  idKey: "RoleName",
 
-  getIntrinsicConfig: () => ({
+  getPrimaryKey: (input) => ({
+    RoleName: input.RoleName,
+  }),
+
+  getIntrinsicInput: () => ({
     AssumeRolePolicyDocument: JSON.stringify(lambdaTrustPolicy),
   }),
 
   create: async (input) => {
     const command = new sdk.CreateRoleCommand(input);
-    return iamClient.send(command);
+    const result = await iamClient.send(command);
+    return result.Role!;
   },
 
-  read: async (input) => {
-    const command = new sdk.GetRoleCommand(input);
-    return iamClient.send(command);
+  read: async (pk) => {
+    const command = new sdk.GetRoleCommand(pk);
+    const result = await iamClient.send(command);
+    return result.Role!;
   },
 
-  update: async (input) => {
-    const command = new sdk.UpdateRoleCommand(input);
-    return iamClient.send(command);
+  update: async (patch) => {
+    const command = new sdk.UpdateRoleCommand({
+      RoleName: patch.RoleName,
+      Description: patch.Description,
+      MaxSessionDuration: patch.MaxSessionDuration,
+    });
+    await iamClient.send(command);
   },
 
-  delete: async (input) => {
-    const command = new sdk.DeleteRoleCommand(input);
+  delete: async (pk) => {
+    const command = new sdk.DeleteRoleCommand(pk);
     return iamClient.send(command);
   },
 });

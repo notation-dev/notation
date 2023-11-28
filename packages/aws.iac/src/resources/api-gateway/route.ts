@@ -4,23 +4,11 @@ import { apiGatewayClient } from "src/utils/aws-clients";
 import { ApiInstance, LambdaIntegrationInstance } from ".";
 
 export type RouteSchema = {
-  create: {
-    input: sdk.CreateRouteCommandInput;
-    output: sdk.CreateRouteCommandOutput;
-  };
-  read: {
-    input: sdk.GetRouteCommandInput;
-    output: sdk.GetRouteCommandOutput;
-  };
-  update: {
-    input: sdk.UpdateRouteCommandInput;
-    output: sdk.UpdateRouteCommandOutput;
-  };
-  delete: {
-    input: sdk.DeleteRouteCommandInput;
-    output: sdk.DeleteRouteCommandOutput;
-  };
+  input: sdk.CreateRouteCommandInput;
+  output: sdk.GetRouteCommandOutput;
+  primaryKey: sdk.DeleteRouteCommandInput;
 };
+
 export type RouteDeps = {
   api: ApiInstance;
   lambdaIntegration: LambdaIntegrationInstance;
@@ -30,9 +18,13 @@ const createRouteClass = createResourceFactory<RouteSchema, RouteDeps>();
 
 export const Route = createRouteClass({
   type: "aws/api-gateway/route",
-  idKey: "RouteId",
 
-  getIntrinsicConfig: (dependencies) => ({
+  getPrimaryKey: (input, output) => ({
+    ApiId: input.ApiId,
+    RouteId: output.RouteId,
+  }),
+
+  getIntrinsicInput: (dependencies) => ({
     ApiId: dependencies.api.output.ApiId,
     Target: `integrations/${dependencies.lambdaIntegration.output.IntegrationId}`,
   }),

@@ -7,7 +7,7 @@ export const lambda = (config: { fileName: string; handler: string }) => {
 
   const zipFile = functionGroup.add(
     new std.Zip({
-      config: { fileName: config.fileName },
+      config: { filePath: config.fileName },
     }),
   );
 

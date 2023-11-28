@@ -4,22 +4,9 @@ import { iamClient } from "src/utils/aws-clients";
 import { LambdaIamRoleInstance } from "./lambda-role";
 
 export type LambdaRolePolicyAttachmentSchema = {
-  create: {
-    input: sdk.AttachRolePolicyCommandInput;
-    output: sdk.AttachRolePolicyCommandOutput;
-  };
-  read: {
-    input: void;
-    output: void;
-  };
-  update: {
-    input: void;
-    output: void;
-  };
-  delete: {
-    input: sdk.DetachRolePolicyCommandInput;
-    output: sdk.DetachRolePolicyCommandOutput;
-  };
+  input: sdk.AttachRolePolicyCommandInput;
+  output: sdk.AttachRolePolicyCommandOutput;
+  primaryKey: sdk.DetachRolePolicyCommandInput;
 };
 
 export type LambdaRolePolicyAttachmentDeps = { role: LambdaIamRoleInstance };
@@ -32,10 +19,14 @@ const createLambdaRolePolicyAttachmentClass = createResourceFactory<
 export const LambdaRolePolicyAttachment = createLambdaRolePolicyAttachmentClass(
   {
     type: "aws/lambda/policy-attachment",
-    idKey: "PolicyArn",
 
-    getIntrinsicConfig: (dependencies) => ({
-      RoleName: dependencies.role.output.Role!.RoleName,
+    getPrimaryKey: (input) => ({
+      RoleName: input.RoleName,
+      PolicyArn: input.PolicyArn,
+    }),
+
+    getIntrinsicInput: (dependencies) => ({
+      RoleName: dependencies.role.output.RoleName,
     }),
 
     create: async (input) => {
@@ -43,11 +34,8 @@ export const LambdaRolePolicyAttachment = createLambdaRolePolicyAttachmentClass(
       return iamClient.send(command);
     },
 
-    read: async () => {},
-    update: async () => {},
-
-    delete: async (input) => {
-      const command = new sdk.DetachRolePolicyCommand(input);
+    delete: async (pk) => {
+      const command = new sdk.DetachRolePolicyCommand(pk);
       return iamClient.send(command);
     },
   },
