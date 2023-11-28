@@ -12,12 +12,14 @@
     "dev": "npm run build -- --watch"
   },
   "dependencies": {
+    "fs-extra": "^11.1.1",
     "js-base64": "^3.7.5",
     "pako": "^2.1.0"
   },
   "devDependencies": {
     "@types/common-tags": "^1.8.2",
     "@types/pako": "^2.0.2",
+    "@types/fs-extra": "^11.0.4",
     "common-tags": "^1.8.2"
   }
 }

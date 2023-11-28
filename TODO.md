@@ -1,30 +1,8 @@
 **Focus two: deploy command**
 
-- Implement deploy workflow within CLI
-- Implement destroy workflow within CLI
+- Implement apply workflow
 
-## Data Structures
-
-**State file**
-
-```
-{
-  lastUpdated: "2023-11-27T11:35:29.489Z"
-  resources: Map({
-    "lambda-1": {
-      id: "lambda-1",
-      provider: "@notation/aws",
-      config: {},
-      lastOperation: "drift" | "create" | "update"
-      lastChanged: "2023-11-27T11:35:29.489Z"
-    }
-  })
-}
-```
-
-## Workflows
-
-**Deploy Workflow**
+**Apply Workflow**
 
 ```
 for each resource in orchestration graph:
@@ -53,17 +31,4 @@ for each resource in orchestration graph:
 
 	read updated live resource
   update state
-```
-
-**Destroy Workflow**
-
-```
-deploy --refresh
-
-for each resource in state:
-	read live resource -> update state
-
-	if resource exists
-		delete resource
-		update state
 ```

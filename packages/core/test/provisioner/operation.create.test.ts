@@ -1,6 +1,6 @@
 import { expect, it, mock } from "bun:test";
-import { createResourceFactory } from "@notation/core";
-import { runDeploy } from "../src/deploy";
+import { createResourceFactory } from "src/resource";
+import { createResource } from "src/provisioner/operation.create";
 
 type Schema = {
   input: { name: string };
@@ -25,7 +25,7 @@ it("passes computed input to resource.create", async () => {
 
   const resource = new TestResource({});
 
-  await runDeploy(resource);
+  await createResource(resource, {});
   expect(createMock.mock.calls[0]).toEqual([{ name: "name" }]);
 });
 
@@ -44,6 +44,6 @@ it("assigns outputs after deploy", async () => {
   const resource = new TestResource({ config: { name: "testName" } });
   expect(resource.output).toBe(null);
 
-  await runDeploy(resource);
+  await createResource(resource, {});
   expect(resource.output).toEqual({ id: 1, name: "name" });
 });

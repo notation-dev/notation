@@ -1,5 +1,6 @@
 import path from "path";
-import { getResources, getResourceGroups, filePaths } from "@notation/core";
+import { getResources, getResourceGroups } from "src/state-getters";
+import { filePaths } from "src/paths";
 
 export async function getResourceGraph(entryPoint: string) {
   const outFilePath = filePaths.dist.infra(entryPoint);

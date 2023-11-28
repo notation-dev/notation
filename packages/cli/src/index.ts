@@ -2,6 +2,7 @@
 import { program } from "commander";
 import { compile } from "./compile";
 import { deploy } from "./deploy";
+import { destroy } from "./destroy";
 import { visualise } from "./visualise";
 import { scaffoldApp } from "./scaffold";
 
@@ -35,6 +36,14 @@ program
   .description("Deploy Notation App")
   .action(async (entryPoint) => {
     await deploy(entryPoint);
+  });
+
+program
+  .command("destroy")
+  .argument("<entryPoint>", "entryPoint")
+  .description("Destroy Notation App")
+  .action(async (entryPoint) => {
+    await destroy(entryPoint);
   });
 
 program.parse(process.argv);
