@@ -1,34 +1,41 @@
-**Focus two: deploy command**
-
-- Implement apply workflow
-
-**Apply Workflow**
+**Deploy Workflow**
 
 ```
 for each resource in orchestration graph:
-	state_node = find resource in state
+  state_node = find in state by resource.id
 
-  // refresh state
-  if exists
+  if not state_node
+    update_state (resource, pending)
+    needs_deploy = true
+
+for each state_node in state
+  resource_node = find in resources by state.id
+
+  // refresh state node
+  state_node = find in state by resource.id
+
+  if state_node
     latest_state_node = read live resource
 
-    if changed
+    if state_node.outputs != latest_state_node.outputs
       log: report drift
-      update state with latest_state_node, marking as drifted
+      update_state (latest_state_node, drifted)
 
-  if refresh
-    return
+  if refresh_only
+    continue
 
-  // reconcile infra
-  calculate diff between resource and latest_state_node
-  calculate reconciliation operation
+  if resource_node is undefined
+    operation = delete
+
+  else if state_node is pending
+    operation = create
+
+  else if state_node is drifted or resource.input != state_node.input
+    operation = update
 
 	if dry-run
-		log intended operation
+		log operation
 
 	else
 		run operation
-
-	read updated live resource
-  update state
 ```
