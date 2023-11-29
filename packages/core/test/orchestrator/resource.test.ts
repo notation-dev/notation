@@ -45,7 +45,7 @@ test("merges config and intrinsic config", async () => {
   expect((await resource.getInput()).name).toBe("intrinsicName");
 });
 
-it("passes dependencies to getIntrinsicConfig", () => {
+it("passes dependencies to getIntrinsicConfig", async () => {
   const getIntrinsicInputMock = mock((deps) => deps.dep1);
 
   const childFactory = createResourceFactory<Schema>();
@@ -79,7 +79,7 @@ it("passes dependencies to getIntrinsicConfig", () => {
     },
   });
 
-  resource.getInput();
+  await resource.getInput();
 
   expect(getIntrinsicInputMock.mock.calls[0]).toEqual([
     { dep1: childResource },

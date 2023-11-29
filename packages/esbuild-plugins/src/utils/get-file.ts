@@ -1,5 +1,3 @@
-import { OnLoadArgs } from "esbuild";
-
 export type GetFile = (
   filePath: string,
 ) => string | Promise<string> | undefined;
