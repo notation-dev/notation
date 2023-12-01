@@ -11,7 +11,7 @@ export type ApiSchema = {
 const createApiClass = createResourceFactory<ApiSchema>();
 
 export const Api = createApiClass({
-  type: "aws/api-gateway",
+  type: "aws/apiGateway/Api",
 
   getPrimaryKey: (input, output) => ({
     ApiId: output.ApiId,

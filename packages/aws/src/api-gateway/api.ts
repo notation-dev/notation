@@ -1,8 +1,7 @@
-import { AwsResourceGroup } from "@notation/aws.iac/client";
-import * as aws from "@notation/aws.iac/resources";
+import * as aws from "@notation/aws.iac";
 
 export const api = (rgConfig: { name: string }) => {
-  const apiGroup = new AwsResourceGroup("api", rgConfig);
+  const apiGroup = new aws.AwsResourceGroup("api", rgConfig);
 
   const apiResource = apiGroup.add(
     new aws.apiGateway.Api({

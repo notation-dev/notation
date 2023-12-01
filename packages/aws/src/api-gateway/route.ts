@@ -1,6 +1,5 @@
 import type { ApiGatewayHandler } from "src/shared";
-import * as aws from "@notation/aws.iac/resources";
-import { AwsResourceGroup } from "@notation/aws.iac/client";
+import * as aws from "@notation/aws.iac";
 import { lambda } from "src/lambda";
 import { api } from "./api";
 
@@ -15,7 +14,7 @@ export const route = (
   // at compile time becomes infra module
   const lambdaGroup = handler as any as ReturnType<typeof lambda>;
 
-  const routeGroup = new AwsResourceGroup("api/route", {
+  const routeGroup = new aws.AwsResourceGroup("api/route", {
     dependencies: { router: apiGroup.id, fn: lambdaGroup.id },
   });
 

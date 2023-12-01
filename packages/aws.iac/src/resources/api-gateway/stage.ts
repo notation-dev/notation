@@ -17,7 +17,7 @@ const createStageClass = createResourceFactory<
 >();
 
 export const Stage = createStageClass({
-  type: "aws/api-gateway/stage",
+  type: "aws/apiGateway/Stage",
 
   getPrimaryKey: (input, output) => ({
     ApiId: input.ApiId,

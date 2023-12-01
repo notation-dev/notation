@@ -1,6 +1,6 @@
 import { OptionalIfAllPropertiesOptional } from "../utils/types";
 
-type BaseSchema = {
+export type BaseSchema = {
   input: any;
   output: any;
   primaryKey: any;
@@ -46,6 +46,15 @@ export abstract class Resource<
     this.config = opts.config || ({} as config);
     this.dependencies = opts.dependencies || ({} as Dependencies);
     return this;
+  }
+
+  get meta() {
+    const parts = this.type.split("/");
+    return {
+      moduleName: `@notation/${parts[0]}.iac`,
+      serviceName: parts[1],
+      resourceName: parts[2],
+    };
   }
 
   abstract getInput(): Promise<config> | config;

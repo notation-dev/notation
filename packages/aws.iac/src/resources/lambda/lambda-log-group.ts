@@ -17,7 +17,7 @@ const createLambdaLogGroupClass = createResourceFactory<
 >();
 
 export const LambdaLogGroup = createLambdaLogGroupClass({
-  type: "aws/lambda/log-group",
+  type: "aws/lambda/LambdaLogGroup",
 
   getPrimaryKey: (input) => ({
     logGroupName: input.logGroupName,

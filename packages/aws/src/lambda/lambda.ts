@@ -1,12 +1,11 @@
-import * as aws from "@notation/aws.iac/resources";
+import * as aws from "@notation/aws.iac";
 import * as std from "@notation/std.iac";
-import { AwsResourceGroup } from "@notation/aws.iac/client";
 
 export const lambda = (config: { fileName: string; handler: string }) => {
-  const functionGroup = new AwsResourceGroup("aws/function", { config });
+  const functionGroup = new aws.AwsResourceGroup("aws/function", { config });
 
   const zipFile = functionGroup.add(
-    new std.Zip({
+    new std.fs.Zip({
       config: { filePath: config.fileName },
     }),
   );

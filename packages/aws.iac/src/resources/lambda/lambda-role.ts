@@ -12,7 +12,7 @@ export type LambdaIamRoleSchema = {
 const createLambdaIamRoleClass = createResourceFactory<LambdaIamRoleSchema>();
 
 export const LambdaIamRole = createLambdaIamRoleClass({
-  type: "aws/lambda/role",
+  type: "aws/lambda/LambdaIamRole",
 
   getPrimaryKey: (input) => ({
     RoleName: input.RoleName,

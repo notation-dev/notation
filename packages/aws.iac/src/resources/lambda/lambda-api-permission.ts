@@ -23,7 +23,7 @@ const createLambdaApiGatewayPermissionClass = createResourceFactory<
 
 export const LambdaApiGatewayPermission = createLambdaApiGatewayPermissionClass(
   {
-    type: "aws/lambda/permission/api-gateway",
+    type: "aws/lambda/LambdaApiGatewayPermission",
 
     getPrimaryKey: (input) => ({
       StatementId: input.StatementId,

@@ -110,12 +110,13 @@ export async function deployApp(
     let resource = graph.resources.find((r) => r.id === stateNode.id);
 
     if (!resource) {
-      // todo: make resource.types match up to import path
-      // aws/lambda/LambdaRole -> import(@notation/aws).lambda.LambdaRole
-      // add a test to provider that iterates over exports and tests type matches export
-      const Provider = await import(stateNode.provider);
-      resource = new Provider(stateNode) as Resource;
-      await deleteResource(resource, state);
+      const { moduleName, serviceName, resourceName } = stateNode.meta;
+      const provider = await import(moduleName);
+      const Resource = provider[serviceName][resourceName];
+      // todo: ensure the resource is hydrated correctly
+      resource = new Resource({ config: stateNode.config }) as Resource;
+      resource.id = stateNode.id;
+      await deleteResource(resource, state, stateNode);
     }
   }
 }

@@ -9,9 +9,10 @@ export async function createResource(resource: Resource, state: State) {
 
     await state.update(resource.id, {
       id: resource.id,
-      provider: resource.type,
+      meta: resource.meta,
       lastOperation: "create",
       lastOperationAt: new Date().toISOString(),
+      config: resource.config,
       input: input,
       output: resource.output,
     });

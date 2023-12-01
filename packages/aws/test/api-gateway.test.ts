@@ -1,6 +1,6 @@
 import { test, expect, beforeEach } from "bun:test";
 import { resetResourceGroupCounters } from "@notation/core";
-import { apiGateway } from "@notation/aws.iac/resources";
+import { apiGateway } from "@notation/aws.iac";
 import { api, route, router } from "src/api-gateway";
 import { lambda } from "src/lambda";
 

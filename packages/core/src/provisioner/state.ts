@@ -1,8 +1,10 @@
 import fsExtra from "fs-extra/esm";
+import { Resource } from "..";
 
 export type StateNode = {
   id: number;
-  provider: string;
+  meta: Resource["meta"];
+  config: any;
   input: any;
   output: any;
   lastOperation: "drift" | "create" | "update" | "delete";

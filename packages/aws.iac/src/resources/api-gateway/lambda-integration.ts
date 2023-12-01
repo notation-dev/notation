@@ -22,7 +22,7 @@ const createLambdaIntegrationClass = createResourceFactory<
 >();
 
 export const LambdaIntegration = createLambdaIntegrationClass({
-  type: "aws/api-gateway/integration/lambda",
+  type: "aws/apiGateway/LambdaIntegration",
 
   getPrimaryKey: (config, output) => ({
     ApiId: config.ApiId,

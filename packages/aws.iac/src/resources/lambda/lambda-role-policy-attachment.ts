@@ -18,7 +18,7 @@ const createLambdaRolePolicyAttachmentClass = createResourceFactory<
 
 export const LambdaRolePolicyAttachment = createLambdaRolePolicyAttachmentClass(
   {
-    type: "aws/lambda/policy-attachment",
+    type: "aws/lambda/LambdaRolePolicyAttachment",
 
     getPrimaryKey: (input) => ({
       RoleName: input.RoleName,

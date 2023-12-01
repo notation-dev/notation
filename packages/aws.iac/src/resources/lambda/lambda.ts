@@ -1,8 +1,8 @@
 import { createResourceFactory } from "@notation/core";
 import * as sdk from "@aws-sdk/client-lambda";
-import { LambdaIamRoleInstance, LambdaRolePolicyAttachmentInstance } from "./";
-import { ZipFileInstance } from "@notation/std.iac";
+import { fs } from "@notation/std.iac";
 import { lambdaClient } from "src/utils/aws-clients";
+import { LambdaIamRoleInstance, LambdaRolePolicyAttachmentInstance } from "./";
 
 export type LambdaSchema = {
   input: sdk.CreateFunctionCommandInput;
@@ -16,7 +16,7 @@ type LambdaImplicitDeps = {
 
 export type LambdaDeps = {
   role: LambdaIamRoleInstance;
-  zipFile: ZipFileInstance;
+  zipFile: fs.ZipFileInstance;
 };
 
 const createLambdaClass = createResourceFactory<
@@ -25,7 +25,7 @@ const createLambdaClass = createResourceFactory<
 >();
 
 export const Lambda = createLambdaClass({
-  type: "aws/lambda",
+  type: "aws/lambda/Lambda",
 
   retryOn: [
     "InvalidParameterValueException: The role defined for the function cannot be assumed by Lambda",

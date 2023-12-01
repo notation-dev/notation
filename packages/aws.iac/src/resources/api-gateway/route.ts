@@ -17,7 +17,7 @@ export type RouteDeps = {
 const createRouteClass = createResourceFactory<RouteSchema, RouteDeps>();
 
 export const Route = createRouteClass({
-  type: "aws/api-gateway/route",
+  type: "aws/apiGateway/Route",
 
   getPrimaryKey: (input, output) => ({
     ApiId: input.ApiId,

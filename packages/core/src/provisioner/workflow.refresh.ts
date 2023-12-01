@@ -22,8 +22,10 @@ export async function refreshState(
     let resource = graph.resources.find((r) => r.id === stateNode.id);
 
     if (!resource) {
-      const Provider = await import(stateNode.provider);
-      resource = new Provider(stateNode) as Resource;
+      const { moduleName, serviceName, resourceName } = stateNode.meta;
+      const provider = await import(moduleName);
+      const Resource = provider[serviceName][resourceName];
+      resource = new Resource(stateNode) as Resource;
 
       if (!dryRun) {
         await deleteResource(resource, state);
