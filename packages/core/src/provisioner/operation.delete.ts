@@ -31,10 +31,5 @@ export async function deleteResource(
     }
   }
 
-  await state.update(resource.id, {
-    lastOperation: "delete",
-    lastOperationAt: new Date().toISOString(),
-    input: stateNode.input,
-    output: null,
-  });
+  await state.delete(resource.id);
 }

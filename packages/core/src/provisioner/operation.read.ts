@@ -1,12 +1,11 @@
-import { Resource } from "src/orchestrator/resource";
-import { State } from "./state";
+import { Resource, BaseSchema } from "src/orchestrator/resource";
+import { State, StateNode } from "./state";
 
-export async function readResource(
-  resource: Resource,
+export async function readResource<T>(
+  resource: Resource<BaseSchema & { output: T }>,
   state: State,
-): Promise<any> {
-  const stateNode = state.get(resource.id);
-
+  stateNode: StateNode,
+): Promise<T | null> {
   if (!resource.read) {
     return stateNode.output;
   }

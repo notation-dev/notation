@@ -25,7 +25,10 @@ export async function getState() {
         ...patch,
       };
       await writeState(state);
-      state = await readState();
+    },
+    async delete(id: number) {
+      delete state[id];
+      await writeState(state);
     },
     values() {
       return Object.values(state);
