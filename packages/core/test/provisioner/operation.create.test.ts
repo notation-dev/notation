@@ -12,6 +12,7 @@ type Schema = {
 const stateMock = {
   get: mock((id: number) => Promise.resolve({}) as any as StateNode),
   update: mock((id: number, patch: any) => Promise.resolve()),
+  delete: mock((id: number) => Promise.resolve()),
   values: mock(() => [] as StateNode[]),
 } as State;
 
