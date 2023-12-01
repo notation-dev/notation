@@ -1,8 +1,11 @@
 import { Resource } from "src/orchestrator/resource";
-import { State } from "./state";
+import { State, StateNode } from "./state";
 
-export async function deleteResource(resource: Resource, state: State) {
-  const stateNode = state.get(resource.id);
+export async function deleteResource(
+  resource: Resource,
+  state: State,
+  stateNode: StateNode,
+) {
   const primaryKey = resource.getPrimaryKey(stateNode.input, stateNode.output);
   const message = `Destroying ${resource.type} ${resource.id}`;
 
@@ -20,7 +23,7 @@ export async function deleteResource(resource: Resource, state: State) {
       ["ENOENT"].find((srt) => err.message.includes(srt))
     ) {
       console.log(
-        `Resource ${resource.type} ${resource.id} does not exist. \n→ Marking as deleted in state.\n`,
+        `Resource ${resource.type} ${resource.id} has already been deleted. \n→ Removing from state.\n`,
       );
     } else {
       console.log(`[Error]: ${message}`);

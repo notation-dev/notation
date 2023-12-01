@@ -13,8 +13,13 @@ export async function destroyApp(entryPoint: string) {
 
   for (const resource of graph.resources.reverse()) {
     const stateNode = state.get(resource.id);
-    if (!stateNode) continue;
+    if (!stateNode) {
+      console.log(
+        `[Skip]: Resource ${resource.type} ${resource.id} not found in state.`,
+      );
+      continue;
+    }
     if (stateNode.lastOperation === "delete") continue;
-    await deleteResource(resource, state);
+    await deleteResource(resource, state, stateNode);
   }
 }

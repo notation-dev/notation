@@ -16,7 +16,7 @@ export type State = Awaited<ReturnType<typeof getState>>;
 export async function getState() {
   let state = await readState();
   return {
-    get(id: number) {
+    get(id: number): StateNode | void {
       return state[id];
     },
     async update(id: number, patch: Partial<StateNode>) {

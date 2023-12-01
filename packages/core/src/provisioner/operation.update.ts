@@ -1,9 +1,10 @@
 import { Resource } from "src/orchestrator/resource";
-import { State } from "./state";
+import { State, StateNode } from "./state";
 
 export async function updateResource(
   resource: Resource,
   state: State,
+  stateNode: StateNode,
   patch: any,
 ): Promise<void> {
   if (!resource.update) {
@@ -12,7 +13,6 @@ export async function updateResource(
     );
   }
 
-  const stateNode = state.get(resource.id);
   const pk = await resource.getPrimaryKey(stateNode.input, stateNode.output);
 
   resource.output = await resource.update({ ...pk, ...patch });
