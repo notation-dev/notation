@@ -24,7 +24,11 @@ export const Zip = createZipClass({
   },
 
   read: async (config) => {
-    return zip.read(config.filePath);
+    try {
+      return zip.read(config.filePath);
+    } catch {
+      return null;
+    }
   },
 
   update: async (config) => {

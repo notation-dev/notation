@@ -12,7 +12,7 @@ type Create<Schema extends BaseSchema> = (
 
 type Read<Schema extends BaseSchema> = (
   input: Schema["primaryKey"],
-) => Promise<Schema["output"]>;
+) => Promise<Schema["output"] | null>;
 
 type Update<Schema extends BaseSchema> = (
   input: Schema["primaryKey"] & Partial<Schema["input"]>,
