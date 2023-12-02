@@ -123,6 +123,9 @@ importers:
 
   packages/core:
     dependencies:
+      deep-object-diff:
+        specifier: ^1.1.9
+        version: 1.1.9
       fs-extra:
         specifier: ^11.1.1
         version: 11.1.1
@@ -187,9 +190,6 @@ importers:
       '@notation/aws':
         specifier: workspace:*
         version: link:../../packages/aws
-      '@notation/aws.iac':
-        specifier: workspace:*
-        version: link:../../packages/aws.iac
       '@notation/cli':
         specifier: workspace:*
         version: link:../../packages/cli
@@ -2322,6 +2322,10 @@ packages:
   /decamelize@1.2.0:
     resolution: {integrity: sha512-z2S+W9X73hAUUki+N+9Za2lBlun89zigOyGrsax+KUQ6wKW4ZoWpEYBkGhQjwAjjDCkWxhY0VKEhk8wzY7F5cA==}
     engines: {node: '>=0.10.0'}
+    dev: false
+
+  /deep-object-diff@1.1.9:
+    resolution: {integrity: sha512-Rn+RuwkmkDwCi2/oXOFS9Gsr5lJZu/yTGpK7wAaAIE75CC+LCGEZHpY6VQJa/RoJcrmaA/docWJZvYohlNkWPA==}
     dev: false
 
   /defaults@1.0.4:

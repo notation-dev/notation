@@ -4,17 +4,8 @@ import { readResource } from "./operation.read";
 import { updateResource } from "./operation.update";
 import { deleteResource } from "./operation.delete";
 import { getState } from "./state";
+import { diff } from "deep-object-diff";
 import { Resource } from "src/orchestrator/resource";
-import { omitBy, isEqual } from "lodash-es";
-
-const diff = <T extends Record<string, any>, U extends Record<string, any>>(
-  object: T,
-  base: U,
-) => {
-  return omitBy(object, (value, key) => {
-    isEqual(value, base[key]);
-  });
-};
 
 export async function deployApp(
   entryPoint: string,
@@ -52,10 +43,14 @@ export async function deployApp(
       continue;
     }
 
-    // 2. Has resource changed?
-    const inputsDiff = diff(await resource.getInput(), stateNode.input);
+    // 2. Assign existing state output to resource
+    resource.output = stateNode.output;
 
-    if (inputsDiff.changed) {
+    // 3. Has resource changed?
+    const inputsDiff = diff(await resource.getInput(), stateNode.input);
+    const inputsChanged = Object.keys(inputsDiff).length > 0;
+
+    if (inputsChanged) {
       if (!resource.update) {
         throw new Error(
           `Resource ${resource.type} ${resource.id} does not support update.`,
@@ -69,10 +64,10 @@ export async function deployApp(
       continue;
     }
 
-    // 3. Has resource been deleted?
-    const latestOutput = await readResource(resource, state, stateNode);
+    // 4. Has resource been deleted?
+    const latestOutput = await readResource(resource, stateNode);
 
-    if (!latestOutput) {
+    if (latestOutput === null) {
       console.log(
         `Resource ${resource.type} ${resource.id} has been deleted remotely.`,
       );
@@ -84,25 +79,19 @@ export async function deployApp(
       continue;
     }
 
-    // 4. Has unchanged resource drifted from its state?
+    // 5. Has deployed resource drifted from its state?
     const outputsDiff = diff(stateNode.output, latestOutput);
+    const outputsChanged = Object.keys(outputsDiff).length > 0;
 
-    if (outputsDiff.changed) {
+    if (outputsChanged) {
       console.log(`Drift detected for ${resource.type} ${resource.id}.`);
 
       await commit(`Reverting ${resource.type} ${resource.id}`, async () => {
-        await updateResource(resource, state, stateNode, resource.getInput());
+        await updateResource(resource, state, stateNode, outputsDiff);
       });
 
       continue;
     }
-
-    // 5. Fallback – assign state output to resource
-    // todo: figure out serialisation/deserialisation for array buffers
-    // probably best if resources define their own serialisation/deserialisation
-    // for zip, it can ignore the buffer in serialisation and read it from fs in deserialisation
-    // for everything else, just have a default method on the resource class
-    resource.output = stateNode.output;
   }
 
   // 6. Has resource been removed from the orchestration graph?
@@ -113,10 +102,13 @@ export async function deployApp(
       const { moduleName, serviceName, resourceName } = stateNode.meta;
       const provider = await import(moduleName);
       const Resource = provider[serviceName][resourceName];
-      // todo: ensure the resource is hydrated correctly
+      // todo: ensure the resource is hydrated with dependencies
       resource = new Resource({ config: stateNode.config }) as Resource;
       resource.id = stateNode.id;
-      await deleteResource(resource, state, stateNode);
+
+      await commit(`Deleting ${resource.type} ${resource.id}`, async () => {
+        deleteResource(resource!, state, stateNode);
+      });
     }
   }
 }
