@@ -37,7 +37,7 @@ export const Lambda = createLambdaClass({
 
   getIntrinsicInput: (dependencies) => ({
     PackageType: "Zip",
-    Code: { ZipFile: dependencies.zipFile.output.contents },
+    Code: { ZipFile: dependencies.zipFile.output.getArrayBuffer() },
     Role: dependencies.role.output.Arn,
   }),
 

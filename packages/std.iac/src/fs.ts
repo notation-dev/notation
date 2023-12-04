@@ -5,7 +5,7 @@ import * as fflate from "fflate";
 
 export type ZipSchema = {
   input: { filePath: string };
-  output: { contents: Buffer };
+  output: { getArrayBuffer: () => Buffer };
   primaryKey: { filePath: string };
 };
 
@@ -50,7 +50,7 @@ const zip = {
 
   read: async (filePath: string) => {
     const contents = await fs.readFile(zip.path(filePath));
-    return { contents };
+    return { getArrayBuffer: () => contents };
   },
 
   package: async (filePath: string) => {
