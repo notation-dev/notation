@@ -1,53 +1,125 @@
-import { createResourceFactory } from "@notation/core";
+import { resource } from "@notation/core";
+import * as z from "zod";
 import * as sdk from "@aws-sdk/client-apigatewayv2";
 import { apiGatewayClient } from "src/utils/aws-clients";
 import { ApiInstance, LambdaIntegrationInstance } from ".";
+import { AwsSchema } from "src/utils/types";
 
-export type RouteSchema = {
-  input: sdk.CreateRouteCommandInput;
-  output: sdk.GetRouteCommandOutput;
-  primaryKey: sdk.DeleteRouteCommandInput;
-};
+type RouteSdkSchema = AwsSchema<{
+  Key: sdk.DeleteRouteRequest;
+  CreateParams: sdk.CreateRouteRequest;
+  UpdateParams: sdk.UpdateRouteRequest;
+  ReadResult: sdk.GetRouteResult;
+}>;
 
-export type RouteDeps = {
+type Dependencies = {
   api: ApiInstance;
   lambdaIntegration: LambdaIntegrationInstance;
 };
 
-const createRouteClass = createResourceFactory<RouteSchema, RouteDeps>();
-
-export const Route = createRouteClass({
+const route = resource<RouteSdkSchema>({
   type: "aws/apiGateway/Route",
+});
 
-  getPrimaryKey: (input, output) => ({
-    ApiId: input.ApiId,
-    RouteId: output.RouteId,
-  }),
-
-  getIntrinsicInput: (dependencies) => ({
-    ApiId: dependencies.api.output.ApiId,
-    Target: `integrations/${dependencies.lambdaIntegration.output.IntegrationId}`,
-  }),
-
-  create: async (input) => {
-    const command = new sdk.CreateRouteCommand(input);
-    return apiGatewayClient.send(command);
+export const routeSchema = route.defineSchema({
+  RouteId: {
+    valueType: z.string(),
+    propertyType: "primaryKey",
+    presence: "required",
   },
-
-  read: async (input) => {
-    const command = new sdk.GetRouteCommand(input);
-    return apiGatewayClient.send(command);
+  ApiId: {
+    valueType: z.string(),
+    propertyType: "secondaryKey",
+    presence: "required",
   },
-
-  update: async (input) => {
-    const command = new sdk.UpdateRouteCommand(input);
-    return apiGatewayClient.send(command);
+  ApiKeyRequired: {
+    valueType: z.boolean(),
+    propertyType: "param",
+    presence: "optional",
   },
-
-  delete: async (input) => {
-    const command = new sdk.DeleteRouteCommand(input);
-    return apiGatewayClient.send(command);
+  ApiGatewayManaged: {
+    valueType: z.boolean(),
+    propertyType: "computed",
+    presence: "optional",
+  },
+  AuthorizationScopes: {
+    valueType: z.array(z.string()),
+    propertyType: "param",
+    presence: "optional",
+  },
+  AuthorizationType: {
+    valueType: z.enum(["NONE", "AWS_IAM", "CUSTOM", "JWT"]),
+    propertyType: "param",
+    presence: "optional",
+  },
+  AuthorizerId: {
+    valueType: z.string(),
+    propertyType: "param",
+    presence: "optional",
+  },
+  ModelSelectionExpression: {
+    valueType: z.string(),
+    propertyType: "param",
+    presence: "optional",
+  },
+  OperationName: {
+    valueType: z.string(),
+    propertyType: "param",
+    presence: "optional",
+  },
+  RequestModels: {
+    valueType: z.record(z.string()),
+    propertyType: "param",
+    presence: "optional",
+  },
+  RequestParameters: {
+    valueType: z.record(
+      z.object({
+        Required: z.boolean().optional(),
+      }),
+    ),
+    propertyType: "param",
+    presence: "optional",
+  },
+  RouteKey: {
+    valueType: z.string(),
+    propertyType: "param",
+    presence: "required",
+  },
+  RouteResponseSelectionExpression: {
+    valueType: z.string(),
+    propertyType: "param",
+    presence: "optional",
+  },
+  Target: {
+    valueType: z.string(),
+    propertyType: "param",
+    presence: "optional",
   },
 });
+
+export const Route = routeSchema
+  .implement({
+    create: async (params) => {
+      const command = new sdk.CreateRouteCommand(params);
+      await apiGatewayClient.send(command);
+    },
+    read: async (key) => {
+      const command = new sdk.GetRouteCommand(key);
+      const result = await apiGatewayClient.send(command);
+      return { ...key, ...result };
+    },
+    update: async (key, params) => {
+      const command = new sdk.UpdateRouteCommand({ ...key, ...params });
+      await apiGatewayClient.send(command);
+    },
+    delete: async (key) => {
+      const command = new sdk.DeleteRouteCommand(key);
+      await apiGatewayClient.send(command);
+    },
+  })
+  .withIntrinsicConfig<Dependencies>((dependencies) => ({
+    ApiId: dependencies.api.output.ApiId!,
+  }));
 
 export type RouteInstance = InstanceType<typeof Route>;

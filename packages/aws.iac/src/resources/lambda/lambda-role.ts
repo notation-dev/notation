@@ -1,52 +1,92 @@
-import { createResourceFactory } from "@notation/core";
+import { resource } from "@notation/core";
 import * as sdk from "@aws-sdk/client-iam";
+import * as z from "zod";
 import { iamClient } from "src/utils/aws-clients";
-import { lambdaTrustPolicy } from "src/templates/iam.policy";
+import { AwsSchema } from "src/utils/types";
+import { lambdaTrustPolicy } from "../../templates/iam.policy";
 
-export type LambdaIamRoleSchema = {
-  input: sdk.CreateRoleCommandInput;
-  output: NonNullable<sdk.GetRoleCommandOutput["Role"]>;
-  primaryKey: sdk.DeleteRoleCommandInput;
-};
+export type LambdaIamRoleSchema = AwsSchema<{
+  Key: sdk.DeleteRoleRequest;
+  CreateParams: sdk.CreateRoleRequest;
+  UpdateParams: sdk.UpdateRoleRequest;
+  ReadResult: sdk.GetRoleResponse;
+}>;
 
-const createLambdaIamRoleClass = createResourceFactory<LambdaIamRoleSchema>();
-
-export const LambdaIamRole = createLambdaIamRoleClass({
+const lambdaIamRole = resource<LambdaIamRoleSchema>({
   type: "aws/lambda/LambdaIamRole",
+});
 
-  getPrimaryKey: (input) => ({
-    RoleName: input.RoleName,
-  }),
-
-  getIntrinsicInput: () => ({
-    AssumeRolePolicyDocument: JSON.stringify(lambdaTrustPolicy),
-  }),
-
-  create: async (input) => {
-    const command = new sdk.CreateRoleCommand(input);
-    const result = await iamClient.send(command);
-    return result.Role!;
+const lambdaIamRoleSchema = lambdaIamRole.defineSchema({
+  RoleName: {
+    valueType: z.string(),
+    propertyType: "primaryKey",
+    presence: "required",
   },
-
-  read: async (pk) => {
-    const command = new sdk.GetRoleCommand(pk);
-    const result = await iamClient.send(command);
-    return result.Role!;
+  Role: {
+    valueType: z.object({
+      Path: z.string(),
+      RoleName: z.string(),
+      RoleId: z.string(),
+      Arn: z.string(),
+      CreateDate: z.date(),
+      AssumeRolePolicyDocument: z.string().optional(),
+      Description: z.string().optional(),
+      MaxSessionDuration: z.number().optional(),
+      PermissionsBoundary: z.object({
+        PermissionsBoundaryType: z
+          .enum(["PermissionsBoundaryPolicy"])
+          .optional(),
+      }),
+    }),
+    propertyType: "computed",
+    presence: "required",
   },
-
-  update: async (patch) => {
-    const command = new sdk.UpdateRoleCommand({
-      RoleName: patch.RoleName,
-      Description: patch.Description,
-      MaxSessionDuration: patch.MaxSessionDuration,
-    });
-    await iamClient.send(command);
+  AssumeRolePolicyDocument: {
+    valueType: z.string(),
+    propertyType: "param",
+    presence: "required",
   },
-
-  delete: async (pk) => {
-    const command = new sdk.DeleteRoleCommand(pk);
-    return iamClient.send(command);
+  Description: {
+    valueType: z.string(),
+    propertyType: "param",
+    presence: "optional",
+  },
+  MaxSessionDuration: {
+    valueType: z.number(),
+    propertyType: "param",
+    presence: "optional",
+  },
+  Path: {
+    valueType: z.string(),
+    propertyType: "param",
+    presence: "optional",
+  },
+  PermissionsBoundary: {
+    valueType: z.string(),
+    propertyType: "param",
+    presence: "optional",
   },
 });
 
-export type LambdaIamRoleInstance = InstanceType<typeof LambdaIamRole>;
+export const LambdaIamRole = lambdaIamRoleSchema
+  .implement({
+    create: async (params) => {
+      const command = new sdk.CreateRoleCommand(params);
+      await iamClient.send(command);
+    },
+    read: async (key) => {
+      const command = new sdk.GetRoleCommand(key);
+      return await iamClient.send(command);
+    },
+    update: async (key, params) => {
+      const command = new sdk.UpdateRoleCommand({ ...key, ...params });
+      await iamClient.send(command);
+    },
+    delete: async (key) => {
+      const command = new sdk.DeleteRoleCommand({ RoleName: key.RoleName });
+      await iamClient.send(command);
+    },
+  })
+  .withIntrinsicConfig(() => ({
+    AssumeRolePolicyDocument: JSON.stringify(lambdaTrustPolicy),
+  }));

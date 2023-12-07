@@ -19,6 +19,7 @@
     "@aws-sdk/client-cloudwatch-logs": "^3.441.0",
     "@notation/core": "workspace:*",
     "@notation/std.iac": "workspace:*",
-    "@types/aws-lambda": "^8.10.125"
+    "@types/aws-lambda": "^8.10.125",
+    "zod": "^3.22.4"
   }
 }

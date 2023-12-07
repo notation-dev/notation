@@ -1,57 +1,114 @@
-import { createResourceFactory } from "@notation/core";
+import { resource } from "@notation/core";
 import * as sdk from "@aws-sdk/client-lambda";
+import * as z from "zod";
 import { lambdaClient } from "src/utils/aws-clients";
-import { generateApiGatewaySourceArn } from "src/templates/arn";
+import { AwsSchema } from "src/utils/types";
 import { ApiInstance } from "src/resources/api-gateway/api";
-import { LambdaInstance } from "./lambda";
+import { LambdaFunctionInstance } from "./lambda";
 
-export type LambdaApiGatewayPermissionSchema = {
-  input: sdk.AddPermissionCommandInput;
-  output: sdk.AddPermissionCommandOutput;
-  primaryKey: sdk.RemovePermissionCommandInput;
-};
+export type LambdaApiGatewayV2PermissionSchema = AwsSchema<{
+  Key: sdk.RemovePermissionRequest;
+  CreateParams: sdk.AddPermissionRequest;
+}>;
 
-export type LambdaApiGatewayPermissionDependencies = {
-  lambda: LambdaInstance;
+export type LambdaApiGatewayV2PermissionDependencies = {
+  lambda: LambdaFunctionInstance;
   api: ApiInstance;
 };
 
-const createLambdaApiGatewayPermissionClass = createResourceFactory<
-  LambdaApiGatewayPermissionSchema,
-  LambdaApiGatewayPermissionDependencies
->();
+const lambdaApiGatewayv2Permission =
+  resource<LambdaApiGatewayV2PermissionSchema>({
+    type: "aws/lambda/LambdaApiGatewayv2Permission",
+  });
 
-export const LambdaApiGatewayPermission = createLambdaApiGatewayPermissionClass(
-  {
-    type: "aws/lambda/LambdaApiGatewayPermission",
+const lambdaApiGatewayv2PermissionSchema =
+  lambdaApiGatewayv2Permission.defineSchema({
+    FunctionName: {
+      valueType: z.string(),
+      propertyType: "primaryKey",
+      presence: "required",
+    },
+    StatementId: {
+      valueType: z.string(),
+      propertyType: "secondaryKey",
+      presence: "required",
+    },
+    Qualifier: {
+      valueType: z.string(),
+      propertyType: "secondaryKey",
+      presence: "optional",
+    },
+    RevisionId: {
+      valueType: z.string(),
+      propertyType: "secondaryKey",
+      presence: "optional",
+    },
+    FunctionUrlAuthType: {
+      valueType: z.enum(["NONE", "AWS_IAM"]),
+      propertyType: "param",
+      presence: "optional",
+    },
+    InvocationType: {
+      valueType: z.enum(["Event", "RequestResponse", "DryRun"]),
+      propertyType: "param",
+      presence: "optional",
+    },
+    Policy: {
+      valueType: z.string(),
+      propertyType: "computed",
+      presence: "optional",
+    },
+    PrincipalOrgID: {
+      valueType: z.string(),
+      propertyType: "param",
+      presence: "optional",
+    },
+    Action: {
+      valueType: z.string(),
+      propertyType: "param",
+      presence: "required",
+      defaultValue: "lambda:InvokeFunction",
+    },
+    Principal: {
+      valueType: z.string(),
+      propertyType: "param",
+      presence: "required",
+      defaultValue: "apigateway.amazonaws.com",
+    },
+    SourceArn: {
+      valueType: z.string(),
+      propertyType: "param",
+      presence: "optional",
+    },
+    EventSourceToken: {
+      valueType: z.string(),
+      propertyType: "param",
+      presence: "optional",
+    },
+    SourceAccount: {
+      valueType: z.string(),
+      propertyType: "param",
+      presence: "optional",
+    },
+  });
 
-    getPrimaryKey: (input) => ({
-      StatementId: input.StatementId,
-      FunctionName: input.FunctionName,
-    }),
-
-    getIntrinsicInput: async (dependencies) => ({
-      StatementId: "AllowExecutionFromAPIGateway",
-      Principal: "apigateway.amazonaws.com",
+export const LambdaApiGatewayv2Permission = lambdaApiGatewayv2PermissionSchema
+  .implement({
+    create: async (params) => {
+      const command = new sdk.AddPermissionCommand(params);
+      await lambdaClient.send(command);
+    },
+    delete: async (key) => {
+      const command = new sdk.RemovePermissionCommand(key);
+      await lambdaClient.send(command);
+    },
+  })
+  .withIntrinsicConfig<LambdaApiGatewayV2PermissionDependencies>(
+    (dependencies) => ({
       FunctionName: dependencies.lambda.output.FunctionName,
-      Action: "lambda:InvokeFunction",
-      SourceArn: await generateApiGatewaySourceArn(
-        dependencies.api.output.ApiId!,
-      ),
     }),
+  );
 
-    create: async (input) => {
-      const command = new sdk.AddPermissionCommand(input);
-      return lambdaClient.send(command);
-    },
-
-    delete: async (pk) => {
-      const command = new sdk.RemovePermissionCommand(pk);
-      return lambdaClient.send(command);
-    },
-  },
-);
-
-export type LambdaApiGatewayPermissionInstance = InstanceType<
-  typeof LambdaApiGatewayPermission
+export type LambdaApiGatewayv2PermissionInstance = InstanceType<
+  typeof LambdaApiGatewayv2Permission
 >;
