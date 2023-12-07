@@ -28,7 +28,7 @@ export async function refreshState(
       resource = new Resource(stateNode) as Resource;
 
       if (!dryRun) {
-        await deleteResource(resource, state);
+        await deleteResource(resource, state, stateNode);
       }
 
       log(`Deleted ${resource.type} ${resource.id}`);

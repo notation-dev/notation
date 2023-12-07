@@ -5,7 +5,14 @@ export async function createResource(resource: Resource, state: State) {
   let backoff = 1000;
   try {
     const input = await resource.getInput();
-    resource.output = await resource.create(input);
+    await resource.create(input);
+
+    const output = input;
+
+    if (resource.read) {
+      const readResult = await resource.read(input);
+      Object.assign(output, readResult);
+    }
 
     await state.update(resource.id, {
       id: resource.id,
@@ -19,7 +26,10 @@ export async function createResource(resource: Resource, state: State) {
   } catch (err: any) {
     // todo: set a hold interval in the resource that takes a moment to propagate e.g. iam role
     // when creating, check if any dependencies have a hold, and wait until lastUpdated + holdInterval
-    if (resource.retryOn && err.toString().includes(resource.retryOn)) {
+    if (
+      resource.retryLaterOnError &&
+      err.toString().includes(resource.retryLaterOnError)
+    ) {
       console.log(`[Retry]: Creating ${resource.type} ${resource.id}`);
       await new Promise((resolve) => setTimeout(resolve, backoff));
       backoff *= 1.5;

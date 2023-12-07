@@ -6,11 +6,11 @@ export async function deleteResource(
   state: State,
   stateNode: StateNode,
 ) {
-  const primaryKey = resource.getPrimaryKey(stateNode.input, stateNode.output);
+  const compoundKey = resource.getCompoundKey();
   const message = `Destroying ${resource.type} ${resource.id}`;
 
   try {
-    await resource.delete(primaryKey);
+    await resource.delete(compoundKey);
     console.log(`[Success]: ${message}`);
   } catch (err: any) {
     // @todo: declare these in the resource provider

@@ -1,19 +1,19 @@
-import { Resource, BaseSchema } from "src/orchestrator/resource";
+import { Resource } from "src/orchestrator/resource";
 import { State, StateNode } from "./state";
 
-export async function readResource<T>(
-  resource: Resource<BaseSchema & { output: T }>,
+export async function readResource(
+  resource: Resource,
   state: State,
   stateNode: StateNode,
-): Promise<T | null> {
+) {
   if (!resource.read) {
     return stateNode.output;
   }
 
-  const pk = await resource.getPrimaryKey(stateNode.input, stateNode.output);
+  const key = await resource.getCompoundKey();
 
   try {
-    return await resource.read(pk);
+    return resource.read(key);
   } catch (err: any) {
     // todo: normalise not found errors within resource class
     // add logic for interpreting error in resource

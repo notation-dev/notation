@@ -4,7 +4,6 @@ import { State, StateNode } from "./state";
 export async function updateResource(
   resource: Resource,
   state: State,
-  stateNode: StateNode,
   patch: any,
 ): Promise<void> {
   if (!resource.update) {
@@ -13,9 +12,12 @@ export async function updateResource(
     );
   }
 
-  const pk = await resource.getPrimaryKey(stateNode.input, stateNode.output);
+  const key = await resource.getCompoundKey();
+  await resource.update(key, patch);
 
-  resource.output = await resource.update({ ...pk, ...patch });
+  if (resource.read) {
+    resource.output = await resource.read(key);
+  }
 
   await state.update(resource.id, {
     lastOperation: "update",

@@ -58,14 +58,14 @@ export async function deployApp(
       }
 
       await commit(`Updating ${resource.type} ${resource.id}`, async () => {
-        await updateResource(resource, state, stateNode, inputsDiff);
+        await updateResource(resource, state, inputsDiff);
       });
 
       continue;
     }
 
     // 4. Has resource been deleted?
-    const latestOutput = await readResource(resource, stateNode);
+    const latestOutput = await readResource(resource, state, stateNode);
 
     if (latestOutput === null) {
       console.log(
@@ -87,7 +87,7 @@ export async function deployApp(
       console.log(`Drift detected for ${resource.type} ${resource.id}.`);
 
       await commit(`Reverting ${resource.type} ${resource.id}`, async () => {
-        await updateResource(resource, state, stateNode, outputsDiff);
+        await updateResource(resource, state, outputsDiff);
       });
 
       continue;

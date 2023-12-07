@@ -1,50 +1,58 @@
-import { OptionalIfAllPropertiesOptional } from "../utils/types";
+import {
+  Schema,
+  SchemaItem,
+  SchemaFromApi,
+  Config,
+  Params,
+  Result,
+  Output,
+  CompoundKey,
+} from "./resource.schema";
+export type { Schema, SchemaItem };
 
-export type BaseSchema = {
-  input: any;
-  output: any;
-  primaryKey: any;
+type ErrorMatcher = {
+  name: string;
+  message?: string;
 };
 
-type Create<Schema extends BaseSchema> = (
-  input: Schema["input"],
-) => Promise<Schema["output"]>;
+type ResultCondition<T, K extends keyof T> = {
+  key: K;
+  reason: string;
+  value?: T[K];
+};
 
-type Read<Schema extends BaseSchema> = (
-  input: Schema["primaryKey"],
-) => Promise<Schema["output"] | null>;
+type ResultConditions<T> = {
+  [K in keyof T]?: ResultCondition<T, K>;
+}[keyof T][];
 
-type Update<Schema extends BaseSchema> = (
-  input: Schema["primaryKey"] & Partial<Schema["input"]>,
-) => Promise<Schema["output"] | void>;
+type Fallback<T, U> = T extends undefined ? U : T;
 
-type Delete<Schema extends BaseSchema> = (input: Schema["primaryKey"]) => void;
-
-type GetPrimaryKey<Schema extends BaseSchema> = (
-  input: Schema["input"],
-  output: Schema["output"],
-) => Schema["primaryKey"];
-
-type ResourceOpts<C, D> = OptionalIfAllPropertiesOptional<"config", C> &
-  OptionalIfAllPropertiesOptional<"dependencies", D>;
-
-export abstract class Resource<
-  Schema extends BaseSchema = BaseSchema,
-  Dependencies extends Record<string, Resource> = {},
-  config = Schema["input"],
-> {
+export abstract class Resource<S extends Schema = Schema> {
+  config: Config<S>;
+  dependencies: Record<string, Resource>;
   abstract type: string;
-  abstract retryOn: string[] | undefined;
+  abstract schema: S;
+  abstract id: number;
+  abstract groupId: number;
+  abstract output: Output<S>;
+  abstract getIntrinsicConfig: (deps: any) => Partial<Config<S>>;
+  abstract create: (params: Params<S>) => Promise<void>;
+  abstract read?: (key: CompoundKey<S>) => Promise<Result<S>>;
+  abstract update?: (key: CompoundKey<S>, params: Params<S>) => Promise<void>;
+  abstract delete: (primaryKey: CompoundKey<S>) => Promise<void>;
+  abstract retryReadOnCondition?: ResultConditions<Result<S>>;
+  abstract failOnError?: (ErrorMatcher & { reason: string })[];
+  abstract notFoundOnError?: ErrorMatcher[];
+  abstract retryLaterOnError?: ErrorMatcher[];
+  abstract getParams(): Promise<Params<S>> | Params<S>;
+  abstract getCompoundKey(): Promise<CompoundKey<S>> | CompoundKey<S>;
 
-  config: config;
-  dependencies: Dependencies;
-  id: number = -1;
-  groupId: number = -1;
-  output: Schema["output"] = null as any as Schema["output"];
-
-  constructor(opts: ResourceOpts<config, Dependencies>) {
-    this.config = opts.config || ({} as config);
-    this.dependencies = opts.dependencies || ({} as Dependencies);
+  constructor(resourceOpts: {
+    config: Config<S>;
+    dependencies?: Record<string, Resource>;
+  }) {
+    this.config = resourceOpts.config;
+    this.dependencies = resourceOpts.dependencies || {};
     return this;
   }
 
@@ -57,71 +65,114 @@ export abstract class Resource<
     };
   }
 
-  abstract getInput(): Promise<config> | config;
-  abstract getPrimaryKey: GetPrimaryKey<Schema>;
-
-  abstract create: Create<Schema>;
-  abstract read: Read<Schema> | void;
-  abstract update: Update<Schema> | void;
-  abstract delete: Delete<Schema>;
-}
-
-export function createResourceFactory<
-  Schema extends BaseSchema = BaseSchema,
-  Dependencies extends Record<string, Resource> = {},
->() {
-  type DerivedResourceConstructor<Input> = new (
-    opts: ResourceOpts<Input, Dependencies>,
-  ) => Resource<Schema, Dependencies, Input>;
-
-  function factory<
-    IntrinsicInput extends Partial<Schema["input"]> = Partial<Schema["input"]>,
-    Input = Omit<Schema["input"], keyof IntrinsicInput>,
-  >(opts: {
-    type: string;
-    retryOn?: string[];
-    create: Create<Schema>;
-    read?: Read<Schema>;
-    update?: Update<Schema>;
-    delete: Delete<Schema>;
-    getPrimaryKey: GetPrimaryKey<Schema>;
-    getIntrinsicInput: (
-      dependencies: Dependencies,
-    ) => Promise<IntrinsicInput> | IntrinsicInput;
-  }): DerivedResourceConstructor<Input>;
-
-  // No intrinsic input
-  function factory(opts: {
-    type: string;
-    retryOn?: string[];
-    create: Create<Schema>;
-    read?: Read<Schema>;
-    update?: Update<Schema>;
-    delete: Delete<Schema>;
-    getPrimaryKey: GetPrimaryKey<Schema>;
-  }): DerivedResourceConstructor<Schema["input"]>;
-
-  function factory(opts: any) {
-    return class extends Resource<Schema, Dependencies> {
-      type = opts.type;
-      retryOn = opts.retryOn;
-      getPrimaryKey = opts.getPrimaryKey;
-      create = opts.create;
-      read = opts.read;
-      update = opts.update;
-      delete = opts.delete;
-
-      async getInput() {
-        if ("getIntrinsicInput" in opts) {
-          return {
-            ...this.config,
-            ...(await opts.getIntrinsicInput(this.dependencies)),
-          } as Schema["input"];
-        }
-        return this.config as Schema["input"];
-      }
+  async getInput() {
+    const params = await this.getParams();
+    const compoundKey = this.getCompoundKey();
+    return {
+      ...params,
+      ...compoundKey,
     };
   }
-
-  return factory;
 }
+
+export function resource<
+  ApiSchema extends {
+    Key: any;
+    CreateParams: any;
+    UpdateParams: any;
+    ReadResult: any;
+  },
+>(meta: { type: string }) {
+  return {
+    defineSchema<
+      S extends SchemaFromApi<
+        ApiSchema["Key"],
+        ApiSchema["CreateParams"],
+        Fallback<ApiSchema["UpdateParams"], ApiSchema["CreateParams"]>,
+        Fallback<ApiSchema["ReadResult"], {}>
+      >,
+    >(schema: S) {
+      return {
+        implement: (opts: {
+          create: (params: Params<S>) => Promise<void>;
+          read?: (key: CompoundKey<S>) => Promise<Result<S>>;
+          update?: (key: CompoundKey<S>, params: Params<S>) => Promise<void>;
+          delete: (primaryKey: CompoundKey<S>) => Promise<void>;
+          retryReadOnCondition?: ResultConditions<Result<S>>;
+          failOnError?: (ErrorMatcher & { reason: string })[];
+          notFoundOnError?: ErrorMatcher[];
+          retryLaterOnError?: ErrorMatcher[];
+        }) => {
+          return class ImplementedResource extends Resource<S> {
+            static type = meta.type;
+            type = meta.type;
+            schema = schema;
+            id = -1;
+            groupId = -1;
+            output = outputProxy as any as Output<S>;
+            dependencies = {};
+            create = opts.create;
+            read = opts.read;
+            update = opts.update;
+            delete = opts.delete;
+            getIntrinsicConfig = (deps: any) => ({});
+            retryReadOnCondition = opts.retryReadOnCondition;
+            failOnError = opts.failOnError;
+            notFoundOnError = opts.notFoundOnError;
+            retryLaterOnError = opts.retryLaterOnError;
+
+            async getParams() {
+              if ("getIntrinsicInput" in opts) {
+                return {
+                  ...this.config,
+                  ...(await this.getIntrinsicConfig(this.dependencies)),
+                } as Params<S>;
+              }
+              return this.config as Params<S>;
+            }
+
+            getCompoundKey() {
+              const key = {} as CompoundKey<S>;
+              for (const [k, v] of Object.entries(schema)) {
+                if (["primaryKey", "secondaryKey"].includes(v.propertyType)) {
+                  // @ts-ignore
+                  key[k] = this.output[k];
+                }
+              }
+              return key;
+            }
+
+            // todo make this instance method, but add static extends method
+            static withIntrinsicConfig<
+              Dependencies extends Record<string, Resource> = {},
+            >(
+              // todo: infer intrinsic props and omit from schema
+              getIntrinsicConfig: <I>(deps: Dependencies) => Partial<Config<S>>,
+            ) {
+              return class DependencyAwareResource extends ImplementedResource {
+                constructor(resourceOpts: {
+                  config: Config<S>;
+                  dependencies: Dependencies;
+                }) {
+                  super(resourceOpts);
+                  this.getIntrinsicConfig = getIntrinsicConfig;
+                }
+              };
+            }
+          };
+        },
+      };
+    },
+  };
+}
+
+const outputProxy = new Proxy(
+  {},
+  {
+    get(target, prop) {
+      throw new Error(
+        `Resource outputs are not available at compile time. Accessed output property "${prop.toString()}.`,
+      );
+    },
+  },
+);
