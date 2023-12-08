@@ -5,11 +5,10 @@ export type Schema = Record<string, SchemaItem<any>>;
 export type SchemaItem<T> = {
   valueType: z.ZodType<T>;
   presence: "required" | "optional";
+  sensitive?: true;
 } & (
   | {
       propertyType: "param";
-      presence: "required" | "optional";
-      sensitive?: true;
       immutable?: true;
       defaultValue?: T;
       primaryKey?: true;
@@ -17,14 +16,10 @@ export type SchemaItem<T> = {
     }
   | {
       propertyType: "computed";
-      presence: "required" | "optional";
-      sensitive?: true;
       primaryKey?: true;
     }
   | {
-      propertyType: "derived" | "computed";
-      presence: "required" | "optional";
-      sensitive?: true;
+      propertyType: "derived";
     }
 );
 
@@ -66,6 +61,7 @@ export type SchemaFromApi<
   ApiUpdateParams,
   ApiReadResult,
 > = {
+  // todo: infer propertyType too
   [K in keyof ApiCompoundKey]: SchemaItem<ApiCompoundKey[K]> &
     ({ primaryKey: true } | { secondaryKey: true });
 } & {

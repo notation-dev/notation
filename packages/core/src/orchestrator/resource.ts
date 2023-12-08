@@ -55,7 +55,9 @@ export interface BaseResource {
   notFoundOnError?: ErrorMatcher[];
   retryLaterOnError?: ErrorMatcher[];
   getCompoundKey(): Promise<any> | any;
-  setIntrinsicConfig?: (deps: any) => Record<string, any>;
+  setIntrinsicConfig?: (
+    deps: any,
+  ) => Record<string, any> | Promise<Record<string, any>>;
   getInput(): Promise<Params<Schema>> | Params<Schema>;
 }
 
@@ -81,7 +83,9 @@ export abstract class Resource<
   abstract notFoundOnError?: ErrorMatcher[];
   abstract retryLaterOnError?: ErrorMatcher[];
   abstract getCompoundKey(): Promise<CompoundKey<S>> | CompoundKey<S>;
-  abstract setIntrinsicConfig(deps: D): Record<string, any>;
+  abstract setIntrinsicConfig(
+    deps: D,
+  ): Record<string, any> | Promise<Record<string, any>>;
 
   constructor(opts: ResourceOpts<C, D>) {
     this.config = opts.config || ({} as C);
@@ -147,7 +151,7 @@ export function resource<
           failOnError?: (ErrorMatcher & { reason: string })[];
           notFoundOnError?: ErrorMatcher[];
           retryLaterOnError?: ErrorMatcher[];
-          setIntrinsicConfig?: () => IntrinsicConfig;
+          setIntrinsicConfig?: () => IntrinsicConfig | Promise<IntrinsicConfig>;
         }) => {
           return class ImplementedResource<
             D extends Record<string, BaseResource> = {},
@@ -172,9 +176,9 @@ export function resource<
             notFoundOnError = opts.notFoundOnError;
             retryLaterOnError = opts.retryLaterOnError;
 
-            setIntrinsicConfig() {
+            async setIntrinsicConfig() {
               if (!opts.setIntrinsicConfig) return {};
-              return opts.setIntrinsicConfig();
+              return await opts.setIntrinsicConfig();
             }
 
             getCompoundKey() {
@@ -193,17 +197,20 @@ export function resource<
             >() {
               return {
                 setIntrinsicConfig<IntrinsicConfig extends Partial<Params<S>>>(
-                  setIntrinsicConfig: (deps: Dependencies) => IntrinsicConfig,
+                  setIntrinsicConfig: (
+                    deps: Dependencies,
+                  ) => IntrinsicConfig | Promise<IntrinsicConfig>,
                 ) {
                   return class DependencyAwareResource extends ImplementedResource<
                     Dependencies,
                     Omit<Params<S>, keyof IntrinsicConfig>
                   > {
-                    setIntrinsicConfig() {
-                      const superIntrinsicConfig = super.setIntrinsicConfig();
+                    async setIntrinsicConfig() {
+                      const superIntrinsicConfig =
+                        await super.setIntrinsicConfig();
                       return {
                         ...superIntrinsicConfig,
-                        ...setIntrinsicConfig(this.dependencies),
+                        ...(await setIntrinsicConfig(this.dependencies)),
                       };
                     }
                   };
