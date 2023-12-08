@@ -25,6 +25,7 @@ const stageSchema = stage.defineSchema({
     valueType: z.string(),
     propertyType: "primaryKey",
     presence: "required",
+    userManaged: true,
   },
   ApiId: {
     valueType: z.string(),

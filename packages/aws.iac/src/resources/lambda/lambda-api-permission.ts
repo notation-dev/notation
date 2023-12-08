@@ -27,6 +27,7 @@ const lambdaApiGatewayV2PermissionSchema =
       valueType: z.string(),
       propertyType: "primaryKey",
       presence: "required",
+      userManaged: true,
     },
     StatementId: {
       valueType: z.string(),

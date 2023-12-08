@@ -19,10 +19,11 @@ const lambdaRolePolicyAttachmentSchema =
       valueType: z.string(),
       propertyType: "primaryKey",
       presence: "required",
+      userManaged: true,
     },
     PolicyArn: {
       valueType: z.string(),
-      propertyType: "primaryKey",
+      propertyType: "secondaryKey",
       presence: "required",
     },
   });

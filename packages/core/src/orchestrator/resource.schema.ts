@@ -42,7 +42,8 @@ export type CompoundKey<S extends Schema> = MapSchema<
  */
 export type Params<S extends Schema> = MapSchema<
   S,
-  { propertyType: "computed" | "derived" }
+  | { propertyType: "computed" | "derived" }
+  | { propertyType: "primaryKey"; userManaged?: void }
 >;
 
 /**

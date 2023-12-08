@@ -21,6 +21,7 @@ const lambdaIamRoleSchema = lambdaIamRole.defineSchema({
     valueType: z.string(),
     propertyType: "primaryKey",
     presence: "required",
+    userManaged: true,
   },
   Role: {
     valueType: z.object({

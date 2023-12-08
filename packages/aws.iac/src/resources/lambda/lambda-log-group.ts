@@ -21,6 +21,7 @@ const lambdaLogGroupSchema = lambdaLogGroup.defineSchema({
     valueType: z.string(),
     propertyType: "primaryKey",
     presence: "required",
+    userManaged: true,
   },
   kmsKeyId: {
     valueType: z.string(),
