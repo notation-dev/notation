@@ -57,14 +57,15 @@ export const LambdaIamRole = lambdaIamRoleSchema.defineOperations({
   },
   read: async (key) => {
     const command = new sdk.GetRoleCommand(key);
-    return await iamClient.send(command);
+    const { Role } = await iamClient.send(command);
+    return Role!;
   },
   update: async (key, params) => {
     const command = new sdk.UpdateRoleCommand({ ...key, ...params });
     await iamClient.send(command);
   },
   delete: async (key) => {
-    const command = new sdk.DeleteRoleCommand({ RoleName: key.RoleName });
+    const command = new sdk.DeleteRoleCommand(key);
     await iamClient.send(command);
   },
   setIntrinsicConfig: () => ({
