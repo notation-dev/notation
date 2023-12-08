@@ -1,7 +1,7 @@
-import { Resource } from "src/orchestrator/resource";
+import { BaseResource } from "src/orchestrator/resource";
 import { State } from "./state";
 
-export async function createResource(resource: Resource, state: State) {
+export async function createResource(resource: BaseResource, state: State) {
   let backoff = 1000;
   try {
     const input = await resource.getInput();

@@ -16,13 +16,13 @@ export type LambdaApiGatewayV2PermissionDependencies = {
   api: ApiInstance;
 };
 
-const lambdaApiGatewayv2Permission =
+const lambdaApiGatewayV2Permission =
   resource<LambdaApiGatewayV2PermissionSchema>({
     type: "aws/lambda/LambdaApiGatewayv2Permission",
   });
 
-const lambdaApiGatewayv2PermissionSchema =
-  lambdaApiGatewayv2Permission.defineSchema({
+const lambdaApiGatewayV2PermissionSchema =
+  lambdaApiGatewayV2Permission.defineSchema({
     FunctionName: {
       valueType: z.string(),
       propertyType: "primaryKey",
@@ -92,8 +92,8 @@ const lambdaApiGatewayv2PermissionSchema =
     },
   });
 
-export const LambdaApiGatewayv2Permission = lambdaApiGatewayv2PermissionSchema
-  .implement({
+export const LambdaApiGatewayV2Permission = lambdaApiGatewayV2PermissionSchema
+  .defineOperations({
     create: async (params) => {
       const command = new sdk.AddPermissionCommand(params);
       await lambdaClient.send(command);
@@ -103,12 +103,11 @@ export const LambdaApiGatewayv2Permission = lambdaApiGatewayv2PermissionSchema
       await lambdaClient.send(command);
     },
   })
-  .withIntrinsicConfig<LambdaApiGatewayV2PermissionDependencies>(
-    (dependencies) => ({
-      FunctionName: dependencies.lambda.output.FunctionName,
-    }),
-  );
+  .requireDependencies<LambdaApiGatewayV2PermissionDependencies>()
+  .setIntrinsicConfig((deps) => ({
+    FunctionName: deps.lambda.output.FunctionName,
+  }));
 
-export type LambdaApiGatewayv2PermissionInstance = InstanceType<
-  typeof LambdaApiGatewayv2Permission
+export type LambdaApiGatewayV2PermissionInstance = InstanceType<
+  typeof LambdaApiGatewayV2Permission
 >;

@@ -1,9 +1,8 @@
-import { Resource } from "src/orchestrator/resource";
+import { BaseResource } from "src/orchestrator/resource";
 import { State, StateNode } from "./state";
 
 export async function readResource(
-  resource: Resource,
-  state: State,
+  resource: BaseResource,
   stateNode: StateNode,
 ) {
   if (!resource.read) {

@@ -68,25 +68,24 @@ const lambdaIamRoleSchema = lambdaIamRole.defineSchema({
   },
 });
 
-export const LambdaIamRole = lambdaIamRoleSchema
-  .implement({
-    create: async (params) => {
-      const command = new sdk.CreateRoleCommand(params);
-      await iamClient.send(command);
-    },
-    read: async (key) => {
-      const command = new sdk.GetRoleCommand(key);
-      return await iamClient.send(command);
-    },
-    update: async (key, params) => {
-      const command = new sdk.UpdateRoleCommand({ ...key, ...params });
-      await iamClient.send(command);
-    },
-    delete: async (key) => {
-      const command = new sdk.DeleteRoleCommand({ RoleName: key.RoleName });
-      await iamClient.send(command);
-    },
-  })
-  .withIntrinsicConfig(() => ({
+export const LambdaIamRole = lambdaIamRoleSchema.defineOperations({
+  create: async (params) => {
+    const command = new sdk.CreateRoleCommand(params);
+    await iamClient.send(command);
+  },
+  read: async (key) => {
+    const command = new sdk.GetRoleCommand(key);
+    return await iamClient.send(command);
+  },
+  update: async (key, params) => {
+    const command = new sdk.UpdateRoleCommand({ ...key, ...params });
+    await iamClient.send(command);
+  },
+  delete: async (key) => {
+    const command = new sdk.DeleteRoleCommand({ RoleName: key.RoleName });
+    await iamClient.send(command);
+  },
+  setIntrinsicConfig: () => ({
     AssumeRolePolicyDocument: JSON.stringify(lambdaTrustPolicy),
-  }));
+  }),
+});

@@ -10,7 +10,7 @@ export type LambdaLogGroupSchema = AwsSchema<{
   CreateParams: sdk.CreateLogGroupRequest & sdk.PutRetentionPolicyRequest;
 }>;
 
-export type LambdaLogGroupDeps = { lambda: LambdaFunctionInstance };
+export type LambdaLogGroupDependencies = { lambda: LambdaFunctionInstance };
 
 const lambdaLogGroup = resource<LambdaLogGroupSchema>({
   type: "aws/lambda/LambdaLogGroup",
@@ -40,7 +40,7 @@ const lambdaLogGroupSchema = lambdaLogGroup.defineSchema({
 });
 
 export const LambdaLogGroup = lambdaLogGroupSchema
-  .implement({
+  .defineOperations({
     create: async (params) => {
       const command = new sdk.CreateLogGroupCommand(params);
       await cloudWatchLogsClient.send(command);
@@ -59,8 +59,9 @@ export const LambdaLogGroup = lambdaLogGroupSchema
       await cloudWatchLogsClient.send(command);
     },
   })
-  .withIntrinsicConfig<LambdaLogGroupDeps>((dependencies) => ({
-    logGroupName: `/aws/lambda/${dependencies.lambda.output.FunctionName}`,
+  .requireDependencies<LambdaLogGroupDependencies>()
+  .setIntrinsicConfig((deps) => ({
+    logGroupName: `/aws/lambda/${deps.lambda.output.FunctionName}`,
   }));
 
 export type LambdaLogGroupInstance = InstanceType<typeof LambdaLogGroup>;

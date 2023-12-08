@@ -5,7 +5,7 @@ import { updateResource } from "./operation.update";
 import { deleteResource } from "./operation.delete";
 import { getState } from "./state";
 import { diff } from "deep-object-diff";
-import { Resource } from "src/orchestrator/resource";
+import { BaseResource } from "src/orchestrator/resource";
 
 export async function deployApp(
   entryPoint: string,
@@ -65,7 +65,7 @@ export async function deployApp(
     }
 
     // 4. Has resource been deleted?
-    const latestOutput = await readResource(resource, state, stateNode);
+    const latestOutput = await readResource(resource, stateNode);
 
     if (latestOutput === null) {
       console.log(
@@ -103,11 +103,11 @@ export async function deployApp(
       const provider = await import(moduleName);
       const Resource = provider[serviceName][resourceName];
       // todo: ensure the resource is hydrated with dependencies
-      resource = new Resource({ config: stateNode.config }) as Resource;
+      resource = new Resource({ config: stateNode.config }) as BaseResource;
       resource.id = stateNode.id;
 
       await commit(`Deleting ${resource.type} ${resource.id}`, async () => {
-        deleteResource(resource!, state, stateNode);
+        deleteResource(resource!, state);
       });
     }
   }

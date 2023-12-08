@@ -132,7 +132,7 @@ const integrationSchema = integration.defineSchema({
 });
 
 export const LambdaIntegration = integrationSchema
-  .implement({
+  .defineOperations({
     create: async (params) => {
       const command = new sdk.CreateIntegrationCommand(params);
       await apiGatewayClient.send(command);
@@ -150,13 +150,12 @@ export const LambdaIntegration = integrationSchema
       await apiGatewayClient.send(command);
     },
   })
-  .withIntrinsicConfig<LambdaIntegrationDependencies>((dependencies) => ({
-    ApiId: dependencies.api.output.ApiId,
+  .requireDependencies<LambdaIntegrationDependencies>()
+  .setIntrinsicConfig((deps) => ({
+    ApiId: deps.api.output.ApiId,
     IntegrationType: "AWS_PROXY",
     IntegrationMethod: "POST",
-    IntegrationUri: getLambdaInvocationUri(
-      dependencies.lambda.output.FunctionArn!,
-    ),
+    IntegrationUri: getLambdaInvocationUri(deps.lambda.output.FunctionArn!),
     PayloadFormatVersion: "2.0",
     PassthroughBehavior: "WHEN_NO_MATCH",
     ConnectionType: "INTERNET",

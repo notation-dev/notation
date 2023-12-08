@@ -1,8 +1,8 @@
-import { Resource } from "src/orchestrator/resource";
+import { BaseResource } from "src/orchestrator/resource";
 import { State, StateNode } from "./state";
 
 export async function updateResource(
-  resource: Resource,
+  resource: BaseResource,
   state: State,
   patch: any,
 ): Promise<void> {

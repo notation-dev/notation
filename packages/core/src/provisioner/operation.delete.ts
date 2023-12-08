@@ -1,11 +1,7 @@
-import { Resource } from "src/orchestrator/resource";
-import { State, StateNode } from "./state";
+import { BaseResource } from "src/orchestrator/resource";
+import { State } from "./state";
 
-export async function deleteResource(
-  resource: Resource,
-  state: State,
-  stateNode: StateNode,
-) {
+export async function deleteResource(resource: BaseResource, state: State) {
   const compoundKey = resource.getCompoundKey();
   const message = `Destroying ${resource.type} ${resource.id}`;
 

@@ -28,7 +28,7 @@ const lambdaRolePolicyAttachmentSchema =
   });
 
 export const LambdaRolePolicyAttachment =
-  lambdaRolePolicyAttachmentSchema.implement({
+  lambdaRolePolicyAttachmentSchema.defineOperations({
     create: async (params) => {
       const command = new sdk.AttachRolePolicyCommand(params);
       await iamClient.send(command);

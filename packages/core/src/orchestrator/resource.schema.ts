@@ -30,14 +30,6 @@ export type SchemaItem<T> = {
 );
 
 /**
- * Extract the resource config from a schema
- */
-export type Config<S extends Schema> = MapSchema<
-  S,
-  { propertyType: "computed" | "derived" }
->;
-
-/**
  * Extract the compound key of a resource from a schema
  */
 export type CompoundKey<S extends Schema> = MapSchema<
@@ -123,18 +115,28 @@ export type SchemaFromApi<
 type MapSchema<S extends Schema, ExcludeConditions = never> = S extends {
   [K in keyof S]: { valueType: any };
 }
-  ? {
-      [K in keyof S as S[K] extends { optional: true } | ExcludeConditions
-        ? never
-        : K]: S[K]["valueType"]["_output"];
-    } & {
-      [K in keyof S as S[K] extends { optional: true }
-        ? S[K] extends ExcludeConditions
+  ? Intersect<
+      {
+        [K in keyof S as S[K] extends
+          | { presence: "optional" }
+          | ExcludeConditions
           ? never
-          : K
-        : never]?: S[K]["valueType"]["_output"];
-    }
+          : K]: S[K]["valueType"]["_output"];
+      },
+      {
+        [K in keyof S as S[K] extends { presence: "optional" }
+          ? S[K] extends ExcludeConditions
+            ? never
+            : K
+          : never]?: S[K]["valueType"]["_output"];
+      }
+    >
   : never;
+
+/**
+ * Unpack an intersection
+ */
+type Intersect<T, U> = [T] extends [U] ? T : [U] extends [T] ? U : T & U;
 
 /**
  * Get non-optional properties from a type.
@@ -149,3 +151,20 @@ type PickOptional<T> = Omit<T, OptionalKeys<T>>;
 type DeepPartial<T> = {
   [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
 };
+
+type A = {
+  a: { valueType: z.ZodString; propertyType: "param"; presence: "required" };
+};
+type S = SchemaFromApi<
+  { a: string },
+  { b: string },
+  { c: string },
+  { d: string }
+>;
+
+type B = Omit<Params<S>, keyof Params<S>> extends Partial<Params<S>>
+  ? true
+  : false;
+type C = Partial<Params<A>> extends Omit<Params<A>, keyof Params<A>>
+  ? true
+  : false;

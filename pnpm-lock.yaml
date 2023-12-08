@@ -188,6 +188,9 @@ importers:
       fflate:
         specifier: 0.8.1
         version: 0.8.1
+      zod:
+        specifier: ^3.22.4
+        version: 3.22.4
 
   packages/tsconfig: {}
 

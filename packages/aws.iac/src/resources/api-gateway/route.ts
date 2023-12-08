@@ -12,7 +12,7 @@ type RouteSdkSchema = AwsSchema<{
   ReadResult: sdk.GetRouteResult;
 }>;
 
-type Dependencies = {
+type RouteDependencies = {
   api: ApiInstance;
   lambdaIntegration: LambdaIntegrationInstance;
 };
@@ -99,7 +99,7 @@ export const routeSchema = route.defineSchema({
 });
 
 export const Route = routeSchema
-  .implement({
+  .defineOperations({
     create: async (params) => {
       const command = new sdk.CreateRouteCommand(params);
       await apiGatewayClient.send(command);
@@ -118,8 +118,9 @@ export const Route = routeSchema
       await apiGatewayClient.send(command);
     },
   })
-  .withIntrinsicConfig<Dependencies>((dependencies) => ({
-    ApiId: dependencies.api.output.ApiId!,
+  .requireDependencies<RouteDependencies>()
+  .setIntrinsicConfig((deps) => ({
+    ApiId: deps.api.output.ApiId,
   }));
 
 export type RouteInstance = InstanceType<typeof Route>;

@@ -113,7 +113,7 @@ const apiSchema = api.defineSchema({
   },
 });
 
-export const Api = apiSchema.implement({
+export const Api = apiSchema.defineOperations({
   async create(params) {
     const command = new sdk.CreateApiCommand(params);
     await apiGatewayClient.send(command);

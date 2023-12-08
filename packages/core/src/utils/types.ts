@@ -5,8 +5,8 @@ export type IfAllPropertiesOptional<T, Y, N> = T extends Partial<T>
   : N;
 
 /**
- * @typeparam K - The record key
- * @typeparam T - The record value type
+ * @typeParam K - The record key
+ * @typeParam T - The record value type
  * @description If T is Partial<T>, return { [key in K]?: T }, else return { [key in K]: T }
  */
 export type OptionalIfAllPropertiesOptional<
@@ -18,7 +18,7 @@ export type OptionalIfAllPropertiesOptional<
  * Extracts the keys from type `T` that are required.
  * A key is considered required if it is present in `Required<T>`.
  *
- * @typeparam T - The type to extract required keys from.
+ * @typeParam T - The type to extract required keys from.
  *
  * @returns A union of the keys of `T` that are required.
  */
@@ -31,7 +31,7 @@ export type RequiredKeys<T> = {
  * This type maps over each key in `T`, including it in the tuple if it is required.
  * If `T` has no required keys, an empty tuple type is returned.
  *
- * @typeparam T - The type to create a tuple of required keys from.
+ * @typeParam T - The type to create a tuple of required keys from.
  *
  * @returns A tuple type with each required key of `T` as a separate element, or an empty tuple if `T` has no required keys.
  */
@@ -42,3 +42,31 @@ export type RequiredKeysTuple<T> = keyof T extends infer D
       : RequiredKeysTuple<Omit<T, D>>
     : never
   : [];
+
+/**
+ * Represents a type that provides a fallback value if the first type is `undefined`.
+ * If the first type `T` is `undefined`, the fallback type `U` is used instead.
+ *
+ * @typeParam T - The first type.
+ * @typeParam U - The fallback type.
+ */
+export type Fallback<T, U> = T extends undefined ? U : T;
+
+/**
+ * A utility type that prevents inference of a generic type parameter.
+ * This is useful when you want to preserve the exact type passed as an argument.
+ *
+ * @typeParam T - The type to prevent inference for.
+ * @returns T.
+ *
+ * @example
+ * ```typescript
+ * function foo<T>(arg: NoInfer<T>): void {
+ *   // ...
+ * }
+ *
+ * const value: string = "Hello";
+ * foo(value); // Argument type is preserved as string
+ * ```
+ */
+export type NoInfer<T> = [T][T extends any ? 0 : never];

@@ -270,7 +270,7 @@ const lambdaFunctionSchema = lambdaFunction.defineSchema({
   },
 });
 
-export const LambdaFunction = lambdaFunctionSchema.implement({
+export const LambdaFunction = lambdaFunctionSchema.defineOperations({
   create: async (params) => {
     const command = new sdk.CreateFunctionCommand(params);
     await lambdaClient.send(command);

@@ -12,7 +12,7 @@ export type StageSchema = AwsSchema<{
   ReadResult: sdk.GetStageResponse;
 }>;
 
-type Dependencies = {
+type StageDependencies = {
   api: ApiInstance;
 };
 
@@ -98,7 +98,7 @@ const stageSchema = stage.defineSchema({
 });
 
 export const Stage = stageSchema
-  .implement({
+  .defineOperations({
     create: async (params) => {
       const command = new sdk.CreateStageCommand(params);
       await apiGatewayClient.send(command);
@@ -116,8 +116,9 @@ export const Stage = stageSchema
       await apiGatewayClient.send(command);
     },
   })
-  .withIntrinsicConfig<Dependencies>((dependencies) => ({
-    ApiId: dependencies.api.output.ApiId!,
+  .requireDependencies<StageDependencies>()
+  .setIntrinsicConfig((deps) => ({
+    ApiId: deps.api.output.ApiId!,
   }));
 
 export type StageInstance = InstanceType<typeof Stage>;
