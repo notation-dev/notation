@@ -112,7 +112,7 @@ const apiSchema = api.defineSchema({
     valueType: z.string(),
     presence: "optional",
   },
-});
+} as const);
 
 export const Api = apiSchema.defineOperations({
   async create(params) {

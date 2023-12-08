@@ -97,7 +97,7 @@ const stageSchema = stage.defineSchema({
     presence: "optional",
     immutable: true,
   },
-});
+} as const);
 
 export const Stage = stageSchema
   .defineOperations({

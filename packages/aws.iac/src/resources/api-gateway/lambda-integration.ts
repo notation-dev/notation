@@ -131,7 +131,7 @@ const integrationSchema = integration.defineSchema({
     propertyType: "param",
     presence: "optional",
   },
-});
+} as const);
 
 export const LambdaIntegration = integrationSchema
   .defineOperations({

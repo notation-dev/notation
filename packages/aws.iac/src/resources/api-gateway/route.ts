@@ -98,7 +98,7 @@ export const routeSchema = route.defineSchema({
     propertyType: "param",
     presence: "optional",
   },
-});
+} as const);
 
 export const Route = routeSchema
   .defineOperations({

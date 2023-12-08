@@ -67,7 +67,7 @@ const lambdaIamRoleSchema = lambdaIamRole.defineSchema({
     propertyType: "param",
     presence: "optional",
   },
-});
+} as const);
 
 export const LambdaIamRole = lambdaIamRoleSchema.defineOperations({
   create: async (params) => {

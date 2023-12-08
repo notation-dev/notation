@@ -3,11 +3,16 @@ import * as sdk from "@aws-sdk/client-iam";
 import * as z from "zod";
 import { iamClient } from "src/utils/aws-clients";
 import { AwsSchema } from "src/utils/types";
+import { LambdaIamRoleInstance } from ".";
 
 export type LambdaRolePolicyAttachmentSchema = AwsSchema<{
   Key: sdk.DetachRolePolicyRequest;
   CreateParams: sdk.AttachRolePolicyRequest;
 }>;
+
+export type LambdaRolePolicyAttachmentDependencies = {
+  role: LambdaIamRoleInstance;
+};
 
 const lambdaRolePolicyAttachment = resource<LambdaRolePolicyAttachmentSchema>({
   type: "aws/lambda/LambdaRolePolicyAttachment",
@@ -27,10 +32,10 @@ const lambdaRolePolicyAttachmentSchema =
       presence: "required",
       secondaryKey: true,
     },
-  });
+  } as const);
 
-export const LambdaRolePolicyAttachment =
-  lambdaRolePolicyAttachmentSchema.defineOperations({
+export const LambdaRolePolicyAttachment = lambdaRolePolicyAttachmentSchema
+  .defineOperations({
     create: async (params) => {
       const command = new sdk.AttachRolePolicyCommand(params);
       await iamClient.send(command);
@@ -39,7 +44,13 @@ export const LambdaRolePolicyAttachment =
       const command = new sdk.DetachRolePolicyCommand(key);
       await iamClient.send(command);
     },
-  });
+  })
+  .requireDependencies<LambdaRolePolicyAttachmentDependencies>()
+  .setIntrinsicConfig((deps) => ({
+    RoleName: deps.role.output.RoleName,
+    PolicyArn:
+      "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+  }));
 
 export type LambdaRolePolicyAttachmentInstance = InstanceType<
   typeof LambdaRolePolicyAttachment

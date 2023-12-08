@@ -4,6 +4,7 @@ import * as z from "zod";
 import { lambdaClient } from "src/utils/aws-clients";
 import { AwsSchema } from "src/utils/types";
 import { ApiInstance } from "src/resources/api-gateway/api";
+import { generateApiGatewaySourceArn } from "src/templates/arn";
 import { LambdaFunctionInstance } from "./lambda";
 
 export type LambdaApiGatewayV2PermissionSchema = AwsSchema<{
@@ -51,13 +52,11 @@ const lambdaApiGatewayV2PermissionSchema =
       valueType: z.string(),
       propertyType: "param",
       presence: "required",
-      defaultValue: "lambda:InvokeFunction",
     },
     Principal: {
       valueType: z.string(),
       propertyType: "param",
       presence: "required",
-      defaultValue: "apigateway.amazonaws.com",
     },
     FunctionUrlAuthType: {
       valueType: z.enum(["NONE", "AWS_IAM"]),
@@ -94,7 +93,7 @@ const lambdaApiGatewayV2PermissionSchema =
       propertyType: "param",
       presence: "optional",
     },
-  });
+  } as const);
 
 export const LambdaApiGatewayV2Permission = lambdaApiGatewayV2PermissionSchema
   .defineOperations({
@@ -108,8 +107,12 @@ export const LambdaApiGatewayV2Permission = lambdaApiGatewayV2PermissionSchema
     },
   })
   .requireDependencies<LambdaApiGatewayV2PermissionDependencies>()
-  .setIntrinsicConfig((deps) => ({
+  .setIntrinsicConfig(async (deps) => ({
     FunctionName: deps.lambda.output.FunctionName,
+    StatementId: "lambda-api-gateway-v2-permission",
+    Action: "lambda:InvokeFunction",
+    Principal: "apigateway.amazonaws.com",
+    SourceArn: await generateApiGatewaySourceArn(deps.api.output.ApiId!),
   }));
 
 export type LambdaApiGatewayV2PermissionInstance = InstanceType<

@@ -38,7 +38,7 @@ const lambdaLogGroupSchema = lambdaLogGroup.defineSchema({
     propertyType: "param",
     presence: "required",
   },
-});
+} as const);
 
 export const LambdaLogGroup = lambdaLogGroupSchema
   .defineOperations({

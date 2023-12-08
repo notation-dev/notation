@@ -13,8 +13,8 @@ export type LambdaFunctionSchema = AwsSchema<{
     sdk.UpdateFunctionConfigurationRequest &
     sdk.PutFunctionConcurrencyRequest &
     sdk.PutFunctionCodeSigningConfigRequest;
-  ReadResult: sdk.GetFunctionResponse["Code"] &
-    sdk.GetFunctionResponse["Configuration"] &
+  ReadResult: sdk.GetFunctionResponse["Configuration"] &
+    sdk.GetFunctionResponse["Code"] &
     sdk.GetFunctionResponse["Concurrency"];
 }>;
 
@@ -52,13 +52,6 @@ const lambdaFunctionSchema = lambdaFunction.defineSchema({
   },
   CodeSigningConfigArn: {
     valueType: z.string(),
-    propertyType: "param",
-    presence: "optional",
-  },
-  CodeSigningPolicies: {
-    valueType: z.object({
-      UntrustedArtifactOnDeployment: z.enum(["Warn", "Enforce"]),
-    }),
     propertyType: "param",
     presence: "optional",
   },
@@ -275,7 +268,7 @@ const lambdaFunctionSchema = lambdaFunction.defineSchema({
     propertyType: "param",
     presence: "optional",
   },
-});
+} as const);
 
 export const LambdaFunction = lambdaFunctionSchema
   .defineOperations({
