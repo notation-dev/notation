@@ -28,7 +28,8 @@ export type SchemaItem<T> = {
  */
 export type CompoundKey<S extends Schema> = MapSchema<
   S,
-  { primaryKey?: void; secondaryKey?: void }
+  never,
+  "primaryKey" | "secondaryKey"
 >;
 
 /**
@@ -99,7 +100,11 @@ export type SchemaFromApi<
  * Makes optional fields optional.
  * Excludes properties matching the `ExcludeConditions` type.
  */
-type MapSchema<S extends Schema, ExcludeConditions = never> = S extends {
+type MapSchema<
+  S extends Schema,
+  ExcludeConditions = never,
+  ExcludeKey = any,
+> = S extends {
   [K in keyof S]: { valueType: any };
 }
   ? Intersect<
@@ -108,13 +113,17 @@ type MapSchema<S extends Schema, ExcludeConditions = never> = S extends {
           | { presence: "optional" }
           | ExcludeConditions
           ? never
-          : K]: S[K]["valueType"]["_output"];
+          : ExcludeKey extends keyof S[K]
+          ? K
+          : never]: S[K]["valueType"]["_output"];
       },
       {
         [K in keyof S as S[K] extends { presence: "optional" }
           ? S[K] extends ExcludeConditions
             ? never
-            : K
+            : ExcludeKey extends keyof S[K]
+            ? K
+            : never
           : never]?: S[K]["valueType"]["_output"];
       }
     >
@@ -138,20 +147,3 @@ type PickOptional<T> = Omit<T, OptionalKeys<T>>;
 type DeepPartial<T> = {
   [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
 };
-
-type A = {
-  a: { valueType: z.ZodString; propertyType: "param"; presence: "required" };
-};
-type S = SchemaFromApi<
-  { a: string },
-  { b: string },
-  { c: string },
-  { d: string }
->;
-
-type B = Omit<Params<S>, keyof Params<S>> extends Partial<Params<S>>
-  ? true
-  : false;
-type C = Partial<Params<A>> extends Omit<Params<A>, keyof Params<A>>
-  ? true
-  : false;

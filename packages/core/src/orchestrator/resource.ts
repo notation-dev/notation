@@ -82,7 +82,6 @@ export abstract class Resource<
   abstract failOnError?: (ErrorMatcher & { reason: string })[];
   abstract notFoundOnError?: ErrorMatcher[];
   abstract retryLaterOnError?: ErrorMatcher[];
-  abstract getCompoundKey(): Promise<CompoundKey<S>> | CompoundKey<S>;
   abstract setIntrinsicConfig(
     deps: D,
   ): Record<string, any> | Promise<Record<string, any>>;
@@ -119,6 +118,18 @@ export abstract class Resource<
       } as any as Params<S>;
     }
     return this.config as any as Params<S>;
+  }
+
+  getCompoundKey() {
+    const key = {} as CompoundKey<S>;
+    for (const [k, v] of Object.entries(this.schema)) {
+      let schemaItem = v as CompoundKey<any>;
+      if (schemaItem.primaryKey || schemaItem.secondaryKey) {
+        // @ts-ignore
+        key[k] = this.output[k];
+      }
+    }
+    return key;
   }
 }
 
@@ -165,7 +176,7 @@ export function resource<
             schema = schema;
             id = -1;
             groupId = -1;
-            output = outputProxy as any as Output<S>;
+            output = null as any as Output<S>;
             dependencies = {} as NoInfer<D>;
             create = opts.create;
             read = opts.read;
@@ -179,17 +190,6 @@ export function resource<
             async setIntrinsicConfig() {
               if (!opts.setIntrinsicConfig) return {};
               return await opts.setIntrinsicConfig();
-            }
-
-            getCompoundKey() {
-              const key = {} as CompoundKey<S>;
-              for (const [k, v] of Object.entries(schema)) {
-                if (["primaryKey", "secondaryKey"].includes(v.propertyType)) {
-                  // @ts-ignore
-                  key[k] = this.output[k];
-                }
-              }
-              return key;
             }
 
             static requireDependencies<
