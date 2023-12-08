@@ -19,9 +19,9 @@ const lambdaIamRole = resource<LambdaIamRoleSchema>({
 const lambdaIamRoleSchema = lambdaIamRole.defineSchema({
   RoleName: {
     valueType: z.string(),
-    propertyType: "primaryKey",
+    propertyType: "param",
     presence: "required",
-    userManaged: true,
+    primaryKey: true,
   },
   Role: {
     valueType: z.object({
@@ -90,3 +90,5 @@ export const LambdaIamRole = lambdaIamRoleSchema.defineOperations({
     AssumeRolePolicyDocument: JSON.stringify(lambdaTrustPolicy),
   }),
 });
+
+export type LambdaIamRoleInstance = InstanceType<typeof LambdaIamRole>;

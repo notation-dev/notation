@@ -7,20 +7,19 @@ export type SchemaItem<T> = {
   presence: "required" | "optional";
 } & (
   | {
-      propertyType: "primaryKey";
-      presence: "required";
-      userManaged?: true;
-    }
-  | {
-      propertyType: "secondaryKey";
-      presence: "required" | "optional";
-    }
-  | {
       propertyType: "param";
       presence: "required" | "optional";
       sensitive?: true;
       immutable?: true;
       defaultValue?: T;
+      primaryKey?: true;
+      secondaryKey?: true;
+    }
+  | {
+      propertyType: "computed";
+      presence: "required" | "optional";
+      sensitive?: true;
+      primaryKey?: true;
     }
   | {
       propertyType: "derived" | "computed";
@@ -34,7 +33,7 @@ export type SchemaItem<T> = {
  */
 export type CompoundKey<S extends Schema> = MapSchema<
   S,
-  { propertyType: "param" | "derived" | "computed" }
+  { primaryKey?: void; secondaryKey?: void }
 >;
 
 /**
@@ -42,8 +41,7 @@ export type CompoundKey<S extends Schema> = MapSchema<
  */
 export type Params<S extends Schema> = MapSchema<
   S,
-  | { propertyType: "computed" | "derived" }
-  | { propertyType: "primaryKey"; userManaged?: void }
+  { propertyType: "computed" | "derived" }
 >;
 
 /**
@@ -51,7 +49,7 @@ export type Params<S extends Schema> = MapSchema<
  * Partial as it's pretty trick to know what will come back from a read
  */
 export type Result<S extends Schema> = DeepPartial<
-  MapSchema<S, { propertyType: "secondaryKey" | "param" | "derived" }>
+  MapSchema<S, { propertyType: "param" | "derived" }>
 >;
 
 /**
@@ -69,15 +67,7 @@ export type SchemaFromApi<
   ApiReadResult,
 > = {
   [K in keyof ApiCompoundKey]: SchemaItem<ApiCompoundKey[K]> &
-    (
-      | {
-          propertyType: "primaryKey";
-          presence: "required";
-        }
-      | {
-          propertyType: "secondaryKey";
-        }
-    );
+    ({ primaryKey: true } | { secondaryKey: true });
 } & {
   [K in keyof OmitOptional<
     Omit<ApiCreateParams, keyof ApiCompoundKey>

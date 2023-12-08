@@ -26,13 +26,15 @@ const integration = resource<LambdaIntegrationSchema>({
 const integrationSchema = integration.defineSchema({
   IntegrationId: {
     valueType: z.string(),
-    propertyType: "primaryKey",
+    propertyType: "computed",
     presence: "required",
+    primaryKey: true,
   },
   ApiId: {
     valueType: z.string(),
-    propertyType: "secondaryKey",
+    propertyType: "param",
     presence: "required",
+    secondaryKey: true,
   },
   ApiGatewayManaged: {
     valueType: z.boolean(),

@@ -3,6 +3,8 @@ import * as sdk from "@aws-sdk/client-lambda";
 import * as z from "zod";
 import { lambdaClient } from "src/utils/aws-clients";
 import { AwsSchema } from "src/utils/types";
+import { fs } from "@notation/std.iac";
+import { LambdaIamRoleInstance } from "./";
 
 export type LambdaFunctionSchema = AwsSchema<{
   Key: Omit<sdk.GetFunctionRequest, "Qualifier">;
@@ -16,6 +18,11 @@ export type LambdaFunctionSchema = AwsSchema<{
     sdk.GetFunctionResponse["Concurrency"];
 }>;
 
+export type LambdaDependencies = {
+  role: LambdaIamRoleInstance;
+  zipFile: fs.ZipFileInstance;
+};
+
 const lambdaFunction = resource<LambdaFunctionSchema>({
   type: "aws/lambda/LambdaFunction",
 });
@@ -23,9 +30,9 @@ const lambdaFunction = resource<LambdaFunctionSchema>({
 const lambdaFunctionSchema = lambdaFunction.defineSchema({
   FunctionName: {
     valueType: z.string(),
-    propertyType: "primaryKey",
+    propertyType: "param",
     presence: "required",
-    userManaged: true,
+    primaryKey: true,
   },
   Architectures: {
     valueType: z.array(z.enum(["x86_64", "arm64"])),
@@ -270,39 +277,46 @@ const lambdaFunctionSchema = lambdaFunction.defineSchema({
   },
 });
 
-export const LambdaFunction = lambdaFunctionSchema.defineOperations({
-  create: async (params) => {
-    const command = new sdk.CreateFunctionCommand(params);
-    await lambdaClient.send(command);
-  },
-  read: async (key) => {
-    const command = new sdk.GetFunctionCommand(key);
-    const { Code, Configuration, Concurrency } =
+export const LambdaFunction = lambdaFunctionSchema
+  .defineOperations({
+    create: async (params) => {
+      const command = new sdk.CreateFunctionCommand(params);
       await lambdaClient.send(command);
+    },
+    read: async (key) => {
+      const command = new sdk.GetFunctionCommand(key);
+      const { Code, Configuration, Concurrency } =
+        await lambdaClient.send(command);
 
-    return {
-      ...Configuration,
-      Layers: Configuration!.Layers?.map((layer) => layer.Arn),
-      ...Concurrency,
-      Code: {
-        S3Bucket: Code?.Location?.split("/")[0],
-        S3Key: Code?.Location?.split("/")[1],
-        S3ObjectVersion: Code?.Location?.split("/")[2],
-        ZipFile: undefined,
-      },
-    };
-  },
-  update: async (key, params) => {
-    const input = { ...key, ...params };
-    const command = new sdk.UpdateFunctionConfigurationCommand(input);
-    const codeCommand = new sdk.UpdateFunctionCodeCommand(input);
-    await lambdaClient.send(codeCommand);
-    await lambdaClient.send(command);
-  },
-  delete: async (key) => {
-    const command = new sdk.DeleteFunctionCommand(key);
-    await lambdaClient.send(command);
-  },
-});
+      return {
+        ...Configuration,
+        Layers: Configuration!.Layers?.map((layer) => layer.Arn),
+        ...Concurrency,
+        Code: {
+          S3Bucket: Code?.Location?.split("/")[0],
+          S3Key: Code?.Location?.split("/")[1],
+          S3ObjectVersion: Code?.Location?.split("/")[2],
+          ZipFile: undefined,
+        },
+      };
+    },
+    update: async (key, params) => {
+      const input = { ...key, ...params };
+      const command = new sdk.UpdateFunctionConfigurationCommand(input);
+      const codeCommand = new sdk.UpdateFunctionCodeCommand(input);
+      await lambdaClient.send(codeCommand);
+      await lambdaClient.send(command);
+    },
+    delete: async (key) => {
+      const command = new sdk.DeleteFunctionCommand(key);
+      await lambdaClient.send(command);
+    },
+  })
+  .requireDependencies()
+  .setIntrinsicConfig((deps) => ({
+    PackageType: "Zip",
+    Code: { ZipFile: deps.zipFile.output.getArrayBuffer() },
+    Role: deps.role.output.Arn,
+  }));
 
 export type LambdaFunctionInstance = InstanceType<typeof LambdaFunction>;

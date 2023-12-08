@@ -24,13 +24,15 @@ const route = resource<RouteSdkSchema>({
 export const routeSchema = route.defineSchema({
   RouteId: {
     valueType: z.string(),
-    propertyType: "primaryKey",
+    propertyType: "computed",
     presence: "required",
+    primaryKey: true,
   },
   ApiId: {
     valueType: z.string(),
-    propertyType: "secondaryKey",
+    propertyType: "param",
     presence: "required",
+    secondaryKey: true,
   },
   ApiKeyRequired: {
     valueType: z.boolean(),

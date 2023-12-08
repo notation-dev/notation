@@ -17,9 +17,10 @@ const api = resource<ApiSdkSchema>({
 
 const apiSchema = api.defineSchema({
   ApiId: {
-    propertyType: "primaryKey",
+    propertyType: "computed",
     valueType: z.string(),
     presence: "required",
+    primaryKey: true,
   },
   ApiEndpoint: {
     propertyType: "computed",

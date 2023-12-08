@@ -18,8 +18,9 @@ const zipResource = resource<ZipSchema>({
 export const zipSchema = zipResource.defineSchema({
   filePath: {
     valueType: z.string(),
-    propertyType: "primaryKey",
+    propertyType: "param",
     presence: "required",
+    primaryKey: true,
   },
   getArrayBuffer: {
     valueType: z.function(z.tuple([]), z.instanceof(Buffer)),

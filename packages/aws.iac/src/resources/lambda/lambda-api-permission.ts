@@ -25,24 +25,39 @@ const lambdaApiGatewayV2PermissionSchema =
   lambdaApiGatewayV2Permission.defineSchema({
     FunctionName: {
       valueType: z.string(),
-      propertyType: "primaryKey",
+      propertyType: "param",
       presence: "required",
-      userManaged: true,
+      primaryKey: true,
     },
     StatementId: {
       valueType: z.string(),
-      propertyType: "secondaryKey",
+      propertyType: "param",
       presence: "required",
+      secondaryKey: true,
     },
     Qualifier: {
       valueType: z.string(),
-      propertyType: "secondaryKey",
+      propertyType: "param",
       presence: "optional",
+      secondaryKey: true,
     },
     RevisionId: {
       valueType: z.string(),
-      propertyType: "secondaryKey",
+      propertyType: "param",
       presence: "optional",
+      secondaryKey: true,
+    },
+    Action: {
+      valueType: z.string(),
+      propertyType: "param",
+      presence: "required",
+      defaultValue: "lambda:InvokeFunction",
+    },
+    Principal: {
+      valueType: z.string(),
+      propertyType: "param",
+      presence: "required",
+      defaultValue: "apigateway.amazonaws.com",
     },
     FunctionUrlAuthType: {
       valueType: z.enum(["NONE", "AWS_IAM"]),
@@ -63,18 +78,6 @@ const lambdaApiGatewayV2PermissionSchema =
       valueType: z.string(),
       propertyType: "param",
       presence: "optional",
-    },
-    Action: {
-      valueType: z.string(),
-      propertyType: "param",
-      presence: "required",
-      defaultValue: "lambda:InvokeFunction",
-    },
-    Principal: {
-      valueType: z.string(),
-      propertyType: "param",
-      presence: "required",
-      defaultValue: "apigateway.amazonaws.com",
     },
     SourceArn: {
       valueType: z.string(),

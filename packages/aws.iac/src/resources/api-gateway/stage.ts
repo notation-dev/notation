@@ -23,14 +23,15 @@ const stage = resource<StageSchema>({
 const stageSchema = stage.defineSchema({
   StageName: {
     valueType: z.string(),
-    propertyType: "primaryKey",
+    propertyType: "param",
     presence: "required",
-    userManaged: true,
+    primaryKey: true,
   },
   ApiId: {
     valueType: z.string(),
-    propertyType: "secondaryKey",
+    propertyType: "param",
     presence: "required",
+    secondaryKey: true,
   },
   AccessLogSettings: {
     valueType: z.object({

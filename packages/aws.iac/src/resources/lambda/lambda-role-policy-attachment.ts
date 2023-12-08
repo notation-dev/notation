@@ -17,14 +17,15 @@ const lambdaRolePolicyAttachmentSchema =
   lambdaRolePolicyAttachment.defineSchema({
     RoleName: {
       valueType: z.string(),
-      propertyType: "primaryKey",
+      propertyType: "param",
       presence: "required",
-      userManaged: true,
+      primaryKey: true,
     },
     PolicyArn: {
       valueType: z.string(),
-      propertyType: "secondaryKey",
+      propertyType: "param",
       presence: "required",
+      secondaryKey: true,
     },
   });
 
