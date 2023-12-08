@@ -4,7 +4,7 @@ import { State } from "./state";
 export async function createResource(resource: BaseResource, state: State) {
   let backoff = 1000;
   try {
-    const input = await resource.getInput();
+    const input = await resource.getParams();
     await resource.create(input);
 
     const output = input;
@@ -14,14 +14,16 @@ export async function createResource(resource: BaseResource, state: State) {
       Object.assign(output, readResult);
     }
 
+    resource.output = output;
+
     await state.update(resource.id, {
       id: resource.id,
       meta: resource.meta,
       lastOperation: "create",
       lastOperationAt: new Date().toISOString(),
       config: resource.config,
-      input: input,
-      output: resource.output,
+      input,
+      output,
     });
   } catch (err: any) {
     // todo: set a hold interval in the resource that takes a moment to propagate e.g. iam role

@@ -1,5 +1,5 @@
 import { BaseResource } from "src/orchestrator/resource";
-import { State, StateNode } from "./state";
+import { State } from "./state";
 
 export async function updateResource(
   resource: BaseResource,
@@ -22,7 +22,7 @@ export async function updateResource(
   await state.update(resource.id, {
     lastOperation: "update",
     lastOperationAt: new Date().toISOString(),
-    input: await resource.getInput(),
+    input: await resource.getParams(),
     output: resource.output,
   });
 }

@@ -35,7 +35,7 @@ export async function deployApp(
     const stateNode = await state.get(resource.id);
 
     // 1. Has resource been created before?
-    if (!stateNode || stateNode.lastOperation === "delete") {
+    if (!stateNode) {
       await commit(`Creating ${resource.type} ${resource.id}`, async () => {
         await createResource(resource, state);
       });
@@ -47,7 +47,7 @@ export async function deployApp(
     resource.output = stateNode.output;
 
     // 3. Has resource changed?
-    const inputsDiff = diff(await resource.getInput(), stateNode.input);
+    const inputsDiff = diff(await resource.getParams(), stateNode.input);
     const inputsChanged = Object.keys(inputsDiff).length > 0;
 
     if (inputsChanged) {

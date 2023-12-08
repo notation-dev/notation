@@ -40,11 +40,7 @@ export interface BaseResource {
   id: number;
   groupId: number;
   output: Output<any>;
-  meta: {
-    moduleName: string;
-    serviceName: string;
-    resourceName: string;
-  };
+  meta: { moduleName: string; serviceName: string; resourceName: string };
   dependencies: Record<string, BaseResource>;
   create: (params: any) => Promise<void>;
   read?: (key: any) => Promise<Result<any>>;
@@ -54,11 +50,11 @@ export interface BaseResource {
   failOnError?: (ErrorMatcher & { reason: string })[];
   notFoundOnError?: ErrorMatcher[];
   retryLaterOnError?: ErrorMatcher[];
-  getCompoundKey(): Promise<any> | any;
+  getCompoundKey(): {};
+  getParams(): {};
   setIntrinsicConfig?: (
     deps: any,
   ) => Record<string, any> | Promise<Record<string, any>>;
-  getInput(): Promise<Params<Schema>> | Params<Schema>;
 }
 
 export abstract class Resource<
@@ -98,15 +94,6 @@ export abstract class Resource<
       moduleName: `@notation/${parts[0]}.iac`,
       serviceName: parts[1]!,
       resourceName: parts[2]!,
-    };
-  }
-
-  async getInput() {
-    const params = await this.getParams();
-    const compoundKey = this.getCompoundKey();
-    return {
-      ...params,
-      ...compoundKey,
     };
   }
 
@@ -164,7 +151,7 @@ export function resource<
           retryLaterOnError?: ErrorMatcher[];
           setIntrinsicConfig?: () => IntrinsicConfig | Promise<IntrinsicConfig>;
         }) => {
-          return class ImplementedResource<
+          return class SimpleResource<
             D extends Record<string, BaseResource> = {},
             C extends Record<string, any> = Omit<
               Params<S>,
@@ -201,10 +188,16 @@ export function resource<
                     deps: Dependencies,
                   ) => IntrinsicConfig | Promise<IntrinsicConfig>,
                 ) {
-                  return class DependencyAwareResource extends ImplementedResource<
+                  return class DependencyAwareResource extends SimpleResource<
                     Dependencies,
                     Omit<Params<S>, keyof IntrinsicConfig>
                   > {
+                    constructor(opts: any) {
+                      super(opts);
+                      this.config = opts.config || {};
+                      this.dependencies = opts.dependencies || {};
+                      return this;
+                    }
                     async setIntrinsicConfig() {
                       const superIntrinsicConfig =
                         await super.setIntrinsicConfig();

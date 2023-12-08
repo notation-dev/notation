@@ -19,7 +19,7 @@ export async function destroyApp(entryPoint: string) {
       );
       continue;
     }
-    if (stateNode.lastOperation === "delete") continue;
+    resource.output = stateNode.output;
     await deleteResource(resource, state);
   }
 }
