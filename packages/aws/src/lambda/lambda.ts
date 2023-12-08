@@ -12,27 +12,25 @@ export const lambda = (config: { fileName: string; handler: string }) => {
 
   const role = functionGroup.add(
     new aws.lambda.LambdaIamRole({
-      config: { RoleName: `${functionGroup.id}-role` },
+      config: {
+        RoleName: `${functionGroup.id}-role`,
+      },
     }),
   );
 
   const policyAttachment = functionGroup.add(
     new aws.lambda.LambdaRolePolicyAttachment({
-      config: {
-        // todo: move to resource, or provide default roles
-        PolicyArn:
-          "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-      },
       dependencies: { role },
     }),
   );
 
   const lambdaResource = functionGroup.add(
-    new aws.lambda.Lambda({
+    new aws.lambda.LambdaFunction({
       config: {
         FunctionName: `function-${functionGroup.id}`,
         Handler: `index.${config.handler}`,
         Runtime: "nodejs18.x",
+        ReservedConcurrentExecutions: 1,
       },
       dependencies: {
         role,
@@ -44,6 +42,7 @@ export const lambda = (config: { fileName: string; handler: string }) => {
 
   functionGroup.add(
     new aws.lambda.LambdaLogGroup({
+      config: { retentionInDays: 30 },
       dependencies: { lambda: lambdaResource },
     }),
   );

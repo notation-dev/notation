@@ -20,17 +20,17 @@ export const route = (
 
   let integration;
 
-  const lambdaResource = lambdaGroup.findResource(aws.lambda.Lambda)!;
+  const lambdaResource = lambdaGroup.findResource(aws.lambda.LambdaFunction)!;
 
   const permission = lambdaGroup.findResource(
-    aws.lambda.LambdaApiGatewayPermission,
+    aws.lambda.LambdaApiGatewayV2Permission,
   );
 
   integration = lambdaGroup.findResource(aws.apiGateway.LambdaIntegration);
 
   if (!permission) {
     lambdaGroup.add(
-      new aws.lambda.LambdaApiGatewayPermission({
+      new aws.lambda.LambdaApiGatewayV2Permission({
         dependencies: {
           api: apiResource,
           lambda: lambdaResource,
