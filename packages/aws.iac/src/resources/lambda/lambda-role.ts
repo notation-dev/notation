@@ -3,13 +3,13 @@ import * as sdk from "@aws-sdk/client-iam";
 import * as z from "zod";
 import { iamClient } from "src/utils/aws-clients";
 import { AwsSchema } from "src/utils/types";
-import { lambdaTrustPolicy } from "../../templates/iam.policy";
+import { lambdaTrustPolicy } from "src/templates/iam.policy";
 
 export type LambdaIamRoleSchema = AwsSchema<{
   Key: sdk.DeleteRoleRequest;
   CreateParams: sdk.CreateRoleRequest;
   UpdateParams: sdk.UpdateRoleRequest;
-  ReadResult: sdk.GetRoleResponse;
+  ReadResult: sdk.GetRoleResponse["Role"];
 }>;
 
 const lambdaIamRole = resource<LambdaIamRoleSchema>({
@@ -22,25 +22,6 @@ const lambdaIamRoleSchema = lambdaIamRole.defineSchema({
     propertyType: "param",
     presence: "required",
     primaryKey: true,
-  },
-  Role: {
-    valueType: z.object({
-      Path: z.string(),
-      RoleName: z.string(),
-      RoleId: z.string(),
-      Arn: z.string(),
-      CreateDate: z.date(),
-      AssumeRolePolicyDocument: z.string().optional(),
-      Description: z.string().optional(),
-      MaxSessionDuration: z.number().optional(),
-      PermissionsBoundary: z.object({
-        PermissionsBoundaryType: z
-          .enum(["PermissionsBoundaryPolicy"])
-          .optional(),
-      }),
-    }),
-    propertyType: "computed",
-    presence: "required",
   },
   AssumeRolePolicyDocument: {
     valueType: z.string(),
