@@ -11,29 +11,32 @@ export type StateNode = {
   lastOperationAt: string;
 };
 
-export type State = Awaited<ReturnType<typeof getState>>;
-
-export async function getState() {
-  let state = await readState();
-  return {
-    get(id: number): StateNode | void {
-      return state[id];
-    },
-    async update(id: number, patch: Partial<StateNode>) {
-      state[id] = {
-        ...state[id],
-        ...patch,
-      };
-      await writeState(state);
-    },
-    async delete(id: number) {
-      delete state[id];
-      await writeState(state);
-    },
-    values() {
-      return Object.values(state);
-    },
-  };
+export class State {
+  state: Record<string, StateNode>;
+  constructor() {
+    this.state = {};
+  }
+  async get(id: number): Promise<StateNode | void> {
+    this.state = await readState();
+    return this.state[id];
+  }
+  async update(id: number, patch: Partial<StateNode>) {
+    this.state = await readState();
+    this.state[id] = {
+      ...this.state[id],
+      ...patch,
+    };
+    await writeState(this.state);
+  }
+  async delete(id: number) {
+    this.state = await readState();
+    delete this.state[id];
+    await writeState(this.state);
+  }
+  async values() {
+    this.state = await readState();
+    return Object.values(this.state);
+  }
 }
 
 async function readState(): Promise<Record<string, StateNode>> {

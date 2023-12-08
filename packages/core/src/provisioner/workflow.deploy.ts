@@ -3,7 +3,7 @@ import { createResource } from "./operation.create";
 import { readResource } from "./operation.read";
 import { updateResource } from "./operation.update";
 import { deleteResource } from "./operation.delete";
-import { getState } from "./state";
+import { State } from "./state";
 import { diff } from "deep-object-diff";
 import { BaseResource } from "src/orchestrator/resource";
 
@@ -29,10 +29,10 @@ export async function deployApp(
   };
 
   const graph = await getResourceGraph(entryPoint);
-  const state = await getState();
+  const state = new State();
 
   for (const resource of graph.resources) {
-    const stateNode = state.get(resource.id);
+    const stateNode = await state.get(resource.id);
 
     // 1. Has resource been created before?
     if (!stateNode || stateNode.lastOperation === "delete") {
@@ -95,7 +95,7 @@ export async function deployApp(
   }
 
   // 6. Has resource been removed from the orchestration graph?
-  for (const stateNode of state.values().reverse()) {
+  for (const stateNode of (await state.values()).reverse()) {
     let resource = graph.resources.find((r) => r.id === stateNode.id);
 
     if (!resource) {

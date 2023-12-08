@@ -1,6 +1,6 @@
 import { getResourceGraph } from "src/orchestrator/graph";
 import { deleteResource } from "./operation.delete";
-import { getState } from "./state";
+import { State } from "./state";
 import { Resource } from "src/orchestrator/resource";
 
 /**
@@ -16,9 +16,9 @@ export async function refreshState(
   log(`Refreshing ${entryPoint} state\n`);
 
   const graph = await getResourceGraph(entryPoint);
-  const state = await getState();
+  const state = new State();
 
-  for (const stateNode of state.values().reverse()) {
+  for (const stateNode of (await state.values()).reverse()) {
     let resource = graph.resources.find((r) => r.id === stateNode.id);
 
     if (!resource) {
@@ -28,7 +28,7 @@ export async function refreshState(
       resource = new Resource(stateNode) as Resource;
 
       if (!dryRun) {
-        await deleteResource(resource, state, stateNode);
+        await deleteResource(resource, state);
       }
 
       log(`Deleted ${resource.type} ${resource.id}`);
