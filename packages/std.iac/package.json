@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@notation/core": "workspace:*",
-    "fflate": "0.8.1"
+    "fflate": "0.8.1",
+    "zod": "^3.22.4"
   }
 }
