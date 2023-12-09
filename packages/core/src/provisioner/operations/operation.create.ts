@@ -23,12 +23,9 @@ async function create(opts: { resource: BaseResource; state: State }) {
       const key = resource.getCompoundKey();
       const readResult = await resource.read(key);
 
-      if (!resource.retryReadOnCondition?.hasOwnProperty(resource.type)) {
-        return readResult;
-      }
-
-      const needsRetry = resource.retryReadOnCondition.some((condition) => {
+      const needsRetry = resource.retryReadOnCondition?.some((condition) => {
         if (!condition) return false;
+
         const { key, value, reason } = condition;
         const msg = `[Info]: ${reason}`;
 
