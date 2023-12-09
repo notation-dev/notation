@@ -5,11 +5,12 @@ export async function createResource(resource: BaseResource, state: State) {
   let backoff = 1000;
   try {
     const params = await resource.getParams();
-    const output = { ...params };
     const maybeComputedPrimaryKey = await resource.create(params);
 
+    resource.output = { ...params };
+
     if (maybeComputedPrimaryKey) {
-      Object.assign(output, maybeComputedPrimaryKey);
+      Object.assign(resource.output, maybeComputedPrimaryKey);
     }
 
     async function getSettledReadResult() {
@@ -50,8 +51,7 @@ export async function createResource(resource: BaseResource, state: State) {
 
     const readResult = await getSettledReadResult();
 
-    Object.assign(output, readResult);
-    resource.output = output;
+    Object.assign(resource.output, readResult);
 
     await state.update(resource.id, {
       id: resource.id,
