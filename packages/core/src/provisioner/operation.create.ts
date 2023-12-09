@@ -60,7 +60,7 @@ export async function createResource(resource: BaseResource, state: State) {
       lastOperationAt: new Date().toISOString(),
       config: resource.config,
       params,
-      output,
+      output: resource.output,
     });
   } catch (err: any) {
     if (
