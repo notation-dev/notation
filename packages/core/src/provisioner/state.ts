@@ -40,9 +40,11 @@ export class State {
 
 async function readState(): Promise<Record<string, StateNode>> {
   const filePath = "./.notation/state.json";
+
   if (await fsExtra.pathExists(filePath)) {
     return fsExtra.readJSON(filePath);
   } else {
+    await fsExtra.ensureFile(filePath);
     await fsExtra.writeJSON(filePath, {});
     return {};
   }
@@ -50,5 +52,6 @@ async function readState(): Promise<Record<string, StateNode>> {
 
 async function writeState(state: Record<string, StateNode>) {
   await fsExtra.ensureDir("./.notation");
+  await fsExtra.ensureFile("./.notation/state.json");
   await fsExtra.writeJSON("./.notation/state.json", state, { spaces: 2 });
 }
