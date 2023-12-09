@@ -19,6 +19,7 @@ export type { Schema, SchemaItem };
 type ErrorMatcher = {
   name: string;
   message?: string;
+  reason: string;
 };
 
 type ResultCondition<T, K extends keyof T> = {

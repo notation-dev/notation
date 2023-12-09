@@ -309,10 +309,13 @@ export const LambdaFunction = lambdaFunctionSchema
         name: "InvalidParameterValueException",
         message:
           "The role defined for the function cannot be assumed by Lambda.",
+        reason: "Waiting for IAM role to propagate",
       },
       {
         name: "InvalidParameterValueException",
         message: "The provided execution role does not have permissions",
+        // todo: find real reason this is here
+        reason: "Waiting for IAM role to propagate",
       },
     ],
   })
