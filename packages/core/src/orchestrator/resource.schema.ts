@@ -1,4 +1,5 @@
 import * as z from "zod";
+import { FallbackIf } from "src/utils/types";
 
 export type Schema = Record<string, SchemaItem<any>>;
 
@@ -22,6 +23,15 @@ export type SchemaItem<T> = {
       propertyType: "derived";
     }
 );
+
+/**
+ * Extracts the primary key type from a schema
+ */
+export type ComputedPrimaryKey<S extends Schema> = FallbackIf<
+  MapSchema<S, { propertyType: "param" }, "primaryKey">,
+  {},
+  void
+>;
 
 /**
  * Extract the compound key of a resource from a schema

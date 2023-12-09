@@ -19,7 +19,7 @@ export async function destroyApp(entryPoint: string) {
       );
       continue;
     }
-    resource.output = stateNode.output;
+    resource.output = stateNode.attributes;
     await deleteResource(resource, state);
   }
 }

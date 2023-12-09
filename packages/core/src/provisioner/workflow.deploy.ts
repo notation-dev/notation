@@ -44,10 +44,10 @@ export async function deployApp(
     }
 
     // 2. Assign existing state output to resource
-    resource.output = stateNode.output;
+    resource.output = stateNode.attributes;
 
     // 3. Has resource changed?
-    const inputsDiff = diff(await resource.getParams(), stateNode.input);
+    const inputsDiff = diff(await resource.getParams(), stateNode.attributes);
     const inputsChanged = Object.keys(inputsDiff).length > 0;
 
     if (inputsChanged) {
@@ -80,7 +80,7 @@ export async function deployApp(
     }
 
     // 5. Has deployed resource drifted from its state?
-    const outputsDiff = diff(stateNode.output, latestOutput);
+    const outputsDiff = diff(stateNode.attributes, latestOutput);
     const outputsChanged = Object.keys(outputsDiff).length > 0;
 
     if (outputsChanged) {

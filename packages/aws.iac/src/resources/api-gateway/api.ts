@@ -117,11 +117,13 @@ const apiSchema = api.defineSchema({
 export const Api = apiSchema.defineOperations({
   async create(params) {
     const command = new sdk.CreateApiCommand(params);
-    await apiGatewayClient.send(command);
+    const result = await apiGatewayClient.send(command);
+    return { ApiId: result.ApiId! };
   },
   async read(key) {
     const command = new sdk.GetApiCommand(key);
     const result = await apiGatewayClient.send(command);
+    console.log(result);
     // todo: check types or correct or if RouteKey is actually in result
     // if not, need to pass the original params to read
     return { RouteKey: "", ...result };

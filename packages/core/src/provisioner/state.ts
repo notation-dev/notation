@@ -5,8 +5,7 @@ export type StateNode = {
   id: number;
   meta: Resource["meta"];
   config: any;
-  input: any;
-  output: any;
+  attributes: any;
   lastOperation: "drift" | "create" | "update" | "delete";
   lastOperationAt: string;
 };

@@ -304,6 +304,17 @@ export const LambdaFunction = lambdaFunctionSchema
       const command = new sdk.DeleteFunctionCommand(key);
       await lambdaClient.send(command);
     },
+    retryLaterOnError: [
+      {
+        name: "InvalidParameterValueException",
+        message:
+          "The role defined for the function cannot be assumed by Lambda.",
+      },
+      {
+        name: "InvalidParameterValueException",
+        message: "The provided execution role does not have permissions",
+      },
+    ],
   })
   .requireDependencies()
   .setIntrinsicConfig((deps) => ({

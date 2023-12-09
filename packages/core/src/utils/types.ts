@@ -44,13 +44,18 @@ export type RequiredKeysTuple<T> = keyof T extends infer D
   : [];
 
 /**
- * Represents a type that provides a fallback value if the first type is `undefined`.
+ * Provides a fallback value if the first type is `undefined`.
  * If the first type `T` is `undefined`, the fallback type `U` is used instead.
  *
  * @typeParam T - The first type.
  * @typeParam U - The fallback type.
  */
 export type Fallback<T, U> = T extends undefined ? U : T;
+
+/**
+ * Provides a fallback if `T` is assignable to `C`.
+ */
+export type FallbackIf<T, C, U> = C extends T ? U : T;
 
 /**
  * A utility type that prevents inference of a generic type parameter.

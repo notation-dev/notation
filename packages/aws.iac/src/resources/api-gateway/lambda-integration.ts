@@ -137,7 +137,8 @@ export const LambdaIntegration = integrationSchema
   .defineOperations({
     create: async (params) => {
       const command = new sdk.CreateIntegrationCommand(params);
-      await apiGatewayClient.send(command);
+      const result = await apiGatewayClient.send(command);
+      return { IntegrationId: result.IntegrationId! };
     },
     read: async (key) => {
       const command = new sdk.GetIntegrationCommand(key);

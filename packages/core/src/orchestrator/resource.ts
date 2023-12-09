@@ -5,6 +5,7 @@ import {
   Params,
   Result,
   Output,
+  ComputedPrimaryKey,
   CompoundKey,
 } from "./resource.schema";
 import {
@@ -42,10 +43,10 @@ export interface BaseResource {
   output: Output<any>;
   meta: { moduleName: string; serviceName: string; resourceName: string };
   dependencies: Record<string, BaseResource>;
-  create: (params: any) => Promise<void>;
+  create: (params: any) => Promise<{} | void>;
   read?: (key: any) => Promise<Result<any>>;
   update?: (key: any, params: any) => Promise<void>;
-  delete: (primaryKey: any) => Promise<void>;
+  delete: (ComputedPrimaryKey: any) => Promise<void>;
   retryReadOnCondition?: any; // todo
   failOnError?: (ErrorMatcher & { reason: string })[];
   notFoundOnError?: ErrorMatcher[];
@@ -70,7 +71,7 @@ export abstract class Resource<
   abstract id: number;
   abstract groupId: number;
   abstract output: Output<S>;
-  abstract create: (params: Params<S>) => Promise<void>;
+  abstract create: (params: Params<S>) => Promise<ComputedPrimaryKey<S>>;
   abstract read?: (key: CompoundKey<S>) => Promise<Result<S>>;
   abstract update?: (key: CompoundKey<S>, params: Params<S>) => Promise<void>;
   abstract delete: (primaryKey: CompoundKey<S>) => Promise<void>;
@@ -141,7 +142,7 @@ export function resource<
         defineOperations: <
           IntrinsicConfig extends Partial<Params<S>> = {},
         >(opts: {
-          create: (params: Params<S>) => Promise<void>;
+          create: (params: Params<S>) => Promise<ComputedPrimaryKey<S>>;
           read?: (key: CompoundKey<S>) => Promise<Result<S>>;
           update?: (key: CompoundKey<S>, params: Params<S>) => Promise<void>;
           delete: (primaryKey: CompoundKey<S>) => Promise<void>;

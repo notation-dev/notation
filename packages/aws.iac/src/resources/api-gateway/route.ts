@@ -104,7 +104,8 @@ export const Route = routeSchema
   .defineOperations({
     create: async (params) => {
       const command = new sdk.CreateRouteCommand(params);
-      await apiGatewayClient.send(command);
+      const result = await apiGatewayClient.send(command);
+      return { RouteId: result.RouteId! };
     },
     read: async (key) => {
       const command = new sdk.GetRouteCommand(key);

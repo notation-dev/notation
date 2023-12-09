@@ -22,7 +22,6 @@ export async function updateResource(
   await state.update(resource.id, {
     lastOperation: "update",
     lastOperationAt: new Date().toISOString(),
-    input: await resource.getParams(),
-    output: resource.output,
+    attributes: resource.output,
   });
 }
