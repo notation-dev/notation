@@ -1,10 +1,12 @@
+import { operation } from "./operation.base";
 import { BaseResource } from "src/orchestrator/resource";
-import { StateNode } from "./state";
+import { StateNode } from "../state";
 
-export async function readResource(
-  resource: BaseResource,
-  stateNode: StateNode,
-) {
+export const readResource = operation("Reading", read);
+
+async function read(opts: { resource: BaseResource; stateNode: StateNode }) {
+  const { resource, stateNode } = opts;
+
   if (!resource.read) {
     return stateNode.output;
   }

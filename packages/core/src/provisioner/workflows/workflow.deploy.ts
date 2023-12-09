@@ -1,9 +1,9 @@
 import { getResourceGraph } from "src/orchestrator/graph";
-import { createResource } from "./operation.create";
-import { readResource } from "./operation.read";
-import { updateResource } from "./operation.update";
-import { deleteResource } from "./operation.delete";
-import { State } from "./state";
+import { createResource } from "../operations/operation.create";
+import { readResource } from "../operations/operation.read";
+import { updateResource } from "../operations/operation.update";
+import { deleteResource } from "../operations/operation.delete";
+import { State } from "../state";
 import { diff } from "deep-object-diff";
 import { BaseResource } from "src/orchestrator/resource";
 
@@ -13,21 +13,6 @@ export async function deployApp(
 ): Promise<void> {
   console.log(`Deploying ${entryPoint}\n`);
 
-  // todo: make HoF operation.base
-  const commit = async (message: string, operation: () => Promise<void>) => {
-    if (dryRun) {
-      console.log(`[Dry Run]: ${message}`);
-      return;
-    }
-    try {
-      await operation();
-    } catch (err) {
-      console.log(`[Error]: ${message}`);
-      throw err;
-    }
-    console.log(`[Success]: ${message}`);
-  };
-
   const graph = await getResourceGraph(entryPoint);
   const state = new State();
 
@@ -36,10 +21,7 @@ export async function deployApp(
 
     // 1. Has resource been created before?
     if (!stateNode) {
-      await commit(`Creating ${resource.type} ${resource.id}`, async () => {
-        await createResource(resource, state);
-      });
-
+      await createResource({ resource, state, dryRun });
       continue;
     }
 
@@ -58,25 +40,19 @@ export async function deployApp(
         );
       }
 
-      await commit(`Updating ${resource.type} ${resource.id}`, async () => {
-        await updateResource(resource, state, inputsDiff);
-      });
+      await updateResource({ resource, state, patch: inputsDiff, dryRun });
 
       continue;
     }
 
     // 4. Has resource been deleted?
-    const latestOutput = await readResource(resource, stateNode);
+    const latestOutput = await readResource({ resource, stateNode, dryRun });
 
     if (latestOutput === null) {
       console.log(
         `Resource ${resource.type} ${resource.id} has been deleted remotely.`,
       );
-
-      await commit(`Recreating ${resource.type} ${resource.id}`, async () => {
-        await createResource(resource, state);
-      });
-
+      await createResource({ resource, state, dryRun });
       continue;
     }
 
@@ -86,11 +62,7 @@ export async function deployApp(
 
     if (outputsChanged) {
       console.log(`Drift detected for ${resource.type} ${resource.id}.`);
-
-      await commit(`Reverting ${resource.type} ${resource.id}`, async () => {
-        await updateResource(resource, state, outputsDiff);
-      });
-
+      await updateResource({ resource, state, patch: outputsDiff, dryRun });
       continue;
     }
   }
@@ -110,9 +82,7 @@ export async function deployApp(
       resource = new Resource({ config: stateNode.config }) as BaseResource;
       resource.id = stateNode.id;
 
-      await commit(`Deleting ${resource.type} ${resource.id}`, async () => {
-        deleteResource(resource!, state);
-      });
+      deleteResource({ resource, state, dryRun });
     }
   }
 }

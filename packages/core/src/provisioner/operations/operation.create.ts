@@ -1,8 +1,13 @@
+import { operation } from "./operation.base";
 import { BaseResource } from "src/orchestrator/resource";
-import { State } from "./state";
+import { State } from "../state";
 
-export async function createResource(resource: BaseResource, state: State) {
+export const createResource = operation("Creating", create);
+
+async function create(opts: { resource: BaseResource; state: State }) {
+  const { resource, state } = opts;
   let backoff = 1000;
+
   try {
     const params = await resource.getParams();
     const maybeComputedPrimaryKey = await resource.create(params);
@@ -72,7 +77,7 @@ export async function createResource(resource: BaseResource, state: State) {
       console.log(`[Retry]: Creating ${resource.type} ${resource.id}`);
       await new Promise((resolve) => setTimeout(resolve, backoff));
       backoff *= 1.5;
-      await createResource(resource, state);
+      await create(opts);
     }
     // else if (err.name === "ConflictException") {
     //   // todo: provide some means to requisition the resource

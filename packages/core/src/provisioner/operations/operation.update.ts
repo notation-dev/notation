@@ -1,11 +1,16 @@
+import { operation } from "./operation.base";
 import { BaseResource } from "src/orchestrator/resource";
-import { State } from "./state";
+import { State } from "../state";
 
-export async function updateResource(
-  resource: BaseResource,
-  state: State,
-  patch: any,
-): Promise<void> {
+export const updateResource = operation("Updating", update);
+
+async function update(opts: {
+  resource: BaseResource;
+  state: State;
+  patch: any;
+}): Promise<void> {
+  const { resource, state, patch } = opts;
+
   if (!resource.update) {
     throw new Error(
       `Update not implemented for ${resource.type} ${resource.id}`,

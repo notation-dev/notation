@@ -1,6 +1,6 @@
 import { getResourceGraph } from "src/orchestrator/graph";
-import { deleteResource } from "./operation.delete";
-import { State } from "./state";
+import { deleteResource } from "../operations";
+import { State } from "../state";
 import { refreshState } from "./workflow.refresh";
 
 export async function destroyApp(entryPoint: string) {
@@ -20,6 +20,6 @@ export async function destroyApp(entryPoint: string) {
       continue;
     }
     resource.output = stateNode.output;
-    await deleteResource(resource, state);
+    await deleteResource({ resource, state });
   }
 }

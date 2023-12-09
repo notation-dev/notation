@@ -1,6 +1,6 @@
 import { getResourceGraph } from "src/orchestrator/graph";
-import { deleteResource } from "./operation.delete";
-import { State } from "./state";
+import { deleteResource } from "../operations/operation.delete";
+import { State } from "../state";
 import { Resource } from "src/orchestrator/resource";
 
 /**
@@ -28,7 +28,7 @@ export async function refreshState(
       resource = new Resource(stateNode) as Resource;
 
       if (!dryRun) {
-        await deleteResource(resource, state);
+        await deleteResource({ resource, state, dryRun });
       }
 
       log(`Deleted ${resource.type} ${resource.id}`);

@@ -1,6 +1,6 @@
 import { expect, it, mock } from "bun:test";
 import { createResourceFactory } from "src/orchestrator/resource";
-import { createResource } from "src/provisioner/operation.create";
+import { createResource } from "src/provisioner/operations/operation.create";
 import { State, StateNode } from "src/provisioner/state";
 
 type Schema = {
