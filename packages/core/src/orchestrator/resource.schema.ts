@@ -52,7 +52,7 @@ export type Params<S extends Schema> = MapSchema<
 
 /**
  * Extract the read result of a resource from a schema
- * Partial as it's pretty trick to know what will come back from a read
+ * Partial as it's pretty tricky to know what will come back from a read
  */
 export type Result<S extends Schema> = DeepPartial<
   MapSchema<S, { propertyType: "param" | "derived" }>

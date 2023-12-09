@@ -168,6 +168,11 @@ const lambdaFunctionSchema = lambdaFunction.defineSchema({
     propertyType: "param",
     presence: "required",
   },
+  RevisionId: {
+    valueType: z.string(),
+    propertyType: "computed",
+    presence: "required",
+  },
   Role: {
     valueType: z.string(),
     propertyType: "param",
@@ -316,6 +321,17 @@ export const LambdaFunction = lambdaFunctionSchema
         message: "The provided execution role does not have permissions",
         // todo: find real reason this is here
         reason: "Waiting for IAM role to propagate",
+      },
+    ],
+    retryReadOnCondition: [
+      {
+        key: "State",
+        value: "Active",
+        reason: "Waiting for lambda to become active",
+      },
+      {
+        key: "RevisionId",
+        reason: "Waiting for lambda to be deployed",
       },
     ],
   })

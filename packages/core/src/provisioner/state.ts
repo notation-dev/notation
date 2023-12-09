@@ -4,8 +4,9 @@ import { Resource } from "..";
 export type StateNode = {
   id: number;
   meta: Resource["meta"];
-  config: any;
-  attributes: any;
+  config: {};
+  params: {};
+  output: {};
   lastOperation: "drift" | "create" | "update" | "delete";
   lastOperationAt: string;
 };

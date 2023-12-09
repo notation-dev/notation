@@ -22,7 +22,7 @@ type ErrorMatcher = {
   reason: string;
 };
 
-type ResultCondition<T, K extends keyof T> = {
+type ResultCondition<T, K extends keyof T = keyof T> = {
   key: K;
   reason: string;
   value?: T[K];
@@ -37,7 +37,7 @@ type ResourceOpts<C, D> = OptionalIfAllPropertiesOptional<"config", C> &
 
 export interface BaseResource {
   type: string;
-  schema: any;
+  schema: Schema;
   config: any;
   id: number;
   groupId: number;
@@ -48,12 +48,16 @@ export interface BaseResource {
   read?: (key: any) => Promise<Result<any>>;
   update?: (key: any, params: any) => Promise<void>;
   delete: (ComputedPrimaryKey: any) => Promise<void>;
-  retryReadOnCondition?: any; // todo
+  retryReadOnCondition?: ({
+    key: any;
+    value?: any;
+    reason: string;
+  } | void)[]; // todo: can this be neater?
   failOnError?: (ErrorMatcher & { reason: string })[];
   notFoundOnError?: ErrorMatcher[];
   retryLaterOnError?: ErrorMatcher[];
   getCompoundKey(): {};
-  getParams(): {};
+  getParams(): Promise<{}>;
   setIntrinsicConfig?: (
     deps: any,
   ) => Record<string, any> | Promise<Record<string, any>>;
@@ -76,7 +80,7 @@ export abstract class Resource<
   abstract read?: (key: CompoundKey<S>) => Promise<Result<S>>;
   abstract update?: (key: CompoundKey<S>, params: Params<S>) => Promise<void>;
   abstract delete: (primaryKey: CompoundKey<S>) => Promise<void>;
-  abstract retryReadOnCondition?: ResultConditions<Result<S>>;
+  abstract retryReadOnCondition?: ResultConditions<Output<S>>;
   abstract failOnError?: (ErrorMatcher & { reason: string })[];
   abstract notFoundOnError?: ErrorMatcher[];
   abstract retryLaterOnError?: ErrorMatcher[];
@@ -147,7 +151,7 @@ export function resource<
           read?: (key: CompoundKey<S>) => Promise<Result<S>>;
           update?: (key: CompoundKey<S>, params: Params<S>) => Promise<void>;
           delete: (primaryKey: CompoundKey<S>) => Promise<void>;
-          retryReadOnCondition?: ResultConditions<Result<S>>;
+          retryReadOnCondition?: ResultConditions<Output<S>>;
           failOnError?: (ErrorMatcher & { reason: string })[];
           notFoundOnError?: ErrorMatcher[];
           retryLaterOnError?: ErrorMatcher[];

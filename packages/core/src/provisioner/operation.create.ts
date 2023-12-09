@@ -4,19 +4,54 @@ import { State } from "./state";
 export async function createResource(resource: BaseResource, state: State) {
   let backoff = 1000;
   try {
-    const attributes = await resource.getParams();
-    const maybeComputedPrimaryKey = await resource.create(attributes);
+    const params = await resource.getParams();
+    const output = { ...params };
+    const maybeComputedPrimaryKey = await resource.create(params);
 
     if (maybeComputedPrimaryKey) {
-      Object.assign(attributes, maybeComputedPrimaryKey);
+      Object.assign(output, maybeComputedPrimaryKey);
     }
 
-    if (resource.read) {
-      const readResult = await resource.read(attributes);
-      Object.assign(attributes, readResult);
+    async function getSettledReadResult() {
+      if (!resource.read) return {};
+      const key = resource.getCompoundKey();
+      const readResult = await resource.read(key);
+
+      if (!resource.retryReadOnCondition?.hasOwnProperty(resource.type)) {
+        return readResult;
+      }
+
+      const needsRetry = resource.retryReadOnCondition.some((condition) => {
+        if (!condition) return false;
+        const { key, value, reason } = condition;
+        const msg = `[Info]: ${reason}`;
+
+        if (value && readResult[key] !== value) {
+          console.log(msg);
+          return true;
+        }
+
+        if (!readResult[key]) {
+          console.log(msg);
+          return true;
+        }
+
+        return false;
+      });
+
+      if (needsRetry) {
+        await new Promise((resolve) => setTimeout(resolve, backoff));
+        backoff *= 1.2;
+        return getSettledReadResult();
+      }
+
+      return readResult;
     }
 
-    resource.output = attributes;
+    const readResult = await getSettledReadResult();
+
+    Object.assign(output, readResult);
+    resource.output = output;
 
     await state.update(resource.id, {
       id: resource.id,
@@ -24,7 +59,8 @@ export async function createResource(resource: BaseResource, state: State) {
       lastOperation: "create",
       lastOperationAt: new Date().toISOString(),
       config: resource.config,
-      attributes,
+      params,
+      output,
     });
   } catch (err: any) {
     if (

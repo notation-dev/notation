@@ -44,13 +44,14 @@ export async function deployApp(
     }
 
     // 2. Assign existing state output to resource
-    resource.output = stateNode.attributes;
+    resource.output = stateNode.output;
 
     // 3. Has resource changed?
-    const inputsDiff = diff(await resource.getParams(), stateNode.attributes);
+    const inputsDiff = diff(await resource.getParams(), stateNode.params);
     const inputsChanged = Object.keys(inputsDiff).length > 0;
 
     if (inputsChanged) {
+      console.log(`Resource ${resource.type} ${resource.id} has changed.`);
       if (!resource.update) {
         throw new Error(
           `Resource ${resource.type} ${resource.id} does not support update.`,
@@ -80,7 +81,7 @@ export async function deployApp(
     }
 
     // 5. Has deployed resource drifted from its state?
-    const outputsDiff = diff(stateNode.attributes, latestOutput);
+    const outputsDiff = diff(stateNode.output, latestOutput);
     const outputsChanged = Object.keys(outputsDiff).length > 0;
 
     if (outputsChanged) {
@@ -99,6 +100,9 @@ export async function deployApp(
     let resource = graph.resources.find((r) => r.id === stateNode.id);
 
     if (!resource) {
+      console.log(
+        `Resource ${stateNode.meta.resourceName} ${stateNode.id} has been removed from the graph.`,
+      );
       const { moduleName, serviceName, resourceName } = stateNode.meta;
       const provider = await import(moduleName);
       const Resource = provider[serviceName][resourceName];

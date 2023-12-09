@@ -6,13 +6,15 @@ export async function readResource(
   stateNode: StateNode,
 ) {
   if (!resource.read) {
-    return stateNode.attributes;
+    return stateNode.output;
   }
 
   const key = await resource.getCompoundKey();
 
   try {
-    return resource.read(key);
+    const result = await resource.read(key);
+    const params = await resource.getParams();
+    return { ...params, ...result };
   } catch (err: any) {
     // todo: normalise not found errors within resource class
     // add logic for interpreting error in resource
