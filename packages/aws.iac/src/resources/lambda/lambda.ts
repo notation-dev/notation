@@ -316,7 +316,7 @@ export const LambdaFunction = lambdaFunctionSchema
       },
     ],
   })
-  .requireDependencies()
+  .requireDependencies<LambdaDependencies>()
   .setIntrinsicConfig((deps) => ({
     PackageType: "Zip",
     Code: { ZipFile: deps.zipFile.output.getArrayBuffer() },

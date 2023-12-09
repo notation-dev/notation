@@ -9,7 +9,7 @@ export type LambdaIamRoleSchema = AwsSchema<{
   Key: sdk.DeleteRoleRequest;
   CreateParams: sdk.CreateRoleRequest;
   UpdateParams: sdk.UpdateRoleRequest;
-  ReadResult: sdk.GetRoleResponse["Role"];
+  ReadResult: NonNullable<sdk.GetRoleResponse["Role"]>;
 }>;
 
 const lambdaIamRole = resource<LambdaIamRoleSchema>({
@@ -23,9 +23,19 @@ const lambdaIamRoleSchema = lambdaIamRole.defineSchema({
     presence: "required",
     primaryKey: true,
   },
+  Arn: {
+    valueType: z.string(),
+    propertyType: "computed",
+    presence: "required",
+  },
   AssumeRolePolicyDocument: {
     valueType: z.string(),
     propertyType: "param",
+    presence: "required",
+  },
+  CreateDate: {
+    valueType: z.date(),
+    propertyType: "computed",
     presence: "required",
   },
   Description: {
@@ -46,6 +56,19 @@ const lambdaIamRoleSchema = lambdaIamRole.defineSchema({
   PermissionsBoundary: {
     valueType: z.string(),
     propertyType: "param",
+    presence: "optional",
+  },
+  RoleId: {
+    valueType: z.string(),
+    propertyType: "computed",
+    presence: "required",
+  },
+  RoleLastUsed: {
+    valueType: z.object({
+      LastUsedDate: z.date().optional(),
+      Region: z.string().optional(),
+    }),
+    propertyType: "computed",
     presence: "optional",
   },
 } as const);
