@@ -124,6 +124,8 @@ export const Route = routeSchema
   .requireDependencies<RouteDependencies>()
   .setIntrinsicConfig((deps) => ({
     ApiId: deps.api.output.ApiId,
+    // todo: this is too opinionated, should be somewhere else
+    Target: `integrations/${deps.lambdaIntegration.output.IntegrationId}`,
   }));
 
 export type RouteInstance = InstanceType<typeof Route>;
