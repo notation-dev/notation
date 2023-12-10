@@ -33,7 +33,7 @@ export const route = (
   if (!permission) {
     lambdaGroup.add(
       new aws.lambda.LambdaApiGatewayV2Permission({
-        id: `${routeId}-permission`,
+        id: `${lambdaResource.id}-${apiResource.id}-permission`,
         dependencies: {
           api: apiResource,
           lambda: lambdaResource,
@@ -45,7 +45,7 @@ export const route = (
   if (!integration) {
     integration = lambdaGroup.add(
       new aws.apiGateway.LambdaIntegration({
-        id: `${routeId}-integration`,
+        id: `${apiResource.id}-${lambdaResource.id}-integration`,
         dependencies: {
           api: apiResource,
           lambda: lambdaResource,
