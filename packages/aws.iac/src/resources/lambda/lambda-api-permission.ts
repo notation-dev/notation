@@ -19,7 +19,7 @@ export type LambdaApiGatewayV2PermissionDependencies = {
 
 const lambdaApiGatewayV2Permission =
   resource<LambdaApiGatewayV2PermissionSchema>({
-    type: "aws/lambda/LambdaApiGatewayv2Permission",
+    type: "aws/lambda/LambdaApiGatewayV2Permission",
   });
 
 const lambdaApiGatewayV2PermissionSchema =
