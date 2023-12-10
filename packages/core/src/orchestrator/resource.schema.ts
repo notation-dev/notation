@@ -8,6 +8,7 @@ export type SchemaItem<T> = {
   presence: "required" | "optional";
   sensitive?: true;
   hidden?: true;
+  ignore?: true;
 } & (
   | {
       propertyType: "param";

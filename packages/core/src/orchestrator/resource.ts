@@ -62,7 +62,8 @@ export interface BaseResource {
   update?: (params: any) => Promise<void>;
   delete: () => Promise<void>;
   getParams(): Promise<{}>;
-  parse(output: {}): {};
+  toState(output: {}): {};
+  toComparable(output: {}): {};
   setOutput(result: {}): void;
   setIntrinsicConfig?: (
     deps: any,
@@ -125,7 +126,21 @@ export abstract class Resource<
     this.output = output as Output<S>;
   }
 
-  parse(data: Output<S>) {
+  toComparable(data: Output<S>) {
+    const parsed = {} as Output<S>;
+    for (const [k, v] of Object.entries(this.schema)) {
+      if (this.schema[k].ignore) continue;
+      if (this.schema[k].hidden) continue;
+      if (this.schema[k].propertyType !== "param") continue;
+      if (k in data) {
+        // @ts-ignore
+        parsed[k] = data[k];
+      }
+    }
+    return parsed;
+  }
+
+  toState(data: Output<S>) {
     const parsed = {} as Output<S>;
     for (const [k, v] of Object.entries(this.schema)) {
       if (this.schema[k].hidden) continue;

@@ -29,8 +29,8 @@ async function create(opts: { resource: BaseResource; state: State }) {
       lastOperation: "create",
       lastOperationAt: new Date().toISOString(),
       config: resource.config,
-      params: resource.parse(params),
-      output: resource.parse(resource.output),
+      params: resource.toState(params),
+      output: resource.toState(resource.output),
     });
   } catch (err: any) {
     if (

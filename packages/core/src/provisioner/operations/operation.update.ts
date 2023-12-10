@@ -32,7 +32,7 @@ async function update(opts: {
   await state.update(resource.id, {
     lastOperation: "update",
     lastOperationAt: new Date().toISOString(),
-    params: resource.parse(params),
-    output: resource.parse(resource.output),
+    params: resource.toState(params),
+    output: resource.toState(resource.output),
   });
 }

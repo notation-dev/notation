@@ -4,7 +4,7 @@ import { readResource } from "../operations/operation.read";
 import { updateResource } from "../operations/operation.update";
 import { deleteResource } from "../operations/operation.delete";
 import { State } from "../state";
-import { diff } from "deep-object-diff";
+import * as deepDiff from "deep-object-diff";
 import { BaseResource } from "src/orchestrator/resource";
 
 export async function deployApp(
@@ -28,26 +28,31 @@ export async function deployApp(
     // 2. Assign existing state output to resource
     resource.setOutput(stateNode.output);
 
-    // 3. Has resource changed?
-    const inputsDiff = diff(await resource.getParams(), stateNode.params);
-    const inputsChanged = Object.keys(inputsDiff).length > 0;
+    // 3. Have the desired params changed from the state?
+    const params = await resource.getParams();
+    const localDiff = deepDiff.diff(
+      resource.toComparable(stateNode.params),
+      resource.toComparable(params),
+    );
+    const inputsChanged = Object.keys(localDiff).length > 0;
 
     if (inputsChanged) {
       console.log(`Resource ${resource.type} ${resource.id} has changed.`);
+      console.log(localDiff);
       if (!resource.update) {
         throw new Error(
           `Resource ${resource.type} ${resource.id} does not support update.`,
         );
       }
 
-      await updateResource({ resource, state, patch: inputsDiff, dryRun });
+      await updateResource({ resource, state, patch: localDiff, dryRun });
 
       continue;
     }
 
-    // 4. Has resource been deleted?
     const latestOutput = await readResource({ resource, state, dryRun });
 
+    // 4. Has resource been deleted?
     if (latestOutput === null) {
       console.log(
         `Resource ${resource.type} ${resource.id} has been deleted remotely.`,
@@ -56,15 +61,21 @@ export async function deployApp(
       continue;
     }
 
-    // 5. Has deployed resource drifted from its state?
-    const outputsDiff = diff(stateNode.output, latestOutput);
-    const outputsChanged = Object.keys(outputsDiff).length > 0;
-
-    // console.log(outputsDiff);
+    // 5. Have the params of the live resource drifted from the state?
+    const liveDetailedDiff = deepDiff.detailedDiff(
+      resource.toComparable(latestOutput),
+      resource.toComparable(stateNode.output),
+    );
+    // diff to go from live to declared state
+    const liveDiff = { ...liveDetailedDiff.updated, ...liveDetailedDiff.added };
+    const outputsChanged = Object.keys(liveDiff).length > 0;
 
     if (outputsChanged) {
-      console.log(`Drift detected for ${resource.type} ${resource.id}.`);
-      await updateResource({ resource, state, patch: outputsDiff, dryRun });
+      console.log(
+        `Drift detected for ${resource.type} ${resource.id}. Reverting...`,
+      );
+      console.log(liveDiff);
+      await updateResource({ resource, state, patch: liveDiff, dryRun });
       continue;
     }
   }
@@ -80,7 +91,7 @@ export async function deployApp(
       const { moduleName, serviceName, resourceName } = stateNode.meta;
       const provider = await import(moduleName);
       const Resource = provider[serviceName][resourceName];
-      // todo: ensure the resource is hydrated with dependencies
+      // todo: ensure the resource is hydrated with dependencies?
       resource = new Resource({ config: stateNode.config }) as BaseResource;
       resource.id = stateNode.id;
 

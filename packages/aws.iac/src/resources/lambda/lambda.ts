@@ -8,11 +8,13 @@ import { LambdaIamRoleInstance } from "./";
 
 export type LambdaFunctionSchema = AwsSchema<{
   Key: Omit<sdk.GetFunctionRequest, "Qualifier">;
-  CreateParams: sdk.CreateFunctionRequest & sdk.PutFunctionConcurrencyRequest;
+  CreateParams: sdk.CreateFunctionRequest &
+    sdk.PutFunctionConcurrencyRequest & { CodeSha256: string }; // not actually a param, but want it to appear in the state for comparison
+
   UpdateParams: sdk.UpdateFunctionCodeRequest &
     sdk.UpdateFunctionConfigurationRequest &
     sdk.PutFunctionConcurrencyRequest &
-    sdk.PutFunctionCodeSigningConfigRequest;
+    sdk.PutFunctionCodeSigningConfigRequest & { CodeSha256: string };
   ReadResult: sdk.GetFunctionResponse["Configuration"] &
     sdk.GetFunctionResponse["Code"] &
     sdk.GetFunctionResponse["Concurrency"];
@@ -50,6 +52,11 @@ const lambdaFunctionSchema = lambdaFunction.defineSchema({
     presence: "required",
     immutable: true,
     hidden: true,
+  },
+  CodeSha256: {
+    valueType: z.string(),
+    propertyType: "param",
+    presence: "required",
   },
   CodeSigningConfigArn: {
     valueType: z.string(),
@@ -173,6 +180,7 @@ const lambdaFunctionSchema = lambdaFunction.defineSchema({
     valueType: z.string(),
     propertyType: "computed",
     presence: "required",
+    ignore: true,
   },
   Role: {
     valueType: z.string(),
@@ -280,7 +288,12 @@ export const LambdaFunction = lambdaFunctionSchema
   .defineOperations({
     create: async (params) => {
       const command = new sdk.CreateFunctionCommand(params);
+      const concurrencyCommand = new sdk.PutFunctionConcurrencyCommand({
+        FunctionName: params.FunctionName,
+        ReservedConcurrentExecutions: params.ReservedConcurrentExecutions,
+      });
       await lambdaClient.send(command);
+      await lambdaClient.send(concurrencyCommand);
     },
     read: async (key) => {
       const command = new sdk.GetFunctionCommand(key);
@@ -339,7 +352,8 @@ export const LambdaFunction = lambdaFunctionSchema
   .requireDependencies<LambdaDependencies>()
   .setIntrinsicConfig((deps) => ({
     PackageType: "Zip",
-    Code: { ZipFile: deps.zipFile.output.contents },
+    Code: { ZipFile: deps.zipFile.output.contentsBuffer },
+    CodeSha256: deps.zipFile.output.sha256,
     Role: deps.role.output.Arn,
   }));
 
