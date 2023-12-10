@@ -37,9 +37,9 @@ export async function deployApp(
       resource.toComparable(params),
     );
 
-    const stateIsState = Object.keys(localDiff).length > 0;
+    const stateIsStale = Object.keys(localDiff).length > 0;
 
-    if (stateIsState) {
+    if (stateIsStale) {
       console.log(`Resource ${resource.type} ${resource.id} has changed.`);
       console.log(localDiff);
 
