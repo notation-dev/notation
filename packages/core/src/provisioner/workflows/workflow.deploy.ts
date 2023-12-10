@@ -30,23 +30,20 @@ export async function deployApp(
 
     // 3. Have the desired params changed from the state?
     const params = await resource.getParams();
+
+    // diff to transition from last state to current params
     const localDiff = deepDiff.diff(
       resource.toComparable(stateNode.params),
       resource.toComparable(params),
     );
-    const inputsChanged = Object.keys(localDiff).length > 0;
 
-    if (inputsChanged) {
+    const stateIsState = Object.keys(localDiff).length > 0;
+
+    if (stateIsState) {
       console.log(`Resource ${resource.type} ${resource.id} has changed.`);
       console.log(localDiff);
-      if (!resource.update) {
-        throw new Error(
-          `Resource ${resource.type} ${resource.id} does not support update.`,
-        );
-      }
 
       await updateResource({ resource, state, patch: localDiff, dryRun });
-
       continue;
     }
 
@@ -66,11 +63,12 @@ export async function deployApp(
       resource.toComparable(latestOutput),
       resource.toComparable(stateNode.output),
     );
-    // diff to go from live to declared state
-    const liveDiff = { ...liveDetailedDiff.updated, ...liveDetailedDiff.added };
-    const outputsChanged = Object.keys(liveDiff).length > 0;
 
-    if (outputsChanged) {
+    // diff to transition from live to declared state
+    const liveDiff = { ...liveDetailedDiff.updated, ...liveDetailedDiff.added };
+    const resourceHasDrifted = Object.keys(liveDiff).length > 0;
+
+    if (resourceHasDrifted) {
       console.log(
         `Drift detected for ${resource.type} ${resource.id}. Reverting...`,
       );
