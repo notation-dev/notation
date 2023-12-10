@@ -33,13 +33,13 @@ type ResultConditions<T> = {
 }[keyof T][];
 
 type ResourceOpts<C, D> = OptionalIfAllPropertiesOptional<"config", C> &
-  OptionalIfAllPropertiesOptional<"dependencies", D>;
+  OptionalIfAllPropertiesOptional<"dependencies", D> & { id: string };
 
 export interface BaseResource {
   readonly type: string;
   readonly schema: Schema;
   readonly config: any;
-  id: number;
+  id: string;
   groupId: number;
   readonly output: {};
   readonly meta: {
@@ -77,7 +77,7 @@ export abstract class Resource<
 > implements BaseResource
 {
   config: C;
-  id = -1;
+  id: string;
   groupId = -1;
   output = null as any as Output<S>;
   dependencies = {} as NoInfer<D>;
@@ -96,6 +96,7 @@ export abstract class Resource<
   ): Record<string, any> | Promise<Record<string, any>>;
 
   constructor(opts: ResourceOpts<C, D>) {
+    this.id = opts.id;
     this.config = opts.config || ({} as C);
     this.dependencies = opts.dependencies || ({} as D);
     return this;

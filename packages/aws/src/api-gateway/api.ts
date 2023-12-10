@@ -5,6 +5,7 @@ export const api = (rgConfig: { name: string }) => {
 
   const apiResource = apiGroup.add(
     new aws.apiGateway.Api({
+      id: rgConfig.name,
       config: {
         Name: rgConfig.name,
         ProtocolType: "HTTP",
@@ -14,6 +15,7 @@ export const api = (rgConfig: { name: string }) => {
 
   apiGroup.add(
     new aws.apiGateway.Stage({
+      id: `${rgConfig.name}-stage`,
       config: { StageName: "$default", AutoDeploy: true },
       dependencies: { api: apiResource },
     }),

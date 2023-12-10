@@ -18,6 +18,8 @@ export const route = (
     dependencies: { router: apiGroup.id, fn: lambdaGroup.id },
   });
 
+  const routeId = `${apiResource.id}-${method}-${path}`;
+
   let integration;
 
   const lambdaResource = lambdaGroup.findResource(aws.lambda.LambdaFunction)!;
@@ -31,6 +33,7 @@ export const route = (
   if (!permission) {
     lambdaGroup.add(
       new aws.lambda.LambdaApiGatewayV2Permission({
+        id: `${routeId}-permission`,
         dependencies: {
           api: apiResource,
           lambda: lambdaResource,
@@ -42,6 +45,7 @@ export const route = (
   if (!integration) {
     integration = lambdaGroup.add(
       new aws.apiGateway.LambdaIntegration({
+        id: `${routeId}-integration`,
         dependencies: {
           api: apiResource,
           lambda: lambdaResource,
@@ -52,6 +56,7 @@ export const route = (
 
   routeGroup.add(
     new aws.apiGateway.Route({
+      id: routeId,
       config: {
         RouteKey: `${method} ${path}`,
       },

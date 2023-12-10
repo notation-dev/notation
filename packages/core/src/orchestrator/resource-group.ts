@@ -1,9 +1,4 @@
-import {
-  resources,
-  resourceGroups,
-  getNextResourceCount,
-  getNextResourceGroupCount,
-} from "./state";
+import { resources, resourceGroups, getNextResourceGroupCount } from "./state";
 import { BaseResource } from "./resource";
 
 export type ResourceGroupOptions = {
@@ -33,7 +28,6 @@ export abstract class ResourceGroup {
     if (resources.includes(resource)) {
       throw new Error(`Resource ${resource.type} has already been registered.`);
     }
-    resource.id = getNextResourceCount();
     resource.groupId = this.id;
     resources.push(resource);
     this.resources.push(resource);

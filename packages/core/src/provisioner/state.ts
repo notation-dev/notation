@@ -2,7 +2,7 @@ import fsExtra from "fs-extra/esm";
 import { Resource } from "..";
 
 export type StateNode = {
-  id: number;
+  id: string;
   meta: Resource["meta"];
   config: {};
   params: {};
@@ -16,15 +16,15 @@ export class State {
   constructor() {
     this.state = {};
   }
-  async get(id: number) {
+  async get(id: string) {
     this.state = await readState();
     return this.state[id];
   }
-  async has(id: number) {
+  async has(id: string) {
     this.state = await readState();
     return !!this.state[id];
   }
-  async update(id: number, patch: Partial<StateNode>) {
+  async update(id: string, patch: Partial<StateNode>) {
     this.state = await readState();
     this.state[id] = {
       ...this.state[id],
@@ -32,7 +32,7 @@ export class State {
     };
     await writeState(this.state);
   }
-  async delete(id: number) {
+  async delete(id: string) {
     this.state = await readState();
     delete this.state[id];
     await writeState(this.state);
