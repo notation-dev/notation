@@ -26,7 +26,7 @@ export async function deployApp(
     }
 
     // 2. Assign existing state output to resource
-    resource.output = stateNode.output;
+    resource.setOutput(stateNode.output);
 
     // 3. Has resource changed?
     const inputsDiff = diff(await resource.getParams(), stateNode.params);
@@ -46,7 +46,7 @@ export async function deployApp(
     }
 
     // 4. Has resource been deleted?
-    const latestOutput = await readResource({ resource, stateNode, dryRun });
+    const latestOutput = await readResource({ resource, state, dryRun });
 
     if (latestOutput === null) {
       console.log(
@@ -59,6 +59,8 @@ export async function deployApp(
     // 5. Has deployed resource drifted from its state?
     const outputsDiff = diff(stateNode.output, latestOutput);
     const outputsChanged = Object.keys(outputsDiff).length > 0;
+
+    // console.log(outputsDiff);
 
     if (outputsChanged) {
       console.log(`Drift detected for ${resource.type} ${resource.id}.`);
@@ -82,7 +84,7 @@ export async function deployApp(
       resource = new Resource({ config: stateNode.config }) as BaseResource;
       resource.id = stateNode.id;
 
-      deleteResource({ resource, state, dryRun });
+      await deleteResource({ resource, state, dryRun });
     }
   }
 }

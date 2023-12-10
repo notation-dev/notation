@@ -49,6 +49,7 @@ const lambdaFunctionSchema = lambdaFunction.defineSchema({
     propertyType: "param",
     presence: "required",
     immutable: true,
+    hidden: true,
   },
   CodeSigningConfigArn: {
     valueType: z.string(),
@@ -338,7 +339,7 @@ export const LambdaFunction = lambdaFunctionSchema
   .requireDependencies<LambdaDependencies>()
   .setIntrinsicConfig((deps) => ({
     PackageType: "Zip",
-    Code: { ZipFile: deps.zipFile.output.getArrayBuffer() },
+    Code: { ZipFile: deps.zipFile.output.contents },
     Role: deps.role.output.Arn,
   }));
 

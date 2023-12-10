@@ -6,8 +6,7 @@ export const zip = {
   path: (filePath: string) => `${filePath}.zip`,
 
   read: async (filePath: string) => {
-    const contents = await fs.readFile(zip.path(filePath));
-    return { getArrayBuffer: () => contents };
+    return fs.readFile(zip.path(filePath));
   },
 
   package: async (filePath: string) => {

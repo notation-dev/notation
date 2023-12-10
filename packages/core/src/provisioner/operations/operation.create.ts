@@ -1,6 +1,7 @@
 import { operation } from "./operation.base";
 import { BaseResource } from "src/orchestrator/resource";
 import { State } from "../state";
+import { readResource } from ".";
 
 export const createResource = operation("Creating", create);
 
@@ -12,48 +13,15 @@ async function create(opts: { resource: BaseResource; state: State }) {
     const params = await resource.getParams();
     const maybeComputedPrimaryKey = await resource.create(params);
 
-    resource.output = { ...params };
+    resource.setOutput(params);
 
     if (maybeComputedPrimaryKey) {
-      Object.assign(resource.output, maybeComputedPrimaryKey);
+      resource.setOutput({ ...maybeComputedPrimaryKey, ...resource.output });
     }
 
-    async function getSettledReadResult() {
-      if (!resource.read) return {};
-      const key = resource.getCompoundKey();
-      const readResult = await resource.read(key);
+    const readResult = await readResource({ resource, state });
 
-      const needsRetry = resource.retryReadOnCondition?.some((condition) => {
-        if (!condition) return false;
-
-        const { key, value, reason } = condition;
-        const msg = `[Info]: ${reason}`;
-
-        if (value && readResult[key] !== value) {
-          console.log(msg);
-          return true;
-        }
-
-        if (!readResult[key]) {
-          console.log(msg);
-          return true;
-        }
-
-        return false;
-      });
-
-      if (needsRetry) {
-        await new Promise((resolve) => setTimeout(resolve, backoff));
-        backoff *= 1.2;
-        return getSettledReadResult();
-      }
-
-      return readResult;
-    }
-
-    const readResult = await getSettledReadResult();
-
-    Object.assign(resource.output, readResult);
+    resource.setOutput({ ...resource.output, ...readResult });
 
     await state.update(resource.id, {
       id: resource.id,
@@ -61,8 +29,8 @@ async function create(opts: { resource: BaseResource; state: State }) {
       lastOperation: "create",
       lastOperationAt: new Date().toISOString(),
       config: resource.config,
-      params,
-      output: resource.output,
+      params: resource.parse(params),
+      output: resource.parse(resource.output),
     });
   } catch (err: any) {
     if (

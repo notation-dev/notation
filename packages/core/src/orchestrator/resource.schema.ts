@@ -7,6 +7,7 @@ export type SchemaItem<T> = {
   valueType: z.ZodType<T>;
   presence: "required" | "optional";
   sensitive?: true;
+  hidden?: true;
 } & (
   | {
       propertyType: "param";

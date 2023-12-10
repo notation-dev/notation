@@ -36,28 +36,34 @@ type ResourceOpts<C, D> = OptionalIfAllPropertiesOptional<"config", C> &
   OptionalIfAllPropertiesOptional<"dependencies", D>;
 
 export interface BaseResource {
-  type: string;
-  schema: Schema;
-  config: any;
+  readonly type: string;
+  readonly schema: Schema;
+  readonly config: any;
   id: number;
   groupId: number;
-  output: Output<any>;
-  meta: { moduleName: string; serviceName: string; resourceName: string };
-  dependencies: Record<string, BaseResource>;
-  create: (params: any) => Promise<{} | void>;
-  read?: (key: any) => Promise<Result<any>>;
-  update?: (key: any, params: any) => Promise<void>;
-  delete: (ComputedPrimaryKey: any) => Promise<void>;
-  retryReadOnCondition?: ({
+  readonly output: {};
+  readonly meta: {
+    moduleName: string;
+    serviceName: string;
+    resourceName: string;
+  };
+  readonly dependencies: Record<string, BaseResource>;
+  readonly retryReadOnCondition?: ({
     key: any;
     value?: any;
     reason: string;
   } | void)[]; // todo: can this be neater?
-  failOnError?: (ErrorMatcher & { reason: string })[];
-  notFoundOnError?: ErrorMatcher[];
-  retryLaterOnError?: ErrorMatcher[];
-  getCompoundKey(): {};
+  readonly failOnError?: (ErrorMatcher & { reason: string })[];
+  readonly notFoundOnError?: ErrorMatcher[];
+  readonly retryLaterOnError?: ErrorMatcher[];
+  readonly key: {};
+  create: (params: any) => Promise<{} | void>;
+  read?: () => Promise<Result<any>>;
+  update?: (params: any) => Promise<void>;
+  delete: () => Promise<void>;
   getParams(): Promise<{}>;
+  parse(output: {}): {};
+  setOutput(result: {}): void;
   setIntrinsicConfig?: (
     deps: any,
   ) => Record<string, any> | Promise<Record<string, any>>;
@@ -70,16 +76,16 @@ export abstract class Resource<
 > implements BaseResource
 {
   config: C;
-  dependencies: D;
+  id = -1;
+  groupId = -1;
+  output = null as any as Output<S>;
+  dependencies = {} as NoInfer<D>;
   abstract type: string;
   abstract schema: S;
-  abstract id: number;
-  abstract groupId: number;
-  abstract output: Output<S>;
   abstract create: (params: Params<S>) => Promise<ComputedPrimaryKey<S>>;
-  abstract read?: (key: CompoundKey<S>) => Promise<Result<S>>;
-  abstract update?: (key: CompoundKey<S>, params: Params<S>) => Promise<void>;
-  abstract delete: (primaryKey: CompoundKey<S>) => Promise<void>;
+  abstract read?: () => Promise<Result<S>>;
+  abstract update?: (params: Params<S>) => Promise<void>;
+  abstract delete: () => Promise<void>;
   abstract retryReadOnCondition?: ResultConditions<Output<S>>;
   abstract failOnError?: (ErrorMatcher & { reason: string })[];
   abstract notFoundOnError?: ErrorMatcher[];
@@ -103,17 +109,7 @@ export abstract class Resource<
     };
   }
 
-  async getParams() {
-    if (this.setIntrinsicConfig) {
-      return {
-        ...(this.config as any as Params<S>),
-        ...(await this.setIntrinsicConfig(this.dependencies)),
-      } as any as Params<S>;
-    }
-    return this.config as any as Params<S>;
-  }
-
-  getCompoundKey() {
+  get key() {
     const key = {} as CompoundKey<S>;
     for (const [k, v] of Object.entries(this.schema)) {
       let schemaItem = v as CompoundKey<any>;
@@ -123,6 +119,32 @@ export abstract class Resource<
       }
     }
     return key;
+  }
+
+  setOutput(output: Output<S>) {
+    this.output = output as Output<S>;
+  }
+
+  parse(data: Output<S>) {
+    const parsed = {} as Output<S>;
+    for (const [k, v] of Object.entries(this.schema)) {
+      if (this.schema[k].hidden) continue;
+      if (k in data) {
+        // @ts-ignore
+        parsed[k] = data[k];
+      }
+    }
+    return parsed;
+  }
+
+  async getParams() {
+    if (this.setIntrinsicConfig) {
+      return {
+        ...(this.config as any as Params<S>),
+        ...(await this.setIntrinsicConfig(this.dependencies)),
+      } as any as Params<S>;
+    }
+    return this.config as any as Params<S>;
   }
 }
 
@@ -167,14 +189,12 @@ export function resource<
             static type = meta.type;
             type = meta.type;
             schema = schema;
-            id = -1;
-            groupId = -1;
-            output = null as any as Output<S>;
-            dependencies = {} as NoInfer<D>;
             create = opts.create;
-            read = opts.read;
-            update = opts.update;
-            delete = opts.delete;
+            read = opts.read ? () => opts.read!(this.key) : undefined;
+            update = opts.update
+              ? (patch: Params<S>) => opts.update!(this.key, patch)
+              : undefined;
+            delete = () => opts.delete(this.key);
             retryReadOnCondition = opts.retryReadOnCondition;
             failOnError = opts.failOnError;
             notFoundOnError = opts.notFoundOnError;
@@ -222,14 +242,3 @@ export function resource<
     },
   };
 }
-
-const outputProxy = new Proxy(
-  {},
-  {
-    get(target, prop) {
-      throw new Error(
-        `Resource outputs are not available at compile time. Accessed output property "${prop.toString()}.`,
-      );
-    },
-  },
-);

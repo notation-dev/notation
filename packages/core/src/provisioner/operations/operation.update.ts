@@ -1,6 +1,7 @@
 import { operation } from "./operation.base";
 import { BaseResource } from "src/orchestrator/resource";
 import { State } from "../state";
+import { readResource } from ".";
 
 export const updateResource = operation("Updating", update);
 
@@ -17,23 +18,21 @@ async function update(opts: {
     );
   }
 
-  const key = await resource.getCompoundKey();
-  await resource.update(key, patch);
+  await resource.update(patch);
 
   const params = await resource.getParams();
-  const output = { ...params };
+
+  resource.setOutput(params);
 
   if (resource.read) {
-    const result = await resource.read(key);
-    Object.assign(output, result);
+    const result = await readResource({ resource, state });
+    resource.setOutput({ ...resource.output, ...result });
   }
-
-  resource.output = output;
 
   await state.update(resource.id, {
     lastOperation: "update",
     lastOperationAt: new Date().toISOString(),
-    params,
-    output,
+    params: resource.parse(params),
+    output: resource.parse(resource.output),
   });
 }

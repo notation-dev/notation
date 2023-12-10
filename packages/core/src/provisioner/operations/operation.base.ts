@@ -18,7 +18,7 @@ export const operation = <Opts extends { resource: BaseResource }, V>(
       console.log(`[Success]: ${message}`);
       return result;
     } catch (err) {
-      console.error(`[Error]: ${message}`, err);
+      console.error(`[Error]: ${message}`);
       throw err;
     }
   };

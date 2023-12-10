@@ -6,12 +6,9 @@ export const deleteResource = operation("Destroying", delete_);
 
 async function delete_(opts: { resource: BaseResource; state: State }) {
   const { resource, state } = opts;
-  const compoundKey = resource.getCompoundKey();
-  const message = `Destroying ${resource.type} ${resource.id}`;
 
   try {
-    await resource.delete(compoundKey);
-    console.log(`[Success]: ${message}`);
+    await resource.delete();
   } catch (err: any) {
     // @todo: declare these in the resource provider
     if (
@@ -26,7 +23,6 @@ async function delete_(opts: { resource: BaseResource; state: State }) {
         `Resource ${resource.type} ${resource.id} has already been deleted. \n→ Removing from state.\n`,
       );
     } else {
-      console.log(`[Error]: ${message}`);
       throw err;
     }
   }

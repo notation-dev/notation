@@ -6,7 +6,7 @@ export type ZipSchema = {
   Key: { filePath: string };
   CreateParams: { filePath: string };
   UpdateParams: { filePath: string };
-  ReadResult: { getArrayBuffer: () => Buffer };
+  ReadResult: { contents: Buffer };
 };
 
 const zipResource = resource<ZipSchema>({
@@ -20,10 +20,11 @@ export const zipSchema = zipResource.defineSchema({
     presence: "required",
     primaryKey: true,
   },
-  getArrayBuffer: {
-    valueType: z.function(z.tuple([]), z.instanceof(Buffer)),
+  contents: {
+    valueType: z.instanceof(Buffer),
     propertyType: "computed",
     presence: "required",
+    hidden: true,
   },
 });
 
@@ -33,7 +34,8 @@ export const Zip = zipSchema.defineOperations({
     await zip.read(config.filePath);
   },
   read: async (config) => {
-    return zip.read(config.filePath);
+    const contents = await zip.read(config.filePath);
+    return { contents };
   },
   update: async (config) => {
     await zip.delete(config.filePath);

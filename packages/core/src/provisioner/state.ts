@@ -16,9 +16,13 @@ export class State {
   constructor() {
     this.state = {};
   }
-  async get(id: number): Promise<StateNode | void> {
+  async get(id: number) {
     this.state = await readState();
     return this.state[id];
+  }
+  async has(id: number) {
+    this.state = await readState();
+    return !!this.state[id];
   }
   async update(id: number, patch: Partial<StateNode>) {
     this.state = await readState();
