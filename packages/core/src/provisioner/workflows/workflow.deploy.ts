@@ -94,9 +94,9 @@ export async function deployApp(
       const { moduleName, serviceName, resourceName } = stateNode.meta;
       const provider = await import(moduleName);
       const Resource = provider[serviceName][resourceName];
-      // todo: ensure the resource is hydrated with dependencies?
       resource = new Resource({ config: stateNode.config }) as BaseResource;
       resource.id = stateNode.id;
+      resource.setOutput(stateNode.output);
 
       await deleteResource({ resource, state, dryRun });
     }
