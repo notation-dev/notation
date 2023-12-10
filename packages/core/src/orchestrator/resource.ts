@@ -233,12 +233,6 @@ export function resource<
                     Dependencies,
                     Omit<Params<S>, keyof IntrinsicConfig>
                   > {
-                    constructor(opts: any) {
-                      super(opts);
-                      this.config = opts.config || {};
-                      this.dependencies = opts.dependencies || {};
-                      return this;
-                    }
                     async setIntrinsicConfig() {
                       const superIntrinsicConfig =
                         await super.setIntrinsicConfig();
