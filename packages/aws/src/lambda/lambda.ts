@@ -1,9 +1,16 @@
 import * as aws from "@notation/aws.iac";
 import * as std from "@notation/std.iac";
+import crypto from "crypto";
 
 export const lambda = (config: { fileName: string; handler: string }) => {
   const functionGroup = new aws.AwsResourceGroup("aws/function", { config });
-  const lambdaId = `${config.fileName}-${config.handler}`;
+  const filePathHash = crypto
+    .createHash("BLAKE2s256")
+    .update(config.fileName)
+    .digest("hex")
+    .slice(0, 8);
+
+  const lambdaId = `${config.handler}-${filePathHash}`;
 
   const zipFile = functionGroup.add(
     new std.fs.Zip({
