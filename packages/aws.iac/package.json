@@ -12,11 +12,12 @@
     "dist"
   ],
   "dependencies": {
-    "@aws-sdk/client-sts": "^3.441.0",
     "@aws-sdk/client-apigatewayv2": "^3.441.0",
-    "@aws-sdk/client-lambda": "^3.441.0",
-    "@aws-sdk/client-iam": "^3.441.0",
     "@aws-sdk/client-cloudwatch-logs": "^3.441.0",
+    "@aws-sdk/client-eventbridge": "^3.470.0",
+    "@aws-sdk/client-iam": "^3.441.0",
+    "@aws-sdk/client-lambda": "^3.441.0",
+    "@aws-sdk/client-sts": "^3.441.0",
     "@notation/core": "workspace:*",
     "@notation/std.iac": "workspace:*",
     "@types/aws-lambda": "^8.10.125",
