@@ -40,7 +40,9 @@ export async function deployApp(
     const stateIsStale = Object.keys(localDiff).length > 0;
 
     if (stateIsStale) {
-      console.log(`Resource ${resource.type} ${resource.id} has changed.`);
+      console.log(
+        `Resource ${resource.type} ${resource.id} has changed. Updating...`,
+      );
       console.log(localDiff);
 
       await updateResource({ resource, state, patch: localDiff, dryRun });
@@ -59,21 +61,24 @@ export async function deployApp(
     }
 
     // 5. Have the params of the live resource drifted from the state?
-    const liveDetailedDiff = deepDiff.detailedDiff(
+    const remoteDetailedDiff = deepDiff.detailedDiff(
       resource.toComparable(latestOutput),
       resource.toComparable(stateNode.output),
     );
 
     // diff to transition from live to declared state
-    const liveDiff = { ...liveDetailedDiff.updated, ...liveDetailedDiff.added };
-    const resourceHasDrifted = Object.keys(liveDiff).length > 0;
+    const remoteDiff = {
+      ...remoteDetailedDiff.updated,
+      ...remoteDetailedDiff.added,
+    };
+    const resourceHasDrifted = Object.keys(remoteDiff).length > 0;
 
     if (resourceHasDrifted) {
       console.log(
         `Drift detected for ${resource.type} ${resource.id}. Reverting...`,
       );
-      console.log(liveDiff);
-      await updateResource({ resource, state, patch: liveDiff, dryRun });
+      console.log(remoteDiff);
+      await updateResource({ resource, state, patch: remoteDiff, dryRun });
       continue;
     }
   }
