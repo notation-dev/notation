@@ -22,7 +22,7 @@ async function update(opts: {
 
   const params = await resource.getParams();
 
-  resource.setOutput(params);
+  resource.setOutput({ ...resource.key, ...params });
 
   if (resource.read) {
     const result = await readResource({ resource, state });
