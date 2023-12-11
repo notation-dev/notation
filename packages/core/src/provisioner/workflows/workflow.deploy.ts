@@ -26,6 +26,7 @@ export async function deployApp(
     }
 
     // 2. Assign existing state output to resource
+    // todo: get hidden fields (or read live resource and check drift first?)
     resource.setOutput(stateNode.output);
 
     // 3. Have the desired params changed from the state?
@@ -40,11 +41,7 @@ export async function deployApp(
     const stateIsStale = Object.keys(localDiff).length > 0;
 
     if (stateIsStale) {
-      console.log(
-        `Resource ${resource.type} ${resource.id} has changed. Updating...`,
-      );
-      console.log(localDiff);
-
+      console.log(`Resource ${resource.id} has changed. Updating...`);
       await updateResource({ resource, state, patch: localDiff, dryRun });
       continue;
     }
@@ -53,9 +50,7 @@ export async function deployApp(
 
     // 4. Has resource been deleted?
     if (latestOutput === null) {
-      console.log(
-        `Resource ${resource.type} ${resource.id} has been deleted remotely.`,
-      );
+      console.log(`Resource ${resource.id} has been deleted remotely.`);
       await createResource({ resource, state, dryRun });
       continue;
     }
@@ -74,10 +69,7 @@ export async function deployApp(
     const resourceHasDrifted = Object.keys(remoteDiff).length > 0;
 
     if (resourceHasDrifted) {
-      console.log(
-        `Drift detected for ${resource.type} ${resource.id}. Reverting...`,
-      );
-      console.log(remoteDiff);
+      console.log(`Drift detected for ${resource.id}. Reverting...`);
       await updateResource({ resource, state, patch: remoteDiff, dryRun });
       continue;
     }

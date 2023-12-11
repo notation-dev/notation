@@ -6,7 +6,7 @@ export type ZipSchema = {
   Key: { filePath: string };
   CreateParams: { filePath: string };
   UpdateParams: { filePath: string };
-  ReadResult: { contentsBuffer: Buffer; sha256: string };
+  ReadResult: void;
 };
 
 const zipResource = resource<ZipSchema>({
@@ -20,31 +20,20 @@ export const zipSchema = zipResource.defineSchema({
     presence: "required",
     primaryKey: true,
   },
-  contentsBuffer: {
-    valueType: z.instanceof(Buffer),
-    propertyType: "computed",
-    presence: "required",
-    hidden: true,
-  },
-  sha256: {
+  sourceSha256: {
     valueType: z.string(),
-    propertyType: "computed",
+    propertyType: "param",
     presence: "required",
   },
-});
+} as const);
 
 export const Zip = zipSchema.defineOperations({
+  setIntrinsicConfig: async ({ config }) => {
+    const sourceSha256 = await zip.getSourceSha256(config.filePath!);
+    return { sourceSha256 };
+  },
   create: async (params) => {
     await zip.package(params.filePath);
-  },
-  async read(key) {
-    try {
-      const result = await zip.read(key.filePath);
-      return result;
-    } catch {
-      await zip.package(key.filePath);
-      return zip.read(key.filePath);
-    }
   },
   update: async (config) => {
     await zip.delete(config.filePath);
@@ -54,5 +43,7 @@ export const Zip = zipSchema.defineOperations({
     await zip.delete(config.filePath);
   },
 });
+
+export const getZip = (filePath: string) => zip.read(filePath);
 
 export type ZipFileInstance = InstanceType<typeof Zip>;

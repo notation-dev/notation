@@ -46,7 +46,7 @@ export const LambdaRolePolicyAttachment = lambdaRolePolicyAttachmentSchema
     },
   })
   .requireDependencies<LambdaRolePolicyAttachmentDependencies>()
-  .setIntrinsicConfig((deps) => ({
+  .setIntrinsicConfig(({ deps }) => ({
     RoleName: deps.role.output.RoleName,
     PolicyArn:
       "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",

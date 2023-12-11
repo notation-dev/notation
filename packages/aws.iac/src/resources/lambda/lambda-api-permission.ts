@@ -107,7 +107,7 @@ export const LambdaApiGatewayV2Permission = lambdaApiGatewayV2PermissionSchema
     },
   })
   .requireDependencies<LambdaApiGatewayV2PermissionDependencies>()
-  .setIntrinsicConfig(async (deps) => ({
+  .setIntrinsicConfig(async ({ deps }) => ({
     FunctionName: deps.lambda.output.FunctionName,
     StatementId: "lambda-api-gateway-v2-permission",
     Action: "lambda:InvokeFunction",

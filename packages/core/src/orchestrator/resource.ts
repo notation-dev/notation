@@ -59,15 +59,16 @@ export interface BaseResource {
   readonly key: {};
   create: (params: any) => Promise<{} | void>;
   read?: () => Promise<Result<any>>;
-  update?: (params: any) => Promise<void>;
+  update?: (patch: any, params: any) => Promise<void>;
   delete: () => Promise<void>;
   getParams(): Promise<{}>;
   toState(output: {}): {};
   toComparable(output: {}): {};
   setOutput(result: {}): void;
-  setIntrinsicConfig?: (
-    deps: any,
-  ) => Record<string, any> | Promise<Record<string, any>>;
+  setIntrinsicConfig?: (opts: {
+    config: any;
+    deps: any;
+  }) => Record<string, any> | Promise<Record<string, any>>;
 }
 
 export abstract class Resource<
@@ -85,15 +86,16 @@ export abstract class Resource<
   abstract schema: S;
   abstract create: (params: Params<S>) => Promise<ComputedPrimaryKey<S>>;
   abstract read?: () => Promise<Result<S>>;
-  abstract update?: (params: Params<S>) => Promise<void>;
+  abstract update?: (patch: Params<S>, params: Params<S>) => Promise<void>;
   abstract delete: () => Promise<void>;
   abstract retryReadOnCondition?: ResultConditions<Output<S>>;
   abstract failOnError?: (ErrorMatcher & { reason: string })[];
   abstract notFoundOnError?: ErrorMatcher[];
   abstract retryLaterOnError?: ErrorMatcher[];
-  abstract setIntrinsicConfig(
-    deps: D,
-  ): Record<string, any> | Promise<Record<string, any>>;
+  abstract setIntrinsicConfig(opts: {
+    config: C;
+    deps: D;
+  }): Record<string, any> | Promise<Record<string, any>>;
 
   constructor(opts: ResourceOpts<C, D>) {
     this.id = opts.id;
@@ -157,7 +159,10 @@ export abstract class Resource<
     if (this.setIntrinsicConfig) {
       return {
         ...(this.config as any as Params<S>),
-        ...(await this.setIntrinsicConfig(this.dependencies)),
+        ...(await this.setIntrinsicConfig({
+          config: this.config,
+          deps: this.dependencies,
+        })),
       } as any as Params<S>;
     }
     return this.config as any as Params<S>;
@@ -187,13 +192,19 @@ export function resource<
         >(opts: {
           create: (params: Params<S>) => Promise<ComputedPrimaryKey<S>>;
           read?: (key: CompoundKey<S>) => Promise<Result<S>>;
-          update?: (key: CompoundKey<S>, params: Params<S>) => Promise<void>;
+          update?: (
+            key: CompoundKey<S>,
+            patch: Params<S>,
+            params: Params<S>,
+          ) => Promise<void>;
           delete: (primaryKey: CompoundKey<S>) => Promise<void>;
           retryReadOnCondition?: ResultConditions<Output<S>>;
           failOnError?: (ErrorMatcher & { reason: string })[];
           notFoundOnError?: ErrorMatcher[];
           retryLaterOnError?: ErrorMatcher[];
-          setIntrinsicConfig?: () => IntrinsicConfig | Promise<IntrinsicConfig>;
+          setIntrinsicConfig?: (opts: {
+            config: Partial<Params<S>>;
+          }) => IntrinsicConfig | Promise<IntrinsicConfig>;
         }) => {
           return class SimpleResource<
             D extends Record<string, BaseResource> = {},
@@ -208,7 +219,8 @@ export function resource<
             create = opts.create;
             read = opts.read ? () => opts.read!(this.key) : undefined;
             update = opts.update
-              ? (patch: Params<S>) => opts.update!(this.key, patch)
+              ? (patch: Params<S>, params: Params<S>) =>
+                  opts.update!(this.key, patch, params)
               : undefined;
             delete = () => opts.delete(this.key);
             retryReadOnCondition = opts.retryReadOnCondition;
@@ -218,7 +230,9 @@ export function resource<
 
             async setIntrinsicConfig() {
               if (!opts.setIntrinsicConfig) return {};
-              return await opts.setIntrinsicConfig();
+              return await opts.setIntrinsicConfig({
+                config: this.config as any as Partial<Params<S>>,
+              });
             }
 
             static requireDependencies<
@@ -226,9 +240,10 @@ export function resource<
             >() {
               return {
                 setIntrinsicConfig<IntrinsicConfig extends Partial<Params<S>>>(
-                  setIntrinsicConfig: (
-                    deps: Dependencies,
-                  ) => IntrinsicConfig | Promise<IntrinsicConfig>,
+                  setIntrinsicConfig: (opts: {
+                    config: Params<S>;
+                    deps: Dependencies;
+                  }) => IntrinsicConfig | Promise<IntrinsicConfig>,
                 ) {
                   return class DependencyAwareResource extends SimpleResource<
                     Dependencies,
@@ -239,7 +254,10 @@ export function resource<
                         await super.setIntrinsicConfig();
                       return {
                         ...superIntrinsicConfig,
-                        ...(await setIntrinsicConfig(this.dependencies)),
+                        ...(await setIntrinsicConfig({
+                          config: this.config as Params<S>,
+                          deps: this.dependencies,
+                        })),
                       };
                     }
                   };

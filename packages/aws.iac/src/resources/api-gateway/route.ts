@@ -122,7 +122,7 @@ export const Route = routeSchema
     },
   })
   .requireDependencies<RouteDependencies>()
-  .setIntrinsicConfig((deps) => ({
+  .setIntrinsicConfig(({ deps }) => ({
     ApiId: deps.api.output.ApiId,
     // todo: this is too opinionated, should be somewhere else
     Target: `integrations/${deps.lambdaIntegration.output.IntegrationId}`,

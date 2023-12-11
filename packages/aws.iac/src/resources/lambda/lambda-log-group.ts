@@ -61,7 +61,7 @@ export const LambdaLogGroup = lambdaLogGroupSchema
     },
   })
   .requireDependencies<LambdaLogGroupDependencies>()
-  .setIntrinsicConfig((deps) => ({
+  .setIntrinsicConfig(({ deps }) => ({
     logGroupName: `/aws/lambda/${deps.lambda.output.FunctionName}`,
   }));
 

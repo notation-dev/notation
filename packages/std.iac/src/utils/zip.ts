@@ -6,13 +6,22 @@ import crypto from "crypto";
 export const zip = {
   path: (filePath: string) => `${filePath}.zip`,
 
-  read: async (filePath: string) => {
-    const contentsBuffer = await fs.readFile(zip.path(filePath));
-    const sha256 = crypto
+  getSourceSha256: async (filePath: string) => {
+    const sourceBuffer = await fs.readFile(filePath);
+    const sourceSha256 = crypto
       .createHash("sha256")
-      .update(contentsBuffer)
+      .update(sourceBuffer)
       .digest("hex");
-    return { contentsBuffer, sha256 };
+    return sourceSha256;
+  },
+
+  read: async (filePath: string) => {
+    try {
+      return fs.readFile(zip.path(filePath));
+    } catch {
+      await zip.package(zip.path(filePath));
+      return fs.readFile(zip.path(filePath));
+    }
   },
 
   package: async (filePath: string) => {

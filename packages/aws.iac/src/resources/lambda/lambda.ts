@@ -10,7 +10,6 @@ export type LambdaFunctionSchema = AwsSchema<{
   Key: Omit<sdk.GetFunctionRequest, "Qualifier">;
   CreateParams: sdk.CreateFunctionRequest &
     sdk.PutFunctionConcurrencyRequest & { CodeSha256: string }; // not actually a param, but want it to appear in the state for comparison
-
   UpdateParams: sdk.UpdateFunctionCodeRequest &
     sdk.UpdateFunctionConfigurationRequest &
     sdk.PutFunctionConcurrencyRequest &
@@ -50,8 +49,12 @@ const lambdaFunctionSchema = lambdaFunction.defineSchema({
     }),
     propertyType: "param",
     presence: "required",
-    immutable: true,
     hidden: true,
+  },
+  CodeZipPath: {
+    valueType: z.string(),
+    propertyType: "param",
+    presence: "required",
   },
   CodeSha256: {
     valueType: z.string(),
@@ -287,14 +290,22 @@ const lambdaFunctionSchema = lambdaFunction.defineSchema({
 export const LambdaFunction = lambdaFunctionSchema
   .defineOperations({
     create: async (params) => {
-      const command = new sdk.CreateFunctionCommand(params);
-      const concurrencyCommand = new sdk.PutFunctionConcurrencyCommand({
-        FunctionName: params.FunctionName,
-        ReservedConcurrentExecutions: params.ReservedConcurrentExecutions,
+      const zip = await fs.getZip(params.CodeZipPath);
+      const command = new sdk.CreateFunctionCommand({
+        ...params,
+        Code: { ZipFile: zip },
       });
       await lambdaClient.send(command);
-      await lambdaClient.send(concurrencyCommand);
+
+      if (params.ReservedConcurrentExecutions) {
+        const concurrencyCommand = new sdk.PutFunctionConcurrencyCommand({
+          FunctionName: params.FunctionName,
+          ReservedConcurrentExecutions: params.ReservedConcurrentExecutions,
+        });
+        await lambdaClient.send(concurrencyCommand);
+      }
     },
+
     read: async (key) => {
       const command = new sdk.GetFunctionCommand(key);
       const { Code, Configuration, Concurrency } =
@@ -312,13 +323,31 @@ export const LambdaFunction = lambdaFunctionSchema
         },
       };
     },
-    update: async (key, params) => {
-      const input = { ...key, ...params };
-      const command = new sdk.UpdateFunctionConfigurationCommand(input);
-      const codeCommand = new sdk.UpdateFunctionCodeCommand(input);
-      await lambdaClient.send(codeCommand);
-      await lambdaClient.send(command);
+
+    update: async (key, patch, params) => {
+      const { Code, CodeSha256, ...conf } = patch;
+
+      // todo: work it out so that these commands be run together. currently errors on:
+      // ResourceConflictException: The operation cannot be performed at this time. An update is in progress for resource: arn...
+
+      if (Object.keys(conf).length > 0) {
+        const confCommand = new sdk.UpdateFunctionConfigurationCommand({
+          ...key,
+          ...conf,
+        });
+        await lambdaClient.send(confCommand);
+      }
+
+      if (CodeSha256) {
+        const zip = await fs.getZip(params.CodeZipPath);
+        const codeCommand = new sdk.UpdateFunctionCodeCommand({
+          ...key,
+          ZipFile: zip,
+        });
+        await lambdaClient.send(codeCommand);
+      }
     },
+
     delete: async (key) => {
       const command = new sdk.DeleteFunctionCommand(key);
       await lambdaClient.send(command);
@@ -350,10 +379,11 @@ export const LambdaFunction = lambdaFunctionSchema
     ],
   })
   .requireDependencies<LambdaDependencies>()
-  .setIntrinsicConfig((deps) => ({
+  .setIntrinsicConfig(async ({ deps }) => ({
     PackageType: "Zip",
-    Code: { ZipFile: deps.zipFile.output.contentsBuffer },
-    CodeSha256: deps.zipFile.output.sha256,
+    Code: { ZipFile: undefined },
+    CodeSha256: deps.zipFile.output.sourceSha256,
+    CodeZipPath: deps.zipFile.config.filePath,
     Role: deps.role.output.Arn,
   }));
 

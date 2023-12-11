@@ -119,7 +119,7 @@ export const Stage = stageSchema
     },
   })
   .requireDependencies<StageDependencies>()
-  .setIntrinsicConfig((deps) => ({
+  .setIntrinsicConfig(({ deps }) => ({
     ApiId: deps.api.output.ApiId!,
   }));
 

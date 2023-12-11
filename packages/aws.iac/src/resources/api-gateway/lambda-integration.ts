@@ -154,7 +154,7 @@ export const LambdaIntegration = integrationSchema
     },
   })
   .requireDependencies<LambdaIntegrationDependencies>()
-  .setIntrinsicConfig((deps) => ({
+  .setIntrinsicConfig(({ deps }) => ({
     ApiId: deps.api.output.ApiId,
     IntegrationType: "AWS_PROXY",
     IntegrationMethod: "POST",

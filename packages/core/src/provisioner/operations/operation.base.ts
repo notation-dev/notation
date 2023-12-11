@@ -6,7 +6,7 @@ export const operation = <Opts extends { resource: BaseResource }, V>(
 ) => {
   return async (opts: Opts & { dryRun?: boolean }): Promise<V> => {
     const { dryRun, ...opOpts } = opts;
-    const message = `${gerund} ${opOpts.resource.type} ${opOpts.resource.id}`;
+    const message = `${gerund} ${opOpts.resource.id}`;
 
     if (dryRun) {
       console.log(`[Dry Run]: ${message}`);

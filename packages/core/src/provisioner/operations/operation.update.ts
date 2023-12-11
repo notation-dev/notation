@@ -18,9 +18,8 @@ async function update(opts: {
     );
   }
 
-  await resource.update(patch);
-
   const params = await resource.getParams();
+  await resource.update(patch, params);
 
   resource.setOutput({ ...resource.key, ...params });
 

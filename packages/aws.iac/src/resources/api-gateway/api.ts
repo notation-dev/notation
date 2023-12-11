@@ -124,7 +124,6 @@ export const Api = apiSchema.defineOperations({
   async read(key) {
     const command = new sdk.GetApiCommand(key);
     const result = await apiGatewayClient.send(command);
-    console.log(result);
     // todo: check types or correct or if RouteKey is actually in result
     // if not, need to pass the original params to read
     return { RouteKey: "", ...result };
