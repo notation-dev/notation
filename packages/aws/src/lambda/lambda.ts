@@ -28,7 +28,7 @@ export const lambda = (config: { fileName: string; handler: string }) => {
     }),
   );
 
-  const policyAttachment = functionGroup.add(
+  functionGroup.add(
     new aws.lambda.LambdaRolePolicyAttachment({
       id: `${lambdaId}-policy`,
       dependencies: { role },
