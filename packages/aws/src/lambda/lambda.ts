@@ -23,7 +23,7 @@ export const lambda = (config: { fileName: string; handler: string }) => {
     new aws.lambda.LambdaIamRole({
       id: `${lambdaId}-role`,
       config: {
-        RoleName: `${functionGroup.id}-role`,
+        RoleName: `${lambdaId}-role`,
       },
     }),
   );
@@ -39,7 +39,7 @@ export const lambda = (config: { fileName: string; handler: string }) => {
     new aws.lambda.LambdaFunction({
       id: lambdaId,
       config: {
-        FunctionName: `function-${functionGroup.id}`,
+        FunctionName: lambdaId,
         Handler: `index.${config.handler}`,
         Runtime: "nodejs18.x",
         ReservedConcurrentExecutions: 1,
