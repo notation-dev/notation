@@ -7,17 +7,17 @@ import {
 } from "@notation/esbuild-plugins";
 import { filePaths } from "@notation/core";
 
-export async function compile(entryPoint: string) {
-  await compileInfra(entryPoint);
+export async function compile(entryPoint: string, watch: boolean = false) {
+  await compileInfra(entryPoint, watch);
   // @todo: fnEntryPoints could be an output of compileInfra
   const fnEntryPoints = await glob("**/*.fn.ts");
-  await compileFns(fnEntryPoints);
+  await compileFns(fnEntryPoints, watch);
 }
 
-export async function compileInfra(entryPoint: string) {
-  log("Compiling infrastructure", entryPoint);
+export async function compileInfra(entryPoint: string, watch: boolean) {
+  log(`${watch ? "Watching" : "Compiling"} infrastructure`, entryPoint);
 
-  await esbuild.build({
+  const context = await esbuild.context({
     entryPoints: [entryPoint],
     plugins: [functionInfraPlugin()],
     outdir: "dist/infra",
@@ -29,13 +29,20 @@ export async function compileInfra(entryPoint: string) {
     treeShaking: true,
     packages: "external",
   });
+
+  if (watch) {
+    await context.watch();
+  } else {
+    await context.rebuild();
+    context.dispose();
+  }
 }
 
-export async function compileFns(entryPoints: string[]) {
-  log("Compiling functions");
+export async function compileFns(entryPoints: string[], watch: boolean) {
+  log(`${watch ? "Watching" : "Compiling"} functions`);
 
   for (const entryPoint of entryPoints) {
-    await esbuild.build({
+    const context = await esbuild.context({
       entryPoints: [entryPoint],
       plugins: [functionRuntimePlugin()],
       outfile: filePaths.dist.runtime.index(entryPoint),
@@ -45,5 +52,12 @@ export async function compileFns(entryPoints: string[]) {
       platform: "node",
       treeShaking: true,
     });
+
+    if (watch) {
+      await context.watch();
+    } else {
+      await context.rebuild();
+      context.dispose();
+    }
   }
 }

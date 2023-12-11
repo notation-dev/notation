@@ -9,10 +9,9 @@ import { BaseResource } from "src/orchestrator/resource";
 
 export async function deployApp(
   entryPoint: string,
+  driftDetection = true,
   dryRun = false,
 ): Promise<void> {
-  console.log(`Deploying ${entryPoint}\n`);
-
   const graph = await getResourceGraph(entryPoint);
   const state = new State();
 
@@ -45,6 +44,8 @@ export async function deployApp(
       await updateResource({ resource, state, patch: localDiff, dryRun });
       continue;
     }
+
+    if (!driftDetection) continue;
 
     const latestOutput = await readResource({ resource, state, dryRun });
 

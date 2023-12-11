@@ -4,6 +4,7 @@ import { compile } from "./compile";
 import { deploy } from "./deploy";
 import { destroy } from "./destroy";
 import { visualise } from "./visualise";
+import { watch } from "./watch";
 import { scaffoldApp } from "./scaffold";
 
 program
@@ -44,6 +45,14 @@ program
   .description("Destroy Notation App")
   .action(async (entryPoint) => {
     await destroy(entryPoint);
+  });
+
+program
+  .command("watch")
+  .argument("<entryPoint>", "entryPoint")
+  .description("Watch Notation App")
+  .action(async (entryPoint) => {
+    await watch(entryPoint);
   });
 
 program.parse(process.argv);

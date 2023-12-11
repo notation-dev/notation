@@ -101,6 +101,9 @@ importers:
       '@notation/esbuild-plugins':
         specifier: workspace:*
         version: link:../esbuild-plugins
+      chokidar:
+        specifier: ^3.5.3
+        version: 3.5.3
       commander:
         specifier: ^11.0.0
         version: 11.0.0
