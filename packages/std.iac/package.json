@@ -12,6 +12,8 @@
     "dev": "npm run build -- --watch"
   },
   "dependencies": {
-    "@notation/core": "workspace:*"
+    "@notation/core": "workspace:*",
+    "fflate": "0.8.1",
+    "zod": "^3.22.4"
   }
 }

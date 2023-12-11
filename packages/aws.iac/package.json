@@ -6,16 +6,8 @@
     "build": "tsup",
     "dev": "npm run build -- --watch"
   },
-  "exports": {
-    "./client": {
-      "import": "./dist/client.js",
-      "types": "./dist/client.d.ts"
-    },
-    "./resources": {
-      "import": "./dist/resources.js",
-      "types": "./dist/resources.d.ts"
-    }
-  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "files": [
     "dist"
   ],
@@ -27,6 +19,7 @@
     "@aws-sdk/client-cloudwatch-logs": "^3.441.0",
     "@notation/core": "workspace:*",
     "@notation/std.iac": "workspace:*",
-    "@types/aws-lambda": "^8.10.125"
+    "@types/aws-lambda": "^8.10.125",
+    "zod": "^3.22.4"
   }
 }

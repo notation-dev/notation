@@ -1,33 +1,68 @@
-import { createResourceFactory } from "@notation/core";
-import {
-  CreateLogGroupCommand,
-  CreateLogGroupCommandInput,
-  CreateLogGroupCommandOutput,
-} from "@aws-sdk/client-cloudwatch-logs";
+import { resource } from "@notation/core";
+import * as sdk from "@aws-sdk/client-cloudwatch-logs";
+import * as z from "zod";
 import { cloudWatchLogsClient } from "src/utils/aws-clients";
-import { LambdaInstance } from "./lambda";
+import { AwsSchema } from "src/utils/types";
+import { LambdaFunctionInstance } from "../lambda";
 
-export type LambdaLogGroupInput = CreateLogGroupCommandInput;
-export type LambdaLogGroupOutput = CreateLogGroupCommandOutput;
-export type LambdaLogGroupDeps = { lambda: LambdaInstance };
+export type LambdaLogGroupSchema = AwsSchema<{
+  Key: sdk.DeleteLogGroupRequest;
+  CreateParams: sdk.CreateLogGroupRequest & sdk.PutRetentionPolicyRequest;
+}>;
 
-const createLambdaLogGroupClass = createResourceFactory<
-  LambdaLogGroupInput,
-  LambdaLogGroupOutput,
-  LambdaLogGroupDeps
->();
+export type LambdaLogGroupDependencies = { lambda: LambdaFunctionInstance };
 
-export const LambdaLogGroup = createLambdaLogGroupClass({
-  type: "aws/lambda/log-group",
-
-  getIntrinsicConfig: (dependencies) => ({
-    logGroupName: `/aws/lambda/${dependencies.lambda.output.FunctionName}`,
-  }),
-
-  deploy: async (props: LambdaLogGroupInput) => {
-    const command = new CreateLogGroupCommand(props);
-    return cloudWatchLogsClient.send(command);
-  },
+const lambdaLogGroup = resource<LambdaLogGroupSchema>({
+  type: "aws/lambda/LambdaLogGroup",
 });
+
+const lambdaLogGroupSchema = lambdaLogGroup.defineSchema({
+  logGroupName: {
+    valueType: z.string(),
+    propertyType: "param",
+    presence: "required",
+    primaryKey: true,
+  },
+  kmsKeyId: {
+    valueType: z.string(),
+    propertyType: "param",
+    presence: "optional",
+  },
+  tags: {
+    valueType: z.record(z.string()),
+    propertyType: "param",
+    presence: "optional",
+  },
+  retentionInDays: {
+    valueType: z.number(),
+    propertyType: "param",
+    presence: "required",
+  },
+} as const);
+
+export const LambdaLogGroup = lambdaLogGroupSchema
+  .defineOperations({
+    create: async (params) => {
+      const command = new sdk.CreateLogGroupCommand(params);
+      await cloudWatchLogsClient.send(command);
+      const retentionCommand = new sdk.PutRetentionPolicyCommand({
+        logGroupName: params.logGroupName,
+        retentionInDays: params.retentionInDays,
+      });
+      await cloudWatchLogsClient.send(retentionCommand);
+    },
+    update: async (key, params) => {
+      const command = new sdk.PutRetentionPolicyCommand({ ...key, ...params });
+      await cloudWatchLogsClient.send(command);
+    },
+    delete: async (key) => {
+      const command = new sdk.DeleteLogGroupCommand(key);
+      await cloudWatchLogsClient.send(command);
+    },
+  })
+  .requireDependencies<LambdaLogGroupDependencies>()
+  .setIntrinsicConfig(({ deps }) => ({
+    logGroupName: `/aws/lambda/${deps.lambda.output.FunctionName}`,
+  }));
 
 export type LambdaLogGroupInstance = InstanceType<typeof LambdaLogGroup>;

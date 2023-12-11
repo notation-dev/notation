@@ -1,5 +1,3 @@
-import fs from "fs";
-import * as fflate from "fflate";
 import { glob } from "glob";
 import { log } from "console";
 import esbuild from "esbuild";
@@ -14,7 +12,6 @@ export async function compile(entryPoint: string) {
   // @todo: fnEntryPoints could be an output of compileInfra
   const fnEntryPoints = await glob("**/*.fn.ts");
   await compileFns(fnEntryPoints);
-  await zipFns(fnEntryPoints);
 }
 
 export async function compileInfra(entryPoint: string) {
@@ -48,19 +45,5 @@ export async function compileFns(entryPoints: string[]) {
       platform: "node",
       treeShaking: true,
     });
-  }
-}
-
-export async function zipFns(entryPoints: string[]) {
-  log("Compiling deployable packages");
-
-  for (const entryPoint of entryPoints) {
-    const inputFilePath = filePaths.dist.runtime.index(entryPoint);
-    const inputFile = fs.readFileSync(inputFilePath);
-
-    const zipFilePath = `${inputFilePath}.zip`;
-    const archive = fflate.zipSync({ "index.mjs": inputFile }, { level: 9 });
-
-    fs.writeFileSync(zipFilePath, archive);
   }
 }

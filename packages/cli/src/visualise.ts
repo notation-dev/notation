@@ -1,5 +1,8 @@
-import { createMermaidFlowChart, createMermaidLiveUrl } from "@notation/core";
-import { getResourceGraph } from "./utils";
+import {
+  createMermaidFlowChart,
+  createMermaidLiveUrl,
+  getResourceGraph,
+} from "@notation/core";
 import { log } from "console";
 import { compileInfra } from "./compile";
 

@@ -1,7 +1,7 @@
 import pako from "pako";
 import { fromUint8Array } from "js-base64";
-import { ResourceGroup } from "./resource-group";
-import { Resource } from "./resource";
+import { ResourceGroup } from "../orchestrator/resource-group";
+import { Resource } from "../orchestrator/resource";
 
 export const createMermaidFlowChart = (
   resourceGroups: ResourceGroup[],

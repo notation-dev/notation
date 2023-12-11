@@ -1,11 +1,11 @@
-import { AwsResourceGroup } from "@notation/aws.iac/client";
-import * as aws from "@notation/aws.iac/resources";
+import * as aws from "@notation/aws.iac";
 
 export const api = (rgConfig: { name: string }) => {
-  const apiGroup = new AwsResourceGroup("api", rgConfig);
+  const apiGroup = new aws.AwsResourceGroup("api", rgConfig);
 
   const apiResource = apiGroup.add(
     new aws.apiGateway.Api({
+      id: rgConfig.name,
       config: {
         Name: rgConfig.name,
         ProtocolType: "HTTP",
@@ -15,8 +15,9 @@ export const api = (rgConfig: { name: string }) => {
 
   apiGroup.add(
     new aws.apiGateway.Stage({
+      id: `${rgConfig.name}-stage`,
       config: { StageName: "$default", AutoDeploy: true },
-      dependencies: { router: apiResource },
+      dependencies: { api: apiResource },
     }),
   );
 

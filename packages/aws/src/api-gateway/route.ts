@@ -1,6 +1,5 @@
 import type { ApiGatewayHandler } from "src/shared";
-import * as aws from "@notation/aws.iac/resources";
-import { AwsResourceGroup } from "@notation/aws.iac/client";
+import * as aws from "@notation/aws.iac";
 import { lambda } from "src/lambda";
 import { api } from "./api";
 
@@ -15,23 +14,26 @@ export const route = (
   // at compile time becomes infra module
   const lambdaGroup = handler as any as ReturnType<typeof lambda>;
 
-  const routeGroup = new AwsResourceGroup("api/route", {
+  const routeGroup = new aws.AwsResourceGroup("api/route", {
     dependencies: { router: apiGroup.id, fn: lambdaGroup.id },
   });
 
+  const routeId = `${apiResource.id}-${method}-${path}`;
+
   let integration;
 
-  const lambdaResource = lambdaGroup.findResource(aws.lambda.Lambda)!;
+  const lambdaResource = lambdaGroup.findResource(aws.lambda.LambdaFunction)!;
 
   const permission = lambdaGroup.findResource(
-    aws.lambda.LambdaApiGatewayPermission,
+    aws.lambda.LambdaApiGatewayV2Permission,
   );
 
   integration = lambdaGroup.findResource(aws.apiGateway.LambdaIntegration);
 
   if (!permission) {
     lambdaGroup.add(
-      new aws.lambda.LambdaApiGatewayPermission({
+      new aws.lambda.LambdaApiGatewayV2Permission({
+        id: `${lambdaResource.id}-${apiResource.id}-permission`,
         dependencies: {
           api: apiResource,
           lambda: lambdaResource,
@@ -43,6 +45,7 @@ export const route = (
   if (!integration) {
     integration = lambdaGroup.add(
       new aws.apiGateway.LambdaIntegration({
+        id: `${apiResource.id}-${lambdaResource.id}-integration`,
         dependencies: {
           api: apiResource,
           lambda: lambdaResource,
@@ -53,6 +56,7 @@ export const route = (
 
   routeGroup.add(
     new aws.apiGateway.Route({
+      id: routeId,
       config: {
         RouteKey: `${method} ${path}`,
       },

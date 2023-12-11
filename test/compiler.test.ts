@@ -15,7 +15,6 @@ it("generates infra and runtime modules matching source file structure", async (
   const expected = [
     "dist/infra/src/api.mjs",
     "dist/runtime/src/todos/todos.fn/index.mjs",
-    "dist/runtime/src/todos/todos.fn/index.mjs.zip",
   ];
 
   const actual = await glob("dist/**/*.{js,mjs,zip}", { cwd });

@@ -1,43 +1,51 @@
-import * as aws from "@notation/aws.iac/resources";
+import * as aws from "@notation/aws.iac";
 import * as std from "@notation/std.iac";
-import { AwsResourceGroup } from "@notation/aws.iac/client";
+import crypto from "crypto";
 
 export const lambda = (config: { fileName: string; handler: string }) => {
-  const functionGroup = new AwsResourceGroup("aws/function", { config });
+  const functionGroup = new aws.AwsResourceGroup("aws/function", { config });
+  const filePathHash = crypto
+    .createHash("BLAKE2s256")
+    .update(config.fileName)
+    .digest("hex")
+    .slice(0, 8);
+
+  const lambdaId = `${config.handler}-${filePathHash}`;
 
   const zipFile = functionGroup.add(
-    new std.Zip({
-      config: { fileName: config.fileName },
+    new std.fs.Zip({
+      id: `${lambdaId}-zip`,
+      config: { filePath: config.fileName },
     }),
   );
 
   const role = functionGroup.add(
     new aws.lambda.LambdaIamRole({
-      config: { RoleName: `${functionGroup.id}-role` },
+      id: `${lambdaId}-role`,
+      config: {
+        RoleName: `${functionGroup.id}-role`,
+      },
     }),
   );
 
-  const policyAttachment = functionGroup.add(
+  functionGroup.add(
     new aws.lambda.LambdaRolePolicyAttachment({
-      config: {
-        // todo: move to resource, or provide default roles
-        PolicyArn:
-          "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-      },
+      id: `${lambdaId}-policy`,
       dependencies: { role },
     }),
   );
 
   const lambdaResource = functionGroup.add(
-    new aws.lambda.Lambda({
+    new aws.lambda.LambdaFunction({
+      id: lambdaId,
       config: {
         FunctionName: `function-${functionGroup.id}`,
         Handler: `index.${config.handler}`,
         Runtime: "nodejs18.x",
+        ReservedConcurrentExecutions: 1,
       },
       dependencies: {
         role,
-        policyAttachment,
         zipFile,
       },
     }),
@@ -45,6 +53,8 @@ export const lambda = (config: { fileName: string; handler: string }) => {
 
   functionGroup.add(
     new aws.lambda.LambdaLogGroup({
+      id: `${lambdaId}-log-group`,
+      config: { retentionInDays: 30 },
       dependencies: { lambda: lambdaResource },
     }),
   );

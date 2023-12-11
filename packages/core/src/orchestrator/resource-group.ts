@@ -1,10 +1,5 @@
-import {
-  resources,
-  resourceGroups,
-  getNextResourceCount,
-  getNextResourceGroupCount,
-} from "./state";
-import { Resource } from "./resource";
+import { resources, resourceGroups, getNextResourceGroupCount } from "./state";
+import { BaseResource } from "./resource";
 
 export type ResourceGroupOptions = {
   dependencies?: Record<string, number>;
@@ -16,7 +11,7 @@ export abstract class ResourceGroup {
   id: number;
   dependencies: Record<string, number>;
   config: Record<string, any>;
-  resources: Resource[];
+  resources: BaseResource[];
 
   constructor(type: string, opts: ResourceGroupOptions) {
     const { dependencies, ...config } = opts;
@@ -29,18 +24,19 @@ export abstract class ResourceGroup {
     return this;
   }
 
-  add<T extends Resource>(resource: T) {
+  add<T extends BaseResource>(resource: T) {
     if (resources.includes(resource)) {
       throw new Error(`Resource ${resource.type} has already been registered.`);
     }
-    resource.id = getNextResourceCount();
     resource.groupId = this.id;
     resources.push(resource);
     this.resources.push(resource);
     return resource;
   }
 
-  findResource<T extends new (...opts: any[]) => Resource>(ResourceClass: T) {
+  findResource<T extends new (...opts: any[]) => BaseResource>(
+    ResourceClass: T,
+  ) {
     return this.resources.find((r) => r instanceof ResourceClass) as
       | InstanceType<T>
       | undefined;
