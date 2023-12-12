@@ -1,11 +1,11 @@
 import pako from "pako";
 import { fromUint8Array } from "js-base64";
 import { ResourceGroup } from "../orchestrator/resource-group";
-import { Resource } from "../orchestrator/resource";
+import { BaseResource } from "../orchestrator/resource";
 
 export const createMermaidFlowChart = (
   resourceGroups: ResourceGroup[],
-  resources: Resource[],
+  resources: BaseResource[],
 ): string => {
   let mermaidString = "flowchart TD\n";
   let connectionsString = "";
@@ -18,12 +18,14 @@ export const createMermaidFlowChart = (
     mermaidString += `  end\n`;
 
     group.resources.forEach((resource) => {
-      (Object.values(resource.dependencies) as Resource[]).forEach((dep) => {
-        const depResource = resources.find((r) => r.id === dep.id);
-        if (depResource) {
-          connectionsString += `  ${resource.type}_${resource.id} --> ${depResource.type}_${dep.id}\n`;
-        }
-      });
+      (Object.values(resource.dependencies) as BaseResource[]).forEach(
+        (dep) => {
+          const depResource = resources.find((r) => r.id === dep.id);
+          if (depResource) {
+            connectionsString += `  ${resource.type}_${resource.id} --> ${depResource.type}_${dep.id}\n`;
+          }
+        },
+      );
     });
   });
 
