@@ -1,5 +1,17 @@
 # @notation/cli
 
+## 0.5.0
+
+### Minor Changes
+
+- Stateful deployments
+
+### Patch Changes
+
+- Updated dependencies
+  - @notation/core@0.4.0
+  - @notation/esbuild-plugins@0.3.2
+
 ## 0.4.2
 
 ### Patch Changes

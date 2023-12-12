@@ -1,5 +1,11 @@
 # @notation/core
 
+## 0.4.0
+
+### Minor Changes
+
+- Stateful deployments
+
 ## 0.3.1
 
 ### Patch Changes
