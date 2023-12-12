@@ -1,9 +1,9 @@
 import { beforeEach, test, expect } from "bun:test";
 import { lambda } from "src/lambda";
-import { resetResourceGroupCounters } from "@notation/core";
+import { reset } from "@notation/core";
 
 beforeEach(() => {
-  resetResourceGroupCounters();
+  reset();
 });
 
 test("lambda resource group snapshot", async () => {

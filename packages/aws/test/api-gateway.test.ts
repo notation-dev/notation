@@ -1,11 +1,11 @@
 import { test, expect, beforeEach } from "bun:test";
-import { resetResourceGroupCounters } from "@notation/core";
+import { reset } from "@notation/core";
 import { apiGateway } from "@notation/aws.iac";
 import { api, route, router } from "src/api-gateway";
 import { lambda } from "src/lambda";
 
 beforeEach(() => {
-  resetResourceGroupCounters();
+  reset();
 });
 
 test("api resource group snapshot", () => {

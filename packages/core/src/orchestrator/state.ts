@@ -10,7 +10,7 @@ export const getNextResourceGroupCount = () => {
   return ++resourceGroupCounter;
 };
 
-export const resetResourceGroupCounters = () => {
+export const reset = () => {
   resources = [];
   resourceGroups = [];
   resourceGroupCounter = -1;

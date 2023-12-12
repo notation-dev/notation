@@ -5,10 +5,10 @@ import {
   getResourceGroups,
   getResources,
 } from "src";
-import { resetResourceGroupCounters } from "src/";
+import { reset } from "src/";
 
 beforeEach(() => {
-  resetResourceGroupCounters();
+  reset();
 });
 
 class TestResourceGroup extends ResourceGroup {

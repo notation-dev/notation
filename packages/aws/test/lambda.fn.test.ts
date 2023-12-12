@@ -1,9 +1,9 @@
 import { test, expect, beforeEach } from "bun:test";
-import { resetResourceGroupCounters } from "@notation/core";
+import { reset } from "@notation/core";
 import { handle, json } from "src/lambda.fn";
 
 beforeEach(() => {
-  resetResourceGroupCounters();
+  reset();
 });
 
 test("handlers wrap user-provided handlers", async () => {
