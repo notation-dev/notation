@@ -6,6 +6,7 @@ import { destroy } from "./destroy";
 import { visualise } from "./visualise";
 import { watch } from "./watch";
 import { scaffoldApp } from "./scaffold";
+import { startDashboardServer } from "@notation/dashboard";
 
 program
   .command("create")
@@ -24,11 +25,10 @@ program
   });
 
 program
-  .command("viz")
-  .argument("<entryPoint>", "entryPoint")
-  .description("Visualise Notation App")
-  .action(async (entryPoint) => {
-    await visualise(entryPoint);
+  .command("dashboard")
+  .description("Start Notation Dashboard")
+  .action(async () => {
+    await startDashboardServer();
   });
 
 program
@@ -45,6 +45,14 @@ program
   .description("Destroy Notation App")
   .action(async (entryPoint) => {
     await destroy(entryPoint);
+  });
+
+program
+  .command("viz")
+  .argument("<entryPoint>", "entryPoint")
+  .description("Visualise Notation App")
+  .action(async (entryPoint) => {
+    await visualise(entryPoint);
   });
 
 program

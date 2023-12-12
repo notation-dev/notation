@@ -1,0 +1,19 @@
+{
+  "extends": "tsconfig/base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "outDir": "../dist/server",
+    "moduleResolution": "NodeNext",
+    "module": "NodeNext",
+    "skipLibCheck": true
+  },
+  "files": ["server.ts"],
+  "include": ["**/*.ts"],
+  "exclude": [
+    "node_modules",
+    "../node_modules",
+    "../dist",
+    "../../node_modules",
+    "../../../node_modules"
+  ]
+}
