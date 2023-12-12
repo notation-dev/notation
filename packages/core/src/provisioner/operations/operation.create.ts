@@ -19,7 +19,7 @@ async function create(opts: { resource: BaseResource; state: State }) {
       resource.setOutput({ ...maybeComputedPrimaryKey, ...resource.output });
     }
 
-    const readResult = await readResource({ resource, state });
+    const readResult = await readResource({ resource, state, quiet: true });
 
     resource.setOutput({ ...resource.output, ...readResult });
 

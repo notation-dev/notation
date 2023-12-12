@@ -47,7 +47,12 @@ export async function deployApp(
 
     if (!driftDetection) continue;
 
-    const latestOutput = await readResource({ resource, state, dryRun });
+    const latestOutput = await readResource({
+      resource,
+      state,
+      dryRun,
+      quiet: true,
+    });
 
     // 4. Has resource been deleted?
     if (latestOutput === null) {
@@ -70,7 +75,9 @@ export async function deployApp(
     const resourceHasDrifted = Object.keys(remoteDiff).length > 0;
 
     if (resourceHasDrifted) {
-      console.log(`Drift detected for ${resource.id}. Reverting...`);
+      console.log(
+        `Remote ${resource.id} has drifted from its state. Reverting...`,
+      );
       await updateResource({ resource, state, patch: remoteDiff, dryRun });
       continue;
     }
@@ -81,9 +88,6 @@ export async function deployApp(
     let resource = graph.resources.find((r) => r.id === stateNode.id);
 
     if (!resource) {
-      console.log(
-        `Resource ${stateNode.meta.resourceName} ${stateNode.id} has been removed from the graph.`,
-      );
       const { moduleName, serviceName, resourceName } = stateNode.meta;
       const provider = await import(moduleName);
       const Resource = provider[serviceName][resourceName];

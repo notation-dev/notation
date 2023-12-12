@@ -23,10 +23,8 @@ async function update(opts: {
 
   resource.setOutput({ ...resource.key, ...params });
 
-  if (resource.read) {
-    const result = await readResource({ resource, state });
-    resource.setOutput({ ...resource.output, ...result });
-  }
+  const result = await readResource({ resource, state, quiet: true });
+  resource.setOutput({ ...resource.output, ...result });
 
   await state.update(resource.id, {
     lastOperation: "update",
