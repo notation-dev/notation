@@ -5,4 +5,4 @@ export * from "./visualiser/chart";
 export * from "./orchestrator/resource";
 export * from "./orchestrator/resource-group";
 export * from "./orchestrator/state-getters";
-export { resetResourceGroupCounters } from "./orchestrator/state";
+export { reset } from "./orchestrator/state";
