@@ -1,3 +1,4 @@
+import chokidar from "chokidar";
 import { glob } from "glob";
 import { log } from "console";
 import esbuild from "esbuild";
@@ -8,15 +9,30 @@ import {
 import { filePaths } from "@notation/core";
 
 export async function compile(entryPoint: string, watch: boolean = false) {
+  log(`${watch ? "Watching" : "Compiling"} infrastructure`, entryPoint);
   await compileInfra(entryPoint, watch);
+
+  log(`${watch ? "Watching" : "Compiling"} functions`);
+
   // @todo: fnEntryPoints could be an output of compileInfra
   const fnEntryPoints = await glob("**/*.fn.ts");
-  await compileFns(fnEntryPoints, watch);
+  let disposeFnCompiler = await compileFns(fnEntryPoints, watch);
+
+  if (!watch) return;
+
+  chokidar
+    .watch("**/*.fn.ts", {
+      ignored: /node_modules/,
+      persistent: true,
+    })
+    .on("all", async () => {
+      if (disposeFnCompiler) disposeFnCompiler();
+      const fnEntryPoints = await glob("**/*.fn.ts");
+      disposeFnCompiler = await compileFns(fnEntryPoints, watch);
+    });
 }
 
-export async function compileInfra(entryPoint: string, watch: boolean) {
-  log(`${watch ? "Watching" : "Compiling"} infrastructure`, entryPoint);
-
+export async function compileInfra(entryPoint: string, watch: boolean = false) {
   const context = await esbuild.context({
     entryPoints: [entryPoint],
     plugins: [functionInfraPlugin()],
@@ -38,9 +54,10 @@ export async function compileInfra(entryPoint: string, watch: boolean) {
   }
 }
 
-export async function compileFns(entryPoints: string[], watch: boolean) {
-  log(`${watch ? "Watching" : "Compiling"} functions`);
-
+export async function compileFns(
+  entryPoints: string[],
+  watch: boolean = false,
+) {
   for (const entryPoint of entryPoints) {
     const context = await esbuild.context({
       entryPoints: [entryPoint],
@@ -55,6 +72,7 @@ export async function compileFns(entryPoints: string[], watch: boolean) {
 
     if (watch) {
       await context.watch();
+      return () => context.dispose();
     } else {
       await context.rebuild();
       context.dispose();
