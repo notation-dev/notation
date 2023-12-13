@@ -48,6 +48,11 @@ const eventBridgeRuleSchema = eventBridgeRule.defineSchema({
         presence: "required",
         propertyType: "param",
         valueType: z.array(targetSchema)
+    },
+    Arn: {
+        presence: "required",
+        propertyType: "computed",
+        valueType: z.string()
     }
 })
 
