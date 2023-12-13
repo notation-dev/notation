@@ -51,7 +51,7 @@ const eventBridgeRuleSchema = eventBridgeRule.defineSchema({
     }
 })
 
-eventBridgeRuleSchema.defineOperations({
+export const EventBridgeRule = eventBridgeRuleSchema.defineOperations({
 
     read: async (key) => {
         const describeRuleCommand = new sdk.DescribeRuleCommand(key);
@@ -104,3 +104,4 @@ eventBridgeRuleSchema.defineOperations({
     }
 })
 
+export type EventBridgeRuleInstance = InstanceType<typeof EventBridgeRule>;
