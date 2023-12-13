@@ -32,12 +32,12 @@
 - &nbsp;🧩&nbsp;&nbsp; **Infrastructure _from_ code:** Write application code and let Notation figure out the infra
 - &nbsp;🔗&nbsp;&nbsp; **Integrated services:** Connect cloud services without learning proprietary platforms
 - &nbsp;🤝&nbsp;&nbsp; **Cross-platform types:** Build with confidence – all cloud services in a unified type space
-- &nbsp;🔜&nbsp;&nbsp; **Remote dev & test:** Run end-to-end cloud apps right from your terminal
+- &nbsp;⚡️&nbsp;&nbsp; **Hot module swapping:** Develop locally and get near-instant infra changes
 - &nbsp;🔜&nbsp;&nbsp; **Distributed workflows:** Compose serverless functions into powerful workflows
 
 ## Status: Developer Preview
 
-We're excited to share Notation with you but don't use it for anything serious just yet.
+We're excited to share Notation with you but don't use rely on it for anything serious just yet.
 
 0.x.x minor version bumps will contain breaking changes.
 
@@ -47,16 +47,16 @@ While we're working on docs feel free to dive right in:
 
 ```sh
 # pnpm
-pnpm create notation
+pnpm create notation my-app
 
 # bun
-bun create notation
+bun create notation my-app
 
 # yarn
-yarn create notation
+yarn create notation my-app
 
 # npm 7+
-npm create notation@latest
+npm create notation@latest my-app
 ```
 
 ## Community
