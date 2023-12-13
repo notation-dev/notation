@@ -1,5 +1,18 @@
 # @notation/aws
 
+## 0.5.0
+
+### Minor Changes
+
+- 5debdd1: Show deployed resource state in dashboard
+
+### Patch Changes
+
+- Updated dependencies [5debdd1]
+  - @notation/core@0.5.0
+  - @notation/aws.iac@0.4.2
+  - @notation/std.iac@0.4.2
+
 ## 0.4.1
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @notation/aws.iac
 
+## 0.4.2
+
+### Patch Changes
+
+- Updated dependencies [5debdd1]
+  - @notation/core@0.5.0
+  - @notation/std.iac@0.4.2
+
 ## 0.4.1
 
 ### Patch Changes
