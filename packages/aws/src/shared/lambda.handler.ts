@@ -16,16 +16,19 @@ export type ApiGatewayHandler = (
 export type DynamoDbStreamHandler = (
   event: DynamoDBStreamEvent,
   context: Context,
-) => Promise<void>;
+) => void | Promise<void>;
 
 export type DynamoDbBatchHandler = (
   event: DynamoDBBatchResponse,
   context: Context,
-) => Promise<void>;
+) => void | Promise<void>;
 
-export type SqsHandler = (event: SQSEvent, context: Context) => Promise<void>;
+export type SqsHandler = (
+  event: SQSEvent,
+  context: Context,
+) => void | Promise<void>;
 
 export type SqsBatchHandler = (
   event: SQSBatchResponse,
   context: Context,
-) => Promise<void>;
+) => void | Promise<void>;
