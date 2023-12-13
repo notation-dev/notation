@@ -2,8 +2,11 @@
   "private": true,
   "name": "notation-starter",
   "scripts": {
-    "viz": "notation viz src/api.ts",
-    "deploy": "notation deploy src/api.ts",
-    "destroy": "notation destroy src/api.ts"
+    "compile": "notation compile infra/api.ts",
+    "dashboard": "notation dashboard",
+    "deploy": "notation deploy infra/api.ts",
+    "destroy": "notation destroy infra/api.ts",
+    "viz": "notation viz infra/api.ts",
+    "watch": "notation watch infra/api.ts"
   }
 }
