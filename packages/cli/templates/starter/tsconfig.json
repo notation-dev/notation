@@ -21,7 +21,12 @@
     "skipDefaultLibCheck": true,
     "skipLibCheck": true,
     "strict": true,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+
+    "paths": {
+      "runtime/*": ["./runtime/*"],
+      "infra/*": ["./infra/*"]
+    }
   },
   "exclude": ["node_modules"]
 }
