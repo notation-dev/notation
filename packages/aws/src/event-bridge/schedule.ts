@@ -18,15 +18,25 @@ export type OneTimeSchedule = {
 
 export type Schedule = RateSchedule | CronSchedule | OneTimeSchedule
 
-export const rateSchedule = (rate: number, unit: RateSchedule) : Schedule => {
-    throw new Error("wip")
+export const rateSchedule = (rate: number, unit: RateUnit) : Schedule => {
+    return {
+        type: "rate",
+        rate: rate,
+        unit: unit
+    }
 }
 
 export const cronSchedule = (cronExpression: string): Schedule => {
-    throw new Error("wip")
+    return {
+        type: "cron",
+        cronExpression: cronExpression
+    }
 }
 
-export const oneTimeSchedule = (date: Date): Schedule => {
-    throw new Error("wip")
+export const oneTimeSchedule = (dateTime: Date): Schedule => {
+    return {
+        type: "once",
+        dateTime: dateTime
+    }
 }
 
