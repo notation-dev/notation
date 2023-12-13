@@ -1,5 +1,21 @@
 # @notation/cli
 
+## 0.6.0
+
+### Minor Changes
+
+- Load infra in runtime modules
+
+### Patch Changes
+
+- 10a8133: Migrate project scaffolding to create-notation
+- Updated dependencies
+- Updated dependencies
+- Updated dependencies
+  - @notation/dashboard@0.1.0
+  - @notation/esbuild-plugins@0.4.0
+  - @notation/core@0.4.1
+
 ## 0.5.0
 
 ### Minor Changes

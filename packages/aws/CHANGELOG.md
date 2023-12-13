@@ -1,5 +1,15 @@
 # @notation/aws
 
+## 0.4.1
+
+### Patch Changes
+
+- Removed dev artifacts from dist
+- Updated dependencies
+  - @notation/aws.iac@0.4.1
+  - @notation/core@0.4.1
+  - @notation/std.iac@0.4.1
+
 ## 0.4.0
 
 ### Minor Changes
