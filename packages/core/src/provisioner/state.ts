@@ -3,6 +3,8 @@ import { Resource } from "..";
 
 export type StateNode = {
   id: string;
+  groupId: number;
+  groupType: string;
   meta: Resource["meta"];
   config: {};
   params: {};
