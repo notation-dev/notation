@@ -5,16 +5,7 @@ import { deploy } from "./deploy";
 import { destroy } from "./destroy";
 import { visualise } from "./visualise";
 import { watch } from "./watch";
-import { scaffoldApp } from "./scaffold";
 import { startDashboardServer } from "@notation/dashboard";
-
-program
-  .command("create")
-  .argument("[appName]", "app name", "notation-starter")
-  .description("Create Notation App")
-  .action(async (appName) => {
-    await scaffoldApp(appName);
-  });
 
 program
   .command("compile")

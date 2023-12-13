@@ -113,19 +113,10 @@ importers:
       esbuild:
         specifier: ^0.19.3
         version: 0.19.3
-      fs-extra:
-        specifier: ^11.1.1
-        version: 11.1.1
       glob:
         specifier: ^10.3.10
         version: 10.3.10
-      which-pm-runs:
-        specifier: ^1.1.0
-        version: 1.1.0
     devDependencies:
-      '@types/fs-extra':
-        specifier: ^11.0.4
-        version: 11.0.4
       '@types/which-pm-runs':
         specifier: ^1.0.2
         version: 1.0.2
@@ -167,7 +158,21 @@ importers:
         specifier: ^1.8.2
         version: 1.8.2
 
-  packages/create-notation: {}
+  packages/create-notation:
+    dependencies:
+      fs-extra:
+        specifier: ^11.1.1
+        version: 11.1.1
+      which-pm-runs:
+        specifier: ^1.1.0
+        version: 1.1.0
+    devDependencies:
+      '@types/fs-extra':
+        specifier: ^11.0.4
+        version: 11.0.4
+      '@types/which-pm-runs':
+        specifier: ^1.0.2
+        version: 1.0.2
 
   packages/dashboard:
     dependencies:
