@@ -14,7 +14,7 @@ export const route = (
   // at compile time becomes infra module
   const lambdaGroup = handler as any as ReturnType<typeof lambda>;
 
-  const routeGroup = new aws.AwsResourceGroup("api/route", {
+  const routeGroup = new aws.AwsResourceGroup("API Gateway/Route", {
     dependencies: { router: apiGroup.id, fn: lambdaGroup.id },
   });
 

@@ -41,6 +41,7 @@ export interface BaseResource {
   readonly config: any;
   id: string;
   groupId: number;
+  groupType: string;
   readonly output: {};
   readonly meta: {
     moduleName: string;
@@ -80,6 +81,7 @@ export abstract class Resource<
   config: C;
   id: string;
   groupId = -1;
+  groupType = "";
   output = null as any as Output<S>;
   dependencies = {} as NoInfer<D>;
   abstract type: string;
