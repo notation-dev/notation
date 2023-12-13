@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "build": "tsup --clean",
-    "dev": "npm run build -- --watch"
+    "dev": "tsup --watch"
   },
   "dependencies": {
     "deep-object-diff": "^1.1.9",

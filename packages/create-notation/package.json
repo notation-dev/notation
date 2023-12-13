@@ -7,7 +7,7 @@
   },
   "scripts": {
     "build": "tsup --clean",
-    "dev": "npm run build -- --watch"
+    "dev": "tsup --watch"
   },
   "dependencies": {
     "fs-extra": "^11.1.1",

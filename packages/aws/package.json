@@ -13,7 +13,7 @@
   ],
   "scripts": {
     "build": "tsup --clean",
-    "dev": "npm run build -- --watch"
+    "dev": "tsup --watch"
   },
   "dependencies": {
     "@notation/aws.iac": "workspace:*",

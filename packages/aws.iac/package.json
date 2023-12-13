@@ -4,7 +4,7 @@
   "version": "0.4.1",
   "scripts": {
     "build": "tsup --clean",
-    "dev": "npm run build -- --watch"
+    "dev": "tsup --watch"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
