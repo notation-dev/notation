@@ -3,6 +3,7 @@ import { AwsSchema } from "src/utils/types";
 import * as sdk from "@aws-sdk/client-eventbridge";
 import z from 'zod'
 import { eventBridgeClient } from "src/utils/aws-clients";
+import { LambdaFunctionInstance } from "../lambda";
 
 export type EventBridgeRuleSchema = AwsSchema<{
     Key: sdk.DescribeRuleCommandInput,
@@ -11,6 +12,10 @@ export type EventBridgeRuleSchema = AwsSchema<{
     UpdateParams: sdk.PutRuleCommandInput & Omit<sdk.PutTargetsCommandInput, "Rule">,
     ReadResult: Omit<sdk.DescribeRuleCommandOutput & sdk.ListTargetsByRuleCommandOutput, "$metadata">
 }>
+
+export type EventBridgeRuleDependencies = {
+    lambda: LambdaFunctionInstance
+}
 
 const eventBridgeRule = resource<EventBridgeRuleSchema>({
     type: "aws/eventBridge/rule"
@@ -108,5 +113,12 @@ export const EventBridgeRule = eventBridgeRuleSchema.defineOperations({
         await eventBridgeClient.send(deleteRuleCommand)
     }
 })
+.requireDependencies<EventBridgeRuleDependencies>()
+.setIntrinsicConfig(async ({ deps }) => ({
+    Targets: [{
+        Id: deps.lambda.output.FunctionName,
+        Arn: deps.lambda.output.FunctionArn
+    }]
+}))
 
 export type EventBridgeRuleInstance = InstanceType<typeof EventBridgeRule>;

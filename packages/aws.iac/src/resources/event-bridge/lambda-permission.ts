@@ -93,7 +93,8 @@ export type LambdaEventBridgeRulePermissionDependencies = {
         propertyType: "param",
         presence: "optional",
       },
-  })
+    // Todo: why does this solve the compile error at the top level?
+  } as const)
 
   export const LambdaEventBridgeRulePermission = LambdaEventBridgeRulePermissionSchema.defineOperations({
     create: async (params) => {
@@ -108,9 +109,10 @@ export type LambdaEventBridgeRulePermissionDependencies = {
   .requireDependencies<LambdaEventBridgeRulePermissionDependencies>()
   .setIntrinsicConfig(async ({ deps }) => ({
     FunctionName: deps.lambda.output.FunctionName,
-    StatementId: "CloudWatchInvoke",
+    StatementId: `LambdaEventBridgeRulePermission-${deps.lambda.output.FunctionName}`,
     Action: "lambda:InvokeFunction",
     Principal: "events.amazonaws.com",
     SourceArn: deps.eventBridgeRule.output.Arn
   }))
 
+  export type LambdaEventBridgeRulePermissionInstance = InstanceType<typeof LambdaEventBridgeRulePermission>

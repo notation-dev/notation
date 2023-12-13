@@ -40,3 +40,6 @@ export const oneTimeSchedule = (dateTime: Date): Schedule => {
     }
 }
 
+export const toAwsScheduleExpression = (schedule: Schedule): string => {
+    throw new Error("wip")
+}
