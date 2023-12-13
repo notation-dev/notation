@@ -39,6 +39,11 @@ const eventBridgeRuleSchema = eventBridgeRule.defineSchema({
         presence: "optional",
         propertyType: "param"
     },
+    EventPattern: {
+        valueType: z.string().optional(),
+        presence: "optional",
+        propertyType: "param"
+    },
     Targets: {
         presence: "required",
         propertyType: "param",
@@ -80,11 +85,22 @@ eventBridgeRuleSchema.defineOperations({
         await eventBridgeClient.send(createRuleCommand)
         await eventBridgeClient.send(createTargetsCommand)
     },
-    update: async(params) => {
-        throw new Error("wip")
+    update: async(key, patch, params) => {
+        const { Targets, ...ruleConfig } = patch
+
+        const updateRuleCommand = new sdk.PutRuleCommand(ruleConfig)
+        const updateTargetsCommand = new sdk.PutTargetsCommand({
+            Rule: ruleConfig.Name,
+            EventBusName: ruleConfig.EventBusName,
+            Targets: Targets
+        })
+
+        await eventBridgeClient.send(updateRuleCommand)
+        await eventBridgeClient.send(updateTargetsCommand)
     },
-    delete: async(params) => {
-        throw new Error("wip")
+    delete: async(key) => {
+        const deleteRuleCommand = new sdk.DeleteRuleCommand(key)
+        await eventBridgeClient.send(deleteRuleCommand)
     }
 })
 
