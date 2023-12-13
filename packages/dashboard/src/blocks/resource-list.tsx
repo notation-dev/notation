@@ -19,7 +19,7 @@ export function ResourceList(props: {
               {resourceGroup.map((resource) => (
                 <li
                   key={resource.id}
-                  className="px-4 py-3 hover:bg-blue-50 cursor-pointer"
+                  className="px-4 py-2.5 hover:bg-blue-50 cursor-pointer"
                   onClick={() => props.onClick(resource)}
                 >
                   <code className="text-xs">{resource.id}</code>

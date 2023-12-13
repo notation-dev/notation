@@ -3,6 +3,7 @@ import { Header } from "./blocks/header";
 import { ResourceList } from "./blocks/resource-list";
 import { useEffect, useState } from "react";
 import { BaseResource } from "@notation/core";
+import { Resource } from "./blocks/resource";
 
 function App() {
   const state = useRemoteState();
@@ -16,7 +17,7 @@ function App() {
   }, [resources, activeResource]);
 
   return (
-    <div className="flex flex-col w-screen h-screen overflow-hidden">
+    <div className="flex flex-col w-screen h-screen overflow-hidden bg-neutral-50">
       <Header />
       <div className="flex flex-auto h-full">
         <div className="w-1/4 border-r">
@@ -25,13 +26,8 @@ function App() {
             onClick={(resource) => setActiveResource(resource)}
           />
         </div>
-        <div className="flex w-3/4 h-full p-5 text-xs">
-          {activeResource && (
-            <pre>
-              {JSON.stringify(activeResource, null, 2) ||
-                "No resource selected"}
-            </pre>
-          )}
+        <div className="w-3/4 h-full">
+          {activeResource && <Resource resource={activeResource} />}
         </div>
       </div>
     </div>
