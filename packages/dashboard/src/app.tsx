@@ -12,7 +12,11 @@ function App() {
 
   useEffect(() => {
     if (resources.length > 0 && !activeResource) {
-      setActiveResource(resources[0]);
+      // todo: remove hack
+      const resource =
+        resources.find((r) => r.meta.serviceName === "apiGateway") ||
+        resources[0];
+      setActiveResource(resource);
     }
   }, [resources, activeResource]);
 

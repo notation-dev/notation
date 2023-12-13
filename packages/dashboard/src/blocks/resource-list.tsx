@@ -20,7 +20,7 @@ export function ResourceList(props: {
               {resourceGroup.map((resource) => (
                 <li
                   key={resource.id}
-                  className={`px-4 py-2.5 pt-2 hover:bg-blue-100 cursor-pointer ${
+                  className={`text-sm px-4 py-2.5 pt-2 hover:bg-blue-100 cursor-pointer ${
                     props.activeResourceId === resource.id ? "bg-stone-200" : ""
                   }`}
                   onClick={() => props.onClick(resource)}
