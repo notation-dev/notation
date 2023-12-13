@@ -22,6 +22,7 @@ function App() {
       <div className="flex flex-auto h-full">
         <div className="w-1/4 border-r">
           <ResourceList
+            activeResourceId={activeResource?.id}
             resources={resources}
             onClick={(resource) => setActiveResource(resource)}
           />

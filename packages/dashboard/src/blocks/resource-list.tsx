@@ -2,6 +2,7 @@ import { BaseResource } from "@notation/core";
 
 export function ResourceList(props: {
   resources: BaseResource[];
+  activeResourceId?: string;
   onClick: (resource: BaseResource) => void;
 }) {
   return (
@@ -19,7 +20,9 @@ export function ResourceList(props: {
               {resourceGroup.map((resource) => (
                 <li
                   key={resource.id}
-                  className="px-4 py-2.5 hover:bg-blue-50 cursor-pointer"
+                  className={`px-4 py-2.5 pt-2 hover:bg-blue-100 cursor-pointer ${
+                    props.activeResourceId === resource.id ? "bg-stone-200" : ""
+                  }`}
                   onClick={() => props.onClick(resource)}
                 >
                   <code className="text-xs">{resource.id}</code>
