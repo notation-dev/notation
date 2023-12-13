@@ -12,7 +12,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup",
+    "build": "tsup --clean",
     "dev": "npm run build -- --watch"
   },
   "dependencies": {
