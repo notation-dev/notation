@@ -32,17 +32,31 @@
 - &nbsp;🧩&nbsp;&nbsp; **Infrastructure _from_ code:** Write application code and let Notation figure out the infra
 - &nbsp;🔗&nbsp;&nbsp; **Integrated services:** Connect cloud services without learning proprietary platforms
 - &nbsp;🤝&nbsp;&nbsp; **Cross-platform types:** Build with confidence – all cloud services in a unified type space
-- &nbsp;🔜&nbsp;&nbsp; **Local dev & test:** Run end-to-end cloud apps right from your terminal
+- &nbsp;🔜&nbsp;&nbsp; **Remote dev & test:** Run end-to-end cloud apps right from your terminal
 - &nbsp;🔜&nbsp;&nbsp; **Distributed workflows:** Compose serverless functions into powerful workflows
+
+## Status: Developer Preview
+
+We're excited to share Notation with you but don't use it for anything serious just yet.
+
+0.x.x minor version bumps will contain breaking changes.
 
 ## Getting Started
 
-Head over to [notation.dev/docs](https://notation.dev/docs) for documentation and tutorials.
-
-Or, dive right in:
+While we're working on docs feel free to dive right in:
 
 ```sh
-npx @notation/cli create
+# pnpm
+pnpm create notation
+
+# bun
+bun create notation
+
+# yarn
+yarn create notation
+
+# npm 7+
+npm create notation@latest
 ```
 
 ## Community
