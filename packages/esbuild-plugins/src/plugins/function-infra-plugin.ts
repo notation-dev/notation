@@ -1,6 +1,7 @@
 import path from "node:path";
 import { Plugin } from "esbuild";
 import { parseFnModule } from "src/parsers/parse-fn-module";
+import { removeUnsafeReferences } from "src/parsers/remove-unsafe-references";
 import { GetFile, fsGetFile, withFileCheck } from "src/utils/get-file";
 import { filePaths } from "@notation/core";
 
@@ -17,18 +18,19 @@ export function functionInfraPlugin(opts: PluginOpts = {}): Plugin {
         const fileContent = await getFile(args.path);
         const fileName = path.relative(process.cwd(), args.path);
         const outFileName = filePaths.dist.runtime.index(fileName);
-        const { config, configRaw, exports } = parseFnModule(fileContent);
+        const safeFnModule = removeUnsafeReferences(fileContent);
+        const { config, exports } = parseFnModule(fileContent);
 
         const reservedNames = ["preload", "config"];
         const [platform, service] = (config.service as string).split("/");
 
-        let infraCode = `import { ${service} } from "@notation/${platform}/${service}";`;
-        infraCode = infraCode.concat(`\nconst config = ${configRaw};`);
+        let infraCode = `import { ${service} } from "@notation/${platform}/${service}";\n`;
+        infraCode = infraCode.concat(`\n${safeFnModule}\n`);
 
         for (const handlerName of exports) {
           if (reservedNames.includes(handlerName)) continue;
           infraCode = infraCode.concat(
-            `\nexport const ${handlerName} = ${service}({ fileName: "${outFileName}", handler: "${handlerName}", ...config });`,
+            `export const ${handlerName} = ${service}({ fileName: "${outFileName}", handler: "${handlerName}", ...config });\n`,
           );
         }
 
