@@ -45,6 +45,8 @@ const eventBridgeRuleSchema = eventBridgeRule.defineSchema({
         propertyType: "param"
     },
     EventPattern: {
+        // Note: this is a JSON string representation of an event pattern:
+        // (https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-event-patterns.html#eb-filtering-data-types)
         valueType: z.string().optional(),
         presence: "optional",
         propertyType: "param"

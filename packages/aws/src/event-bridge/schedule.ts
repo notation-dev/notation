@@ -1,4 +1,4 @@
-export type RateUnit = "minutes" | "hours" | "days"
+export type RateUnit = "minute" | "minutes"| "hour" | "hours" | "day" | "days"
 
 export type RateSchedule = {
     type: "rate",

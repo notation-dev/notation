@@ -4,7 +4,6 @@ import { Schedule, toAwsScheduleExpression } from "./schedule";
 import { lambda } from "src/lambda";
 import * as aws from "@notation/aws.iac";
 
-
 export const eventBridgeSchedule = (
     schedule: Schedule,
     ruleName: string,

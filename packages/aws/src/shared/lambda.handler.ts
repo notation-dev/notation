@@ -12,3 +12,5 @@ export type ApiGatewayHandler = (
 
 export type EventBridgeHandler<TypeDescription extends string, DetailType> 
   = (event: EventBridgeEvent<TypeDescription, DetailType>, context: Context) => void | Promise<void>
+
+export type EventBridgeScheduleHandler = EventBridgeHandler<"Scheduled Event", any>
