@@ -25,7 +25,7 @@
   </a>
 </p>
 
-<p align="center"><em>Build, test and release cloud applications with TypeScript</em></p>
+<p align="center"><em>Build, test and release serverless applications with TypeScript</em></p>
 
 ## Features
 
