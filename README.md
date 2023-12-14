@@ -37,7 +37,7 @@
 
 ## Status: Developer Preview
 
-We're excited to share Notation with you but don't use rely on it for anything serious just yet.
+We're excited to share Notation with you but don't rely on it for anything serious just yet.
 
 0.x.x minor version bumps will contain breaking changes.
 
