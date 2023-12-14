@@ -37,7 +37,6 @@ export const eventBridgeSchedule = (
         aws.eventBridge.LambdaEventBridgeRulePermission 
     );
 
-    // TODO: is this brittle if the function name changes? Where does the function name come from?
     if (!permission) {
         lambdaGroup.add(new aws.eventBridge.LambdaEventBridgeRulePermission({
             id: `${ruleName}-eventbridge-permission`,
