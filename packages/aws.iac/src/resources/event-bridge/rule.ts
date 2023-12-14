@@ -72,7 +72,7 @@ export const EventBridgeRule = eventBridgeRuleSchema.defineOperations({
             EventBusName: key.EventBusName
         });
 
-        const [ruleDescriptionResult,listRuleTargetsResult ] = await Promise.all(
+        const [ ruleDescriptionResult, listRuleTargetsResult ] = await Promise.all(
             [
                 eventBridgeClient.send(describeRuleCommand),
                 eventBridgeClient.send(listRuleTargetsCommand)
