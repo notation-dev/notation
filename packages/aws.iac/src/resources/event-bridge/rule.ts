@@ -68,7 +68,6 @@ export const EventBridgeRule = eventBridgeRuleSchema.defineOperations({
     read: async (key) => {
         const describeRuleCommand = new sdk.DescribeRuleCommand(key);
         const listRuleTargetsCommand = new sdk.ListTargetsByRuleCommand({
-            // Rule is an alias for 'Name' used in the Create command
             Rule: key.Name,
             EventBusName: key.EventBusName
         });
@@ -111,6 +110,23 @@ export const EventBridgeRule = eventBridgeRuleSchema.defineOperations({
         await eventBridgeClient.send(updateTargetsCommand)
     },
     delete: async(key) => {
+        // The targets must be deleted first, otherwise the API will return an error response
+
+        const existingTargets = await eventBridgeClient.send(new sdk.ListTargetsByRuleCommand({
+            Rule: key.Name,
+            EventBusName: key.EventBusName
+        }))
+
+        if (existingTargets.Targets && existingTargets.Targets.length > 0) {
+            const deleteTargetsCommand = new sdk.RemoveTargetsCommand({
+                Rule: key.Name,
+                EventBusName: key.EventBusName,
+                Ids: existingTargets.Targets.map(target => target.Id!)
+            })
+    
+            await eventBridgeClient.send(deleteTargetsCommand)
+        }
+
         const deleteRuleCommand = new sdk.DeleteRuleCommand(key)
         await eventBridgeClient.send(deleteRuleCommand)
     }
