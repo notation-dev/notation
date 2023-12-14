@@ -1,5 +1,5 @@
 import { eventBus, eventBridgeSchedule, rateSchedule } from "@notation/aws/event-bridge"
-import { exampleHandler2 } from "./eventbridge/scheduleEvent.fn"
+import { exampleHandler2 } from "runtime/eventbridge/scheduleEvent.fn"
 
 eventBus({name: "stuff"})
 

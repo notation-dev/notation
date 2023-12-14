@@ -14,7 +14,7 @@ export const handle = {
       handler(...args),
   eventBridgeScheduledEvent: 
     (handler: EventBridgeHandler<"Scheduled Event", any>): EventBridgeHandler<"Scheduled Event", any> =>
-    async(...args) => handler(...args)
+    async(...args) => handler(...args),
   dynamoDbStream:
     (handler: DynamoDbStreamHandler): DynamoDbStreamHandler =>
     async (...args) =>
