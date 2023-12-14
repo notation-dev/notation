@@ -22,14 +22,14 @@ export const eventBridgeSchedule = (
     const lambdaResource = lambdaGroup.findResource(aws.lambda.LambdaFunction)!;
 
     const eventBridgeRule = new aws.eventBridge.EventBridgeRule({
-        id: `${ruleName}-eventbridge-permission`,
-        dependencies: {
-            lambda: lambdaResource
-        },
+        id: `${ruleName}-eventbridge-rule`,
         config: {
             Name: ruleName,
             ScheduleExpression: toAwsScheduleExpression(schedule)
-        }
+        },
+        dependencies: {
+            lambda: lambdaResource
+        },
     })
 
     const permission = lambdaGroup.findResource(
@@ -39,7 +39,7 @@ export const eventBridgeSchedule = (
     // TODO: is this brittle if the function name changes? Where does the function name come from?
     if (!permission) {
         lambdaGroup.add(new aws.eventBridge.LambdaEventBridgeRulePermission({
-            id: "",
+            id: `${ruleName}-eventbridge-permission`,
             dependencies: {
                 lambda: lambdaResource,
                 eventBridgeRule: eventBridgeRule
