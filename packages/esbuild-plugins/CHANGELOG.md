@@ -1,5 +1,23 @@
 # @notation/esbuild-plugins
 
+## 0.4.1
+
+### Patch Changes
+
+- Updated dependencies [5debdd1]
+  - @notation/core@0.5.0
+
+## 0.4.0
+
+### Minor Changes
+
+- Load infra in runtime modules
+
+### Patch Changes
+
+- Updated dependencies
+  - @notation/core@0.4.1
+
 ## 0.3.2
 
 ### Patch Changes

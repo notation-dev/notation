@@ -3,7 +3,7 @@ import * as std from "@notation/std.iac";
 import crypto from "crypto";
 
 export const lambda = (config: { fileName: string; handler: string }) => {
-  const functionGroup = new aws.AwsResourceGroup("aws/function", { config });
+  const functionGroup = new aws.AwsResourceGroup("Lambda", { config });
   const filePathHash = crypto
     .createHash("BLAKE2s256")
     .update(config.fileName)

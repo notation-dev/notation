@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "@notation/aws",
-  "version": "0.4.0",
+  "version": "0.5.2",
   "exports": {
     "./*": {
       "import": "./dist/*/index.js",
@@ -12,8 +12,8 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup",
-    "dev": "npm run build -- --watch"
+    "build": "tsup --clean",
+    "dev": "tsup --watch"
   },
   "dependencies": {
     "@notation/aws.iac": "workspace:*",

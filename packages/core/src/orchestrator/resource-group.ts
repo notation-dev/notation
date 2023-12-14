@@ -29,6 +29,7 @@ export abstract class ResourceGroup {
       throw new Error(`Resource ${resource.type} has already been registered.`);
     }
     resource.groupId = this.id;
+    resource.groupType = this.type;
     resources.push(resource);
     this.resources.push(resource);
     return resource;

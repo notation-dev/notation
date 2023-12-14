@@ -15,7 +15,7 @@ export async function compile(entryPoint: string, watch: boolean = false) {
   log(`${watch ? "Watching" : "Compiling"} functions`);
 
   // @todo: fnEntryPoints could be an output of compileInfra
-  const fnEntryPoints = await glob("**/*.fn.ts");
+  const fnEntryPoints = await glob("runtime/**/*.fn.ts");
   let disposeFnCompiler = await compileFns(fnEntryPoints, watch);
 
   if (!watch) return;
@@ -27,7 +27,7 @@ export async function compile(entryPoint: string, watch: boolean = false) {
     })
     .on("all", async () => {
       if (disposeFnCompiler) disposeFnCompiler();
-      const fnEntryPoints = await glob("**/*.fn.ts");
+      const fnEntryPoints = await glob("runtime/**/*.fn.ts");
       disposeFnCompiler = await compileFns(fnEntryPoints, watch);
     });
 }
@@ -36,7 +36,7 @@ export async function compileInfra(entryPoint: string, watch: boolean = false) {
   const context = await esbuild.context({
     entryPoints: [entryPoint],
     plugins: [functionInfraPlugin()],
-    outdir: "dist/infra",
+    outdir: "dist",
     outbase: ".",
     outExtension: { ".js": ".mjs" },
     bundle: true,

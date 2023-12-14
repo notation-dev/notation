@@ -25,24 +25,38 @@
   </a>
 </p>
 
-<p align="center"><em>Build, test and release cloud applications with TypeScript</em></p>
+<p align="center"><em>Build, test and release serverless applications with TypeScript</em></p>
 
 ## Features
 
 - &nbsp;🧩&nbsp;&nbsp; **Infrastructure _from_ code:** Write application code and let Notation figure out the infra
 - &nbsp;🔗&nbsp;&nbsp; **Integrated services:** Connect cloud services without learning proprietary platforms
 - &nbsp;🤝&nbsp;&nbsp; **Cross-platform types:** Build with confidence – all cloud services in a unified type space
-- &nbsp;🔜&nbsp;&nbsp; **Local dev & test:** Run end-to-end cloud apps right from your terminal
+- &nbsp;⚡️&nbsp;&nbsp; **Hot module swapping:** Develop locally and get near-instant infra changes
 - &nbsp;🔜&nbsp;&nbsp; **Distributed workflows:** Compose serverless functions into powerful workflows
+
+## Status: Developer Preview
+
+We're excited to share Notation with you but don't rely on it for anything serious just yet.
+
+0.x.x minor version bumps will contain breaking changes.
 
 ## Getting Started
 
-Head over to [notation.dev/docs](https://notation.dev/docs) for documentation and tutorials.
-
-Or, dive right in:
+While we're working on docs feel free to dive right in:
 
 ```sh
-npx @notation/cli create
+# pnpm
+pnpm create notation my-app
+
+# bun
+bun create notation my-app
+
+# yarn
+yarn create notation my-app
+
+# npm 7+
+npm create notation@latest my-app
 ```
 
 ## Community

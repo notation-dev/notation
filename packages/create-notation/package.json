@@ -1,5 +1,20 @@
 {
   "type": "module",
   "name": "create-notation",
-  "version": "0.0.1"
+  "version": "0.0.4",
+  "bin": {
+    "create-notation": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsup --clean",
+    "dev": "tsup --watch"
+  },
+  "dependencies": {
+    "fs-extra": "^11.1.1",
+    "which-pm-runs": "^1.1.0"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/which-pm-runs": "^1.0.2"
+  }
 }

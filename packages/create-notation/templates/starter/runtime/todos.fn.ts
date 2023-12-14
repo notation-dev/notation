@@ -8,10 +8,6 @@ export const getTodos = handle.apiRequest(() => {
   return json(todos);
 });
 
-export const getTodoCount = handle.apiRequest(() => {
-  return json(todos.length);
-});
-
 export const config: LambdaConfig = {
   service: "aws/lambda",
   timeout: 5,

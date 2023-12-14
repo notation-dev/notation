@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "compiler-test-app",
+  "name": "notation-starter",
   "scripts": {
     "compile": "notation compile infra/api.ts",
     "dashboard": "notation dashboard",
@@ -8,14 +8,5 @@
     "destroy": "notation destroy infra/api.ts",
     "viz": "notation viz infra/api.ts",
     "watch": "notation watch infra/api.ts"
-  },
-  "dependencies": {
-    "@notation/aws": "workspace:*",
-    "@notation/cli": "workspace:*",
-    "@notation/core": "workspace:*"
-  },
-  "devDependencies": {
-    "@types/node": "^20.8.4"
-  },
-  "version": null
+  }
 }

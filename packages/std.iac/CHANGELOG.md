@@ -1,5 +1,20 @@
 # @notation/std.iac
 
+## 0.4.2
+
+### Patch Changes
+
+- Updated dependencies [5debdd1]
+  - @notation/core@0.5.0
+
+## 0.4.1
+
+### Patch Changes
+
+- Removed dev artifacts from dist
+- Updated dependencies
+  - @notation/core@0.4.1
+
 ## 0.4.0
 
 ### Minor Changes

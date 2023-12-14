@@ -25,6 +25,8 @@ async function create(opts: { resource: BaseResource; state: State }) {
 
     await state.update(resource.id, {
       id: resource.id,
+      groupId: resource.groupId,
+      groupType: resource.groupType,
       meta: resource.meta,
       lastOperation: "create",
       lastOperationAt: new Date().toISOString(),

@@ -49,6 +49,7 @@ export async function scaffoldApp(appName: string) {
   console.log("\nApp ready! To get started run:\n");
   console.log(`➜ cd ${appName}`);
   console.log(`➜ ${getPmRunCommand(packageManager)} viz`);
+  console.log(`➜ ${getPmRunCommand(packageManager)} deploy`);
 }
 
 function getPmInstallCommand(pm: string) {

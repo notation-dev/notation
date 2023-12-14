@@ -1,10 +1,10 @@
 {
   "type": "module",
   "name": "@notation/aws.iac",
-  "version": "0.4.0",
+  "version": "0.4.2",
   "scripts": {
-    "build": "tsup",
-    "dev": "npm run build -- --watch"
+    "build": "tsup --clean",
+    "dev": "tsup --watch"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

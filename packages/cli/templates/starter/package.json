@@ -1,9 +1,0 @@
-{
-  "private": true,
-  "name": "notation-starter",
-  "scripts": {
-    "viz": "notation viz src/api.ts",
-    "deploy": "notation deploy src/api.ts",
-    "destroy": "notation destroy src/api.ts"
-  }
-}
