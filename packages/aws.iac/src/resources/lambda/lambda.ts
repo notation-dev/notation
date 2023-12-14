@@ -290,6 +290,7 @@ const lambdaFunctionSchema = lambdaFunction.defineSchema({
 export const LambdaFunction = lambdaFunctionSchema
   .defineOperations({
     create: async (params) => {
+
       const zip = await fs.getZip(params.CodeZipPath);
       const command = new sdk.CreateFunctionCommand({
         ...params,
@@ -300,7 +301,7 @@ export const LambdaFunction = lambdaFunctionSchema
       if (params.ReservedConcurrentExecutions) {
         const concurrencyCommand = new sdk.PutFunctionConcurrencyCommand({
           FunctionName: params.FunctionName,
-          ReservedConcurrentExecutions: params.ReservedConcurrentExecutions,
+          ReservedConcurrentExecutions: params.ReservedConcurrentExecutions
         });
         await lambdaClient.send(concurrencyCommand);
       }

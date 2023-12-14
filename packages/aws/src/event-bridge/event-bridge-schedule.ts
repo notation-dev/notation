@@ -31,6 +31,8 @@ export const eventBridgeSchedule = (
         },
     })
 
+    eventBridgeScheduleGroup.add(eventBridgeRule)
+
     const permission = lambdaGroup.findResource(
         aws.eventBridge.LambdaEventBridgeRulePermission 
     );

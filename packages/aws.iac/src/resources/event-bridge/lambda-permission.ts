@@ -107,12 +107,14 @@ export type LambdaEventBridgeRulePermissionDependencies = {
     },
   })
   .requireDependencies<LambdaEventBridgeRulePermissionDependencies>()
-  .setIntrinsicConfig(async ({ deps }) => ({
+  .setIntrinsicConfig(async ({ deps }) => {
+    return {
     FunctionName: deps.lambda.output.FunctionName,
     StatementId: `LambdaEventBridgeRulePermission-${deps.lambda.output.FunctionName}`,
     Action: "lambda:InvokeFunction",
     Principal: "events.amazonaws.com",
     SourceArn: deps.eventBridgeRule.output.Arn
-  }))
+  }
+})
 
   export type LambdaEventBridgeRulePermissionInstance = InstanceType<typeof LambdaEventBridgeRulePermission>

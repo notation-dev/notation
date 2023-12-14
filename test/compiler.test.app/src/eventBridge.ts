@@ -5,6 +5,6 @@ eventBus({name: "stuff"})
 
 eventBridgeSchedule(
     rateSchedule(1, "minute"),
-    "Event bridge schedule test",
+    "Event-bridge-schedule-test",
     exampleHandler2
 )

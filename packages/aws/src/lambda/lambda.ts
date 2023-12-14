@@ -42,7 +42,7 @@ export const lambda = (config: { fileName: string; handler: string }) => {
         FunctionName: lambdaId,
         Handler: `index.${config.handler}`,
         Runtime: "nodejs18.x",
-        ReservedConcurrentExecutions: 1,
+        ReservedConcurrentExecutions: 0,
       },
       dependencies: {
         role,
