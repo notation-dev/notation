@@ -6,4 +6,3 @@ const todoRouter = router(todoApi);
 
 todoRouter.get("/todos", getTodos);
 todoRouter.get("/todos/count", getTodoCount);
-

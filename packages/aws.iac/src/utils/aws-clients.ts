@@ -12,4 +12,4 @@ export const lambdaClient = new LambdaClient({ region });
 export const apiGatewayClient = new ApiGatewayV2Client({ region });
 export const iamClient = new IAMClient({ region });
 
-export const eventBridgeClient = new EventBridgeClient({ region })
+export const eventBridgeClient = new EventBridgeClient({ region });

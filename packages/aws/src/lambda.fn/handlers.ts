@@ -4,7 +4,7 @@ import type {
   DynamoDbStreamHandler,
   SqsBatchHandler,
   SqsHandler,
-  EventBridgeHandler
+  EventBridgeHandler,
 } from "src/shared/lambda.handler";
 
 export const handle = {
@@ -12,9 +12,12 @@ export const handle = {
     (handler: ApiGatewayHandler): ApiGatewayHandler =>
     async (...args) =>
       handler(...args),
-  eventBridgeScheduledEvent: 
-    (handler: EventBridgeHandler<"Scheduled Event", any>): EventBridgeHandler<"Scheduled Event", any> =>
-    async(...args) => handler(...args),
+  eventBridgeScheduledEvent:
+    (
+      handler: EventBridgeHandler<"Scheduled Event", any>,
+    ): EventBridgeHandler<"Scheduled Event", any> =>
+    async (...args) =>
+      handler(...args),
   dynamoDbStream:
     (handler: DynamoDbStreamHandler): DynamoDbStreamHandler =>
     async (...args) =>

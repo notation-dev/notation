@@ -14,10 +14,15 @@ export type ApiGatewayHandler = (
   context: Context,
 ) => APIGatewayProxyResultV2 | Promise<APIGatewayProxyResultV2>;
 
-export type EventBridgeHandler<TypeDescription extends string, DetailType> 
-  = (event: EventBridgeEvent<TypeDescription, DetailType>, context: Context) => void | Promise<void>
+export type EventBridgeHandler<TypeDescription extends string, DetailType> = (
+  event: EventBridgeEvent<TypeDescription, DetailType>,
+  context: Context,
+) => void | Promise<void>;
 
-export type EventBridgeScheduleHandler = EventBridgeHandler<"Scheduled Event", any>
+export type EventBridgeScheduleHandler = EventBridgeHandler<
+  "Scheduled Event",
+  any
+>;
 export type DynamoDbStreamHandler = (
   event: DynamoDBStreamEvent,
   context: Context,
