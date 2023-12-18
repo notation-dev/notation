@@ -22,6 +22,7 @@ export const eventBridgeSchedule = (
     config: {
       Name: config.ruleName,
       ScheduleExpression: toAwsScheduleExpression(config.schedule),
+      EventBusName: "default"
     },
     dependencies: {
       lambda: lambdaResource,

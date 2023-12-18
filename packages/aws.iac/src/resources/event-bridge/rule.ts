@@ -139,7 +139,6 @@ export const EventBridgeRule = eventBridgeRuleSchema
   })
   .requireDependencies<EventBridgeRuleDependencies>()
   .setIntrinsicConfig(async ({ deps }) => ({
-    EventBusName: "default",
     Targets: [
       {
         Id: deps.lambda.output.FunctionName,
