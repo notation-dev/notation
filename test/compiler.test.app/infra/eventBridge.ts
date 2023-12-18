@@ -1,5 +1,4 @@
 import {
-  eventBus,
   eventBridgeSchedule,
   rateSchedule,
 } from "@notation/aws/event-bridge";
