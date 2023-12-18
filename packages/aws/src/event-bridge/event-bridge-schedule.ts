@@ -5,17 +5,12 @@ import { lambda } from "src/lambda";
 import * as aws from "@notation/aws.iac";
 
 export const eventBridgeSchedule = (
-  schedule: Schedule,
-  ruleName: string,
+  config: { ruleName: string; schedule: Schedule },
   handler: EventBridgeHandler<"Scheduled Event", any>,
 ): ResourceGroup => {
   const eventBridgeScheduleGroup = new aws.AwsResourceGroup(
     "aws/eventBridge/schedule",
-    {
-      config: {
-        ruleName,
-      },
-    },
+    config,
   );
 
   // at compile time becomes infra module
@@ -23,10 +18,10 @@ export const eventBridgeSchedule = (
   const lambdaResource = lambdaGroup.findResource(aws.lambda.LambdaFunction)!;
 
   const eventBridgeRule = new aws.eventBridge.EventBridgeRule({
-    id: `${ruleName}-eventbridge-rule`,
+    id: `${config.ruleName}-eventbridge-rule`,
     config: {
-      Name: ruleName,
-      ScheduleExpression: toAwsScheduleExpression(schedule),
+      Name: config.ruleName,
+      ScheduleExpression: toAwsScheduleExpression(config.schedule),
     },
     dependencies: {
       lambda: lambdaResource,
@@ -42,7 +37,7 @@ export const eventBridgeSchedule = (
   if (!permission) {
     lambdaGroup.add(
       new aws.eventBridge.LambdaEventBridgeRulePermission({
-        id: `${ruleName}-eventbridge-permission`,
+        id: `${config.ruleName}-eventbridge-permission`,
         dependencies: {
           lambda: lambdaResource,
           eventBridgeRule: eventBridgeRule,
