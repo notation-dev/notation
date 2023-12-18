@@ -40,7 +40,8 @@ const eventBridgeRuleSchema = eventBridgeRule.defineSchema({
   },
   EventBusName: {
     valueType: z.string(),
-    presence: "optional",
+    presence: "required",
+    defaultValue: "default",
     propertyType: "param",
     secondaryKey: true,
   },
@@ -138,6 +139,7 @@ export const EventBridgeRule = eventBridgeRuleSchema
   })
   .requireDependencies<EventBridgeRuleDependencies>()
   .setIntrinsicConfig(async ({ deps }) => ({
+    EventBusName: "default",
     Targets: [
       {
         Id: deps.lambda.output.FunctionName,
