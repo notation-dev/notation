@@ -17,8 +17,8 @@
   <a href="https://discord.gg/mGzDWShPzm">
     <img alt="Discord" src="https://img.shields.io/discord/1154880135678406676">
   </a>
-  <a href="https://github.com/notationhq/notation/discussions">
-    <img alt="Discussions" src="https://img.shields.io/github/discussions/notationhq/notation"/>
+  <a href="https://github.com/notation-dev/notation/discussions">
+    <img alt="Discussions" src="https://img.shields.io/github/discussions/notation-dev/notation"/>
   </a>
   <a href="https://twitter.com/intent/tweet?url=https://www.notation.dev">
     <img alt="tweet" src="https://img.shields.io/twitter/url/http/shields.io.svg?style=social"/>
@@ -61,14 +61,14 @@ npm create notation@latest my-app
 
 ## Community
 
-Join us on [GitHub Discussions](https://github.com/notationhq/notation/discussions) to:
+Join us on [GitHub Discussions](https://github.com/notation-dev/notation/discussions) to:
 
 - ask questions
 - share your Notation projects
 - give feedback on our RFCs
 - tell us how Notation could be better
 
-Use [Github Issues](https://github.com/notationhq/notation/issues/new) to:
+Use [Github Issues](https://github.com/notation-dev/notation/issues/new) to:
 
 - report a bug
 - suggest a new feature

@@ -14,14 +14,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/notationhq/notation.git"
+    "url": "git+https://github.com/notation-dev/notation.git"
   },
   "author": "Daniel Grant",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/notationhq/notation/issues"
+    "url": "https://github.com/notation-dev/notation/issues"
   },
-  "homepage": "https://github.com/notationhq/notation#readme",
+  "homepage": "https://github.com/notation-dev/notation#readme",
   "dependencies": {
     "@changesets/cli": "^2.26.2",
     "@notation/aws.iac": "workspace:*",
