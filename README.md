@@ -33,30 +33,19 @@
 - &nbsp;🔗&nbsp;&nbsp; **Integrated services:** Connect cloud services without learning proprietary platforms
 - &nbsp;🤝&nbsp;&nbsp; **Cross-platform types:** Build with confidence – all cloud services in a unified type space
 - &nbsp;⚡️&nbsp;&nbsp; **Hot module swapping:** Develop locally and get near-instant infra changes
-- &nbsp;🔜&nbsp;&nbsp; **Distributed workflows:** Compose serverless functions into powerful workflows
 
-## Status: Developer Preview
+---
 
-We're excited to share Notation with you but don't rely on it for anything serious just yet.
-
-0.x.x minor version bumps will contain breaking changes.
+> [!NOTE]
+> We're excited to share Notation with you but don't rely on it for anything serious just yet.<br />
+> 0.x.x minor version bumps will contain breaking changes.
 
 ## Getting Started
 
 While we're working on docs feel free to dive right in:
 
 ```sh
-# pnpm
-pnpm create notation my-app
-
-# bun
-bun create notation my-app
-
-# yarn
-yarn create notation my-app
-
-# npm 7+
-npm create notation@latest my-app
+npm create notation@alpha my-app
 ```
 
 ## Community
