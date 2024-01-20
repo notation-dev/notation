@@ -3,7 +3,7 @@ import { $ } from "execa";
 import path from "path";
 import { glob } from "glob";
 
-const cwd = path.join(process.cwd(), "test/compiler.test.app");
+const cwd = path.join(process.cwd(), "examples/api-gateway");
 const $$ = $({ cwd });
 
 beforeAll(async () => {
@@ -12,12 +12,7 @@ beforeAll(async () => {
 });
 
 it("generates infra and runtime modules matching source file structure", async () => {
-  const expected = [
-    "dist/infra/src/api.mjs",
-    "dist/runtime/src/todos/todos.fn/index.mjs",
-  ];
-
+  const expected = ["dist/infra/api.mjs", "dist/runtime/todos.fn/index.mjs"];
   const actual = await glob("dist/**/*.{js,mjs,zip}", { cwd });
-
   expect(actual.sort()).toEqual(expected);
 });
