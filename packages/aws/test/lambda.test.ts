@@ -1,4 +1,4 @@
-import { beforeEach, test, expect } from "bun:test";
+import { beforeEach, test, expect } from "vitest";
 import { lambda } from "src/lambda";
 import { reset } from "@notation/core";
 

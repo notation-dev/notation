@@ -1,4 +1,4 @@
-import { expect, it } from "bun:test";
+import { expect, it } from "vitest";
 import { stripIndent } from "common-tags";
 import { functionRuntimePlugin } from "src/plugins/function-runtime-plugin";
 import { createBuilder } from "test/esbuild-test-utils";

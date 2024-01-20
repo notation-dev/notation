@@ -1,4 +1,4 @@
-import { expect, it } from "bun:test";
+import { expect, it } from "vitest";
 import { stripIndent } from "common-tags";
 import { functionInfraPlugin } from "src/plugins/function-infra-plugin";
 import { createBuilder } from "test/esbuild-test-utils";

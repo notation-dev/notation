@@ -1,4 +1,4 @@
-import { beforeEach, expect, it } from "bun:test";
+import { beforeEach, expect, it } from "vitest";
 import {
   createResourceFactory,
   ResourceGroup,

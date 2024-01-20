@@ -1,4 +1,4 @@
-import { describe, expect, it, test } from "bun:test";
+import { describe, expect, it, test } from "vitest";
 import { parseFnModule } from "src/parsers/parse-fn-module";
 
 describe("parsing exports", () => {

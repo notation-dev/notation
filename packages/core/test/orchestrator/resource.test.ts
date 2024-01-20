@@ -1,4 +1,4 @@
-import { expect, it, mock, test } from "bun:test";
+import { expect, it, mock, test } from "vitest";
 import { Resource, createResourceFactory } from "src";
 
 type Schema = {
