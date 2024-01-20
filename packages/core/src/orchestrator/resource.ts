@@ -48,7 +48,7 @@ export interface BaseResource {
     serviceName: string;
     resourceName: string;
   };
-  readonly dependencies: Record<string, BaseResource>;
+  readonly dependencies: Record<string, BaseResource | void>;
   readonly retryReadOnCondition?: ({
     key: any;
     value?: any;
@@ -74,7 +74,7 @@ export interface BaseResource {
 
 export abstract class Resource<
   S extends Schema = any,
-  D extends Record<string, BaseResource> = {},
+  D extends Record<string, BaseResource | void> = {},
   C extends Record<string, any> = Params<S>,
 > implements BaseResource
 {
@@ -209,7 +209,7 @@ export function resource<
           }) => IntrinsicConfig | Promise<IntrinsicConfig>;
         }) => {
           return class SimpleResource<
-            D extends Record<string, BaseResource> = {},
+            D extends Record<string, BaseResource | void> = {},
             C extends Record<string, any> = Omit<
               Params<S>,
               keyof IntrinsicConfig
@@ -238,7 +238,7 @@ export function resource<
             }
 
             static requireDependencies<
-              Dependencies extends Record<string, BaseResource>,
+              Dependencies extends Record<string, BaseResource | void>,
             >() {
               return {
                 setIntrinsicConfig<IntrinsicConfig extends Partial<Params<S>>>(
