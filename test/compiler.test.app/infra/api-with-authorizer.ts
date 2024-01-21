@@ -8,20 +8,17 @@ if (!process.env.ISSUER || !process.env.AUDIENCE) {
     throw new Error("ISSUER and AUDIENCE environment variables must be set for api-with-authorizer test app")
 }
 
-const authConfig = jwtAuthorizerConfig(
-    "authorizerTest",
+const todosAuthConfig = jwtAuthorizerConfig(
+    "authorizerTestTodos2",
     process.env.ISSUER,
     [process.env.AUDIENCE]
 )
 
-todoRouter.get("/todos", getTodos, jwtAuthorizerConfig(
-    "authorizerTestTodos",
+const todosCountAuthConfig = jwtAuthorizerConfig(
+    "authorizerTestTodosCount2",
     process.env.ISSUER,
     [process.env.AUDIENCE]
-));
-todoRouter.get("/todos/count", getTodoCount, 
-jwtAuthorizerConfig(
-    "authorizerTestTodosCount",
-    process.env.ISSUER,
-    [process.env.AUDIENCE]
-));
+)
+
+todoRouter.get("/todos-auth", getTodos, todosAuthConfig);
+todoRouter.get("/todos-auth/count", getTodoCount, todosCountAuthConfig);

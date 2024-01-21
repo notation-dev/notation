@@ -45,6 +45,22 @@ export const route = (
     );
   }
 
+  if (auth) {
+    const authConfig = mapAuthConfig(auth)
+
+    const authorizer = new aws.apiGateway.RouteAuth(
+      {
+        id: `${routeId}-${apiResource.id}-authorizer`,
+        config: authConfig,
+        dependencies: {
+          api: apiResource
+        }
+      }
+    )
+
+    routeGroup.add(authorizer)
+  }
+
   if (!integration) {
     integration = lambdaGroup.add(
       new aws.apiGateway.LambdaIntegration({
@@ -57,16 +73,18 @@ export const route = (
     );
   }
 
+  const authorizerResource = routeGroup.findResource(aws.apiGateway.RouteAuth)
+
   routeGroup.add(
     new aws.apiGateway.Route({
       id: routeId,
       config: {
-        RouteKey: `${method} ${path}`,
-        Auth: mapAuthConfig(apiResource.id, auth)
+        RouteKey: `${method} ${path}`
       },
       dependencies: {
         api: apiResource,
         lambdaIntegration: integration,
+        auth: authorizerResource
       },
     }),
   );

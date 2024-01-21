@@ -3,6 +3,7 @@ import { AwsSchema } from "src/utils/types";
 import { resource } from "@notation/core";
 import z from 'zod'
 import { apiGatewayClient } from "src/utils/aws-clients";
+import { ApiInstance } from "./api";
 
 type AuthorizerSdkSchema = AwsSchema<{
     Key: sdk.GetAuthorizerRequest,
@@ -10,6 +11,10 @@ type AuthorizerSdkSchema = AwsSchema<{
     UpdateParams: sdk.UpdateAuthorizerRequest,
     ReadResult: sdk.GetAuthorizerResponse
 }>
+
+type AuthorizerDependencies = {
+    api: ApiInstance
+}
 
 const authorizer = resource<AuthorizerSdkSchema>({
         type: "aws/apiGateway/Authorizer",
@@ -56,9 +61,12 @@ const apiSchema = authorizer.defineSchema({
 
 export const RouteAuth = apiSchema.defineOperations({
     create: async (params) => {
+        console.log("test")
+        console.log(params)
         const command = new sdk.CreateAuthorizerCommand(params)
         const result = await apiGatewayClient.send(command)
 
+        console.log(`Authorizer ID ${result.AuthorizerId}` )
         return {
             AuthorizerId: result.AuthorizerId!
         }
@@ -76,7 +84,18 @@ export const RouteAuth = apiSchema.defineOperations({
     delete: async (params) => {
         const command = new sdk.DeleteAuthorizerCommand(params)
         await apiGatewayClient.send(command)
-    }
+    },
+    retryLaterOnError: [
+        {
+            "name": "ConflictException",
+            "message": "Unable to complete operation due to concurrent modification. Please try again later.",
+            "reason": "Waiting for API gateway to propagate"
+        }
+    ]
 })
+.requireDependencies<AuthorizerDependencies>()
+.setIntrinsicConfig(({ deps }) => ({
+    ApiId: deps.api.output.ApiId
+}))
 
 export type AuthInstance = InstanceType<typeof RouteAuth>

@@ -8,7 +8,7 @@ import { AuthInstance } from "./auth";
 
 type RouteSdkSchema = AwsSchema<{
   Key: sdk.DeleteRouteRequest;
-  CreateParams: sdk.CreateRouteRequest & {Auth?: sdk.CreateAuthorizerRequest};
+  CreateParams: sdk.CreateRouteRequest;
   UpdateParams: sdk.UpdateRouteRequest;
   ReadResult: sdk.GetRouteResult;
 }>;
@@ -16,7 +16,7 @@ type RouteSdkSchema = AwsSchema<{
 type RouteDependencies = {
   api: ApiInstance;
   lambdaIntegration: LambdaIntegrationInstance;
-  Auth: AuthInstance
+  auth?: AuthInstance
 };
 
 const route = resource<RouteSdkSchema>({
@@ -105,6 +105,7 @@ export const routeSchema = route.defineSchema({
 export const Route = routeSchema
   .defineOperations({
     create: async (params) => {
+      console.log(params)
       const command = new sdk.CreateRouteCommand(params);
       const result = await apiGatewayClient.send(command);
 
@@ -126,6 +127,9 @@ export const Route = routeSchema
   })
   .requireDependencies<RouteDependencies>()
   .setIntrinsicConfig(({ deps }) => ({
+    AuthorizerId: deps.auth?.output.AuthorizerId,
+    // Note: there is an 'IAM' type but we don't yet support it.
+    AuthorizationType: deps.auth ? "JWT" : "NONE",
     ApiId: deps.api.output.ApiId,
     // todo: this is too opinionated, should be somewhere else
     Target: `integrations/${deps.lambdaIntegration.output.IntegrationId}`,
