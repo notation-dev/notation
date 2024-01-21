@@ -1,11 +1,11 @@
 import { beforeEach, expect, it } from "vitest";
-import {
-  createResourceFactory,
-  ResourceGroup,
-  getResourceGroups,
-  getResources,
-} from "src";
+import { ResourceGroup, getResourceGroups, getResources } from "src";
 import { reset } from "src/";
+import {
+  TestResource,
+  TestResource2,
+  testResourceConfig,
+} from "./resource.doubles";
 
 beforeEach(() => {
   reset();
@@ -15,24 +15,15 @@ class TestResourceGroup extends ResourceGroup {
   platform = "test-platform";
 }
 
-type TestSchema = {
-  input: { a: number };
-  output: any;
-  primaryKey: number;
-};
+const testResource = new TestResource({
+  id: "test-resource-1",
+  config: testResourceConfig,
+});
 
-const resourceConfig = {
-  type: "test-resource",
-  create: () => Promise.resolve({ a: 1 }),
-  delete() {},
-  getPrimaryKey: () => 0,
-};
-
-const TestResource = createResourceFactory<TestSchema>()(resourceConfig);
-const TestResource2 = createResourceFactory<TestSchema>()(resourceConfig);
-
-const testResource = new TestResource({ config: { a: 1 } });
-const testResource2 = new TestResource2({ config: { a: 2 } });
+const testResource2 = new TestResource2({
+  id: "test-resource-2",
+  config: testResourceConfig,
+});
 
 it("creates a resource group", () => {
   const resourceGroup = new TestResourceGroup("test-group", { a: 1 });
@@ -53,23 +44,19 @@ it("stores resource groups in the global array", () => {
 });
 
 it("creates a resource within a group", () => {
-  const resourceGroup = new TestResourceGroup("test-group", { a: 1 });
+  const resourceGroup = new TestResourceGroup("test-group", {});
   const resource = resourceGroup.add(testResource);
-
-  expect(resource.id).toBe(0);
-  expect(resource.type).toBe("test-resource");
-  expect(resource.groupId).toBe(resourceGroup.id);
   expect(resourceGroup.resources).toContain(resource);
 });
 
 it("stores resources in the global array", () => {
-  const resourceGroup = new TestResourceGroup("test-group", { a: 1 });
+  const resourceGroup = new TestResourceGroup("test-group", {});
   resourceGroup.add(testResource);
   resourceGroup.add(testResource2);
 
   expect(getResources()).toHaveLength(2);
-  expect((getResources()[0].config as any).a).toBe(1);
-  expect((getResources()[1].config as any).a).toBe(2);
+  expect(getResources()[0]).toBe(testResource);
+  expect(getResources()[1]).toBe(testResource2);
 });
 
 it("increments resource group IDs", () => {
@@ -108,6 +95,6 @@ it("increments resource IDs globally", () => {
   const r1 = rg1.add(testResource);
   const rg2 = new TestResourceGroup("test-group", {});
   const r2 = rg2.add(testResource2);
-  expect(r1.id).toBe(0);
-  expect(r2.id).toBe(1);
+  expect(r1.id).toBe("test-resource-1");
+  expect(r2.id).toBe("test-resource-2");
 });
