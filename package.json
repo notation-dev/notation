@@ -5,7 +5,8 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev --concurrency=20",
-    "test": "vitest",
+    "test": "vitest watch",
+    "test:once": "vitest run",
     "format": "prettier --write .",
     "changeset": "changeset",
     "version": "turbo run build && changeset version && pnpm install",
