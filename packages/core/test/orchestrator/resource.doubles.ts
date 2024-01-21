@@ -79,11 +79,11 @@ export const testOperations = {
   },
 };
 
-export const TestResource = resource<TestSchema>({
+export const TestResourceSchema = resource<TestSchema>({
   type: "provider/service/resource",
-})
-  .defineSchema(testSchema)
-  .defineOperations(testOperations);
+}).defineSchema(testSchema);
+
+export const TestResource = TestResourceSchema.defineOperations(testOperations);
 
 export const TestResource2 = resource<TestSchema>({
   type: "provider/service/resource-2",
