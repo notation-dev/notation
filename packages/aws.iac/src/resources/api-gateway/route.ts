@@ -4,10 +4,11 @@ import * as sdk from "@aws-sdk/client-apigatewayv2";
 import { apiGatewayClient } from "src/utils/aws-clients";
 import { ApiInstance, LambdaIntegrationInstance } from ".";
 import { AwsSchema } from "src/utils/types";
+import { AuthInstance } from "./auth";
 
 type RouteSdkSchema = AwsSchema<{
   Key: sdk.DeleteRouteRequest;
-  CreateParams: sdk.CreateRouteRequest;
+  CreateParams: sdk.CreateRouteRequest & {Auth?: sdk.CreateAuthorizerRequest};
   UpdateParams: sdk.UpdateRouteRequest;
   ReadResult: sdk.GetRouteResult;
 }>;
@@ -15,6 +16,7 @@ type RouteSdkSchema = AwsSchema<{
 type RouteDependencies = {
   api: ApiInstance;
   lambdaIntegration: LambdaIntegrationInstance;
+  Auth: AuthInstance
 };
 
 const route = resource<RouteSdkSchema>({
@@ -97,7 +99,7 @@ export const routeSchema = route.defineSchema({
     valueType: z.string(),
     propertyType: "param",
     presence: "optional",
-  },
+  }
 } as const);
 
 export const Route = routeSchema
@@ -105,6 +107,7 @@ export const Route = routeSchema
     create: async (params) => {
       const command = new sdk.CreateRouteCommand(params);
       const result = await apiGatewayClient.send(command);
+
       return { RouteId: result.RouteId! };
     },
     read: async (key) => {

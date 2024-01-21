@@ -2,11 +2,14 @@ import type { ApiGatewayHandler } from "src/shared";
 import * as aws from "@notation/aws.iac";
 import { lambda } from "src/lambda";
 import { api } from "./api";
+import { AuthorizerConfig } from "./auth";
+import {mapAuthConfig} from './utils'
 
 export const route = (
   apiGroup: ReturnType<typeof api>,
   method: string, // todo: http methods only
   path: `/${string}`,
+  auth: AuthorizerConfig,
   handler: ApiGatewayHandler,
 ) => {
   const apiResource = apiGroup.findResource(aws.apiGateway.Api)!;
@@ -59,6 +62,7 @@ export const route = (
       id: routeId,
       config: {
         RouteKey: `${method} ${path}`,
+        Auth: mapAuthConfig(apiResource.id, auth)
       },
       dependencies: {
         api: apiResource,
