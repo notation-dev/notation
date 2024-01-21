@@ -27,7 +27,6 @@
     "@notation/aws.iac": "workspace:*",
     "@notation/std.iac": "workspace:*",
     "@types/node": "^20.7.0",
-    "bun-types": "^1.0.3",
     "execa": "^8.0.1",
     "glob": "^10.3.10",
     "husky": "^8.0.3",
