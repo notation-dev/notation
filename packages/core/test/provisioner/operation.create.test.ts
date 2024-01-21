@@ -1,57 +1,68 @@
-import { expect, it, mock } from "bun:test";
-import { createResourceFactory } from "src/orchestrator/resource";
+import { describe, expect, it, vi, afterEach } from "vitest";
 import { createResource } from "src/provisioner/operations/operation.create";
 import { State, StateNode } from "src/provisioner/state";
-
-type Schema = {
-  input: { name: string };
-  output: { id: number; name: string };
-  primaryKey: { id: number };
-};
+import {
+  TestResourceSchema,
+  testResourceConfig,
+  testOperations,
+  testResourceOutput,
+} from "test/orchestrator/resource.doubles";
+import { reset } from "src/orchestrator/state";
 
 const stateMock = {
-  get: mock((id: number) => Promise.resolve({}) as any as StateNode),
-  update: mock((id: number, patch: any) => Promise.resolve()),
-  delete: mock((id: number) => Promise.resolve()),
-  values: mock(() => [] as StateNode[]),
-} as State;
+  get: vi.fn((id: number) => Promise.resolve({}) as any as StateNode),
+  update: vi.fn((id: number, patch: any) => Promise.resolve()),
+  delete: vi.fn((id: number) => Promise.resolve()),
+  values: vi.fn(() => [] as StateNode[]),
+} as any as State;
 
-it("passes computed input to resource.create", async () => {
-  const createMock = mock(() => Promise.resolve({ id: 1, name: "name" }));
-
-  const factory = createResourceFactory<Schema>();
-
-  const TestResource = factory({
-    type: "testType",
-    getPrimaryKey: () => ({ id: 1 }),
-    create: createMock,
-    read: () => Promise.resolve({ id: 1, name: "name" }),
-    update: () => Promise.resolve({ id: 1, name: "name" }),
-    delete: () => Promise.resolve({}),
-    getIntrinsicInput: () => ({ name: "name" }),
-  });
-
-  const resource = new TestResource({});
-
-  await createResource(resource, stateMock);
-  expect(createMock.mock.calls[0]).toEqual([{ name: "name" }]);
+afterEach(() => {
+  reset();
+  Object.values(stateMock).forEach((fn) => fn.mockClear());
 });
 
-it("assigns outputs after deploy", async () => {
-  const factory = createResourceFactory<Schema>();
+describe("resource creation", () => {
+  const readResult = { ...testResourceOutput, volatileComputed: "123" };
+  const createMock = vi.fn(() => Promise.resolve({ primaryKey: "" }));
+  const readMock = vi.fn(() => Promise.resolve(readResult));
 
-  const TestResource = factory({
-    type: "testType",
-    getPrimaryKey: () => ({ id: 1 }),
-    create: () => Promise.resolve({ id: 1, name: "name" }),
-    read: () => Promise.resolve({ id: 1, name: "name" }),
-    update: () => Promise.resolve({ id: 1, name: "name" }),
-    delete: () => Promise.resolve({}),
+  const TestResource = TestResourceSchema.defineOperations({
+    ...testOperations,
+    create: createMock,
+    read: readMock,
   });
 
-  const resource = new TestResource({ config: { name: "testName" } });
-  expect(resource.output).toBe(null);
+  const testResource = new TestResource({
+    id: "test-resource",
+    config: testResourceConfig,
+  });
 
-  await createResource(resource, stateMock);
-  expect(resource.output).toEqual({ id: 1, name: "name" });
+  it("passes computed input to resource.create", async () => {
+    await createResource({
+      resource: testResource,
+      state: stateMock,
+      quiet: true,
+    });
+    const params = await testResource.getParams();
+    expect(createMock.mock.calls[0]).toEqual([params]);
+  });
+
+  it("updates the state", async () => {
+    await createResource({
+      resource: testResource,
+      state: stateMock,
+      quiet: true,
+    });
+    expect(stateMock.update).toHaveBeenCalledOnce();
+  });
+
+  it("sets the resource output with the read result", async () => {
+    await createResource({
+      resource: testResource,
+      state: stateMock,
+      quiet: true,
+    });
+    expect(testResource.output).not.toEqual(testResourceOutput);
+    expect(testResource.output).toEqual(readResult);
+  });
 });

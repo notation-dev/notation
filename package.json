@@ -5,7 +5,8 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev --concurrency=20",
-    "test": ": 'run `$ bun test` instead'",
+    "test": "vitest watch",
+    "test:once": "vitest run",
     "format": "prettier --write .",
     "changeset": "changeset",
     "version": "turbo run build && changeset version && pnpm install",
@@ -27,7 +28,6 @@
     "@notation/aws.iac": "workspace:*",
     "@notation/std.iac": "workspace:*",
     "@types/node": "^20.7.0",
-    "bun-types": "^1.0.3",
     "execa": "^8.0.1",
     "glob": "^10.3.10",
     "husky": "^8.0.3",
@@ -35,6 +35,8 @@
     "tsconfig": "workspace:*",
     "tsup": "^7.2.0",
     "turbo": "^1.10.14",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "vite-tsconfig-paths": "^4.3.1",
+    "vitest": "^1.2.1"
   }
 }

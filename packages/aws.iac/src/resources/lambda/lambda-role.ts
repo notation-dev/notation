@@ -37,7 +37,7 @@ const lambdaIamRoleSchema = lambdaIamRole.defineSchema({
     valueType: z.date(),
     propertyType: "computed",
     presence: "required",
-    ignore: true,
+    volatile: true,
   },
   Description: {
     valueType: z.string(),

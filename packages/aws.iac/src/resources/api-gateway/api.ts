@@ -53,7 +53,7 @@ const apiSchema = api.defineSchema({
     propertyType: "computed",
     valueType: z.date(),
     presence: "required",
-    ignore: true,
+    volatile: true,
   },
   Description: {
     propertyType: "param",

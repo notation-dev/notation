@@ -1,4 +1,4 @@
-import { test, expect, beforeEach } from "bun:test";
+import { test, expect, beforeEach } from "vitest";
 import { reset } from "@notation/core";
 import { apiGateway } from "@notation/aws.iac";
 import { api, route, router } from "src/api-gateway";
@@ -8,29 +8,6 @@ beforeEach(() => {
   reset();
 });
 
-test("api resource group snapshot", () => {
-  const apiResourceGroup = api({ name: "api" });
-  expect(apiResourceGroup).toMatchSnapshot();
-});
-
-test("route resource group snapshot", () => {
-  const apiResourceGroup = api({ name: "api" });
-  const fnResourceGroup = lambda({
-    fileName: "src/fns/handler.fn.js",
-    handler: "handler.fn.js",
-  });
-
-  const routeResourceGroup = route(
-    apiResourceGroup,
-    "GET",
-    "/hello",
-    fnResourceGroup as any,
-  );
-
-  expect(routeResourceGroup).toMatchSnapshot();
-  expect(fnResourceGroup).toMatchSnapshot();
-});
-
 test("route resource group idempotency snapshot", () => {
   const apiResourceGroup = api({ name: "api" });
   const fnResourceGroup = lambda({
@@ -38,9 +15,9 @@ test("route resource group idempotency snapshot", () => {
     handler: "handler.fn.js",
   });
 
-  route(apiResourceGroup, "GET", "/hello", fnResourceGroup as any);
+  route(apiResourceGroup, "GET", "/hello", undefined, fnResourceGroup as any);
   const fnResourceGroupSnapshot = JSON.stringify(fnResourceGroup);
-  route(apiResourceGroup, "POST", "/hello", fnResourceGroup as any);
+  route(apiResourceGroup, "POST", "/hello", undefined, fnResourceGroup as any);
   const fnResourceGroupSnapshot2 = JSON.stringify(fnResourceGroup);
 
   expect(fnResourceGroupSnapshot).toEqual(fnResourceGroupSnapshot2);

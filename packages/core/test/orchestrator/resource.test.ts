@@ -1,87 +1,148 @@
-import { expect, it, mock, test } from "bun:test";
-import { Resource, createResourceFactory } from "src";
+import { expect, it, test, vi } from "vitest";
+import { resource } from "src";
+import {
+  TestResource,
+  testResourceConfig,
+  testResourceOutput,
+} from "./resource.doubles";
+import { describe } from "node:test";
 
-type Schema = {
-  input: { name: string };
-  output: { id: number; name: string };
-  primaryKey: { id: number };
-};
+describe("resource basics", () => {
+  const TestResource = resource({ type: "provider/service/resource" })
+    .defineSchema({})
+    .defineOperations({} as any);
 
-it("creates a resource class factory", () => {
-  const factory = createResourceFactory<Schema>();
+  const testResource = new TestResource({ id: "0" });
 
-  const TestResource = factory({
-    type: "test-resource",
-    getPrimaryKey: () => ({ id: 1 }),
-    create: () => Promise.resolve({ id: 1, name: "name" }),
-    read: () => Promise.resolve({ id: 1, name: "name" }),
-    update: () => Promise.resolve({ id: 1, name: "name" }),
-    delete: () => Promise.resolve({}),
+  test("type", () => {
+    expect(TestResource.type).toBe("provider/service/resource");
+    expect(testResource.type).toBe("provider/service/resource");
   });
 
-  const resource = new TestResource({
-    config: { name: "sampleName" },
+  test("meta", () => {
+    const expectedMeta = {
+      moduleName: "@notation/provider.iac",
+      serviceName: "service",
+      resourceName: "resource",
+    };
+    expect(testResource.meta).toEqual(expectedMeta);
   });
 
-  expect(resource.config.name).toBe("sampleName");
-  expect(resource.type).toBe("test-resource");
+  test("setOutput", () => {
+    testResource.setOutput({ a: 1 });
+    expect(testResource.output).toEqual({ a: 1 });
+  });
 });
 
-test("merges config and intrinsic config", async () => {
-  const factory = createResourceFactory<Schema>();
-
-  const TestResource = factory({
-    type: "test-resource",
-    getPrimaryKey: () => ({ id: 1 }),
-    getIntrinsicInput: () => ({ name: "intrinsicName" }),
-    create: () => Promise.resolve({ id: 1, name: "name" }),
-    read: () => Promise.resolve({ id: 1, name: "name" }),
-    update: () => Promise.resolve({ id: 1, name: "name" }),
-    delete: () => Promise.resolve({}),
+describe("resource schema", () => {
+  const testResource = new TestResource({
+    id: "test-resource-1",
+    config: testResourceConfig,
   });
 
-  const resource = new TestResource({ config: { name: "overrideName" } });
-  // @ts-expect-error
-  expect((await resource.getInput()).name).toBe("intrinsicName");
+  test("key (primary)", () => {
+    testResource.setOutput(testResourceOutput);
+    expect(testResource.key).toEqual({ primaryKey: "0" });
+  });
+
+  test("key (compound)", () => {
+    testResource.setOutput({
+      ...testResourceOutput,
+      optionalSecondaryKey: 1,
+    });
+    expect(testResource.key).toEqual({
+      primaryKey: "0",
+      optionalSecondaryKey: 1,
+    });
+  });
+
+  test("toComparable removes computed, hidden and volatile fields", () => {
+    testResource.setOutput(testResourceOutput);
+    const comparableState = testResource.toComparable(testResourceOutput);
+    const { primaryKey, hiddenParam, volatileComputed, ...expectedState } =
+      testResourceOutput;
+    expect(comparableState).toEqual(expectedState);
+  });
+
+  test("toState removes hidden params", () => {
+    testResource.setOutput(testResourceOutput);
+    const state = testResource.toState(testResourceOutput);
+    const { hiddenParam, ...expectedState } = testResourceOutput;
+    expect(state).toEqual(expectedState);
+  });
+
+  test("getParams merges intrinsic config", () => {
+    [
+      { requiredParam: "name1", hiddenParam: "" },
+      { requiredParam: "name1", hiddenParam: "", optionalSecondaryKey: 1 },
+    ].forEach(async (params) => {
+      const testResource = new TestResource({
+        id: "test-resource-1",
+        config: params,
+      });
+      expect(await testResource.getParams()).toEqual({
+        ...params,
+        intrinsicParam: true,
+      });
+    });
+  });
 });
 
-it("passes dependencies to getIntrinsicConfig", async () => {
-  const getIntrinsicInputMock = mock((deps) => deps.dep1);
+describe("resource dependencies", () => {
+  it("passes dependencies to getIntrinsicConfig", async () => {
+    const getIntrinsicConfigMock = vi.fn();
 
-  const childFactory = createResourceFactory<Schema>();
+    const TestResourceWithDeps = TestResource.requireDependencies<{
+      dep1: InstanceType<typeof TestResource>;
+    }>().setIntrinsicConfig(getIntrinsicConfigMock);
 
-  const ChildResource = childFactory({
-    type: "childType",
-    getPrimaryKey: () => ({ id: 1 }),
-    create: () => Promise.resolve({ id: 1, name: "name" }),
-    read: () => Promise.resolve({ id: 1, name: "name" }),
-    update: () => Promise.resolve({ id: 1, name: "name" }),
-    delete: () => Promise.resolve({}),
+    const childTestResource = new TestResource({
+      id: "test-resource-1",
+      config: testResourceConfig,
+    });
+
+    const testResource = new TestResourceWithDeps({
+      id: "test-resource-1",
+      config: testResourceConfig,
+      dependencies: { dep1: childTestResource },
+    });
+
+    await testResource.getParams();
+
+    expect(getIntrinsicConfigMock.mock.calls[0]).toEqual([
+      {
+        config: testResourceConfig,
+        deps: { dep1: childTestResource },
+      },
+    ]);
   });
 
-  const childResource = new ChildResource({ config: { name: "child-name" } });
+  it("merges config and intrinsic config", async () => {
+    const getIntrinsicConfigMock = vi.fn(() => ({
+      requiredParam: "preset",
+    }));
 
-  const factory = createResourceFactory<Schema, { dep1: Resource }>();
+    const { requiredParam, ...nonIntrinsicConfig } = testResourceConfig;
 
-  const Resource = factory({
-    type: "testTypeWithDeps",
-    getPrimaryKey: () => ({ id: 1 }),
-    create: () => Promise.resolve({ id: 1, name: "name" }),
-    read: () => Promise.resolve({ id: 1, name: "name" }),
-    update: () => Promise.resolve({ id: 1, name: "name" }),
-    delete: () => Promise.resolve({}),
-    getIntrinsicInput: getIntrinsicInputMock,
+    const TestResourceWithDeps = TestResource.requireDependencies<{
+      dep1: InstanceType<typeof TestResource>;
+    }>().setIntrinsicConfig(getIntrinsicConfigMock);
+
+    const childTestResource = new TestResource({
+      id: "test-resource-1",
+      config: testResourceConfig,
+    });
+
+    const testResource = new TestResourceWithDeps({
+      id: "test-resource-1",
+      config: nonIntrinsicConfig,
+      dependencies: { dep1: childTestResource },
+    });
+
+    expect(await testResource.getParams()).toEqual({
+      ...testResourceConfig,
+      requiredParam: "preset",
+      intrinsicParam: true,
+    });
   });
-
-  const resource = new Resource({
-    dependencies: {
-      dep1: childResource,
-    },
-  });
-
-  await resource.getInput();
-
-  expect(getIntrinsicInputMock.mock.calls[0]).toEqual([
-    { dep1: childResource },
-  ]);
 });

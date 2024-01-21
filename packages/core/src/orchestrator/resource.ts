@@ -36,7 +36,7 @@ type ResourceOpts<C, D> = OptionalIfAllPropertiesOptional<"config", C> &
   OptionalIfAllPropertiesOptional<"dependencies", D> & { id: string };
 
 export interface BaseResource {
-  readonly type: string;
+  readonly type: `${string}/${string}/${string}`;
   readonly schema: Schema;
   readonly config: any;
   id: string;
@@ -84,7 +84,7 @@ export abstract class Resource<
   groupType = "";
   output = null as any as Output<S>;
   dependencies = {} as NoInfer<D>;
-  abstract type: string;
+  abstract type: `${string}/${string}/${string}`;
   abstract schema: S;
   abstract create: (params: Params<S>) => Promise<ComputedPrimaryKey<S>>;
   abstract read?: () => Promise<Result<S>>;
@@ -134,7 +134,7 @@ export abstract class Resource<
   toComparable(data: Output<S>) {
     const parsed = {} as Output<S>;
     for (const [k, v] of Object.entries(this.schema)) {
-      if (this.schema[k].ignore) continue;
+      if (this.schema[k].volatile) continue;
       if (this.schema[k].hidden) continue;
       if (this.schema[k].propertyType !== "param") continue;
       if (k in data) {
@@ -178,7 +178,7 @@ export function resource<
     UpdateParams: any;
     ReadResult: any;
   },
->(meta: { type: string }) {
+>(meta: { type: `${string}/${string}/${string}` }) {
   return {
     defineSchema<
       S extends SchemaFromApi<
@@ -241,15 +241,22 @@ export function resource<
               Dependencies extends Record<string, BaseResource | void>,
             >() {
               return {
-                setIntrinsicConfig<IntrinsicConfig extends Partial<Params<S>>>(
+                setIntrinsicConfig<
+                  DepAwareIntrinsicConfig extends Partial<Params<S>>,
+                >(
                   setIntrinsicConfig: (opts: {
                     config: Params<S>;
                     deps: Dependencies;
-                  }) => IntrinsicConfig | Promise<IntrinsicConfig>,
+                  }) =>
+                    | DepAwareIntrinsicConfig
+                    | Promise<DepAwareIntrinsicConfig>,
                 ) {
                   return class DependencyAwareResource extends SimpleResource<
                     Dependencies,
-                    Omit<Params<S>, keyof IntrinsicConfig>
+                    Omit<
+                      Params<S>,
+                      keyof DepAwareIntrinsicConfig | keyof IntrinsicConfig
+                    >
                   > {
                     async setIntrinsicConfig() {
                       const superIntrinsicConfig =

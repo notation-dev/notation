@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "compiler-test-app",
+  "name": "api-demo",
   "scripts": {
     "compile": "notation compile infra/api.ts",
     "dashboard": "notation dashboard",

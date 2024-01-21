@@ -183,7 +183,7 @@ const lambdaFunctionSchema = lambdaFunction.defineSchema({
     valueType: z.string(),
     propertyType: "computed",
     presence: "required",
-    ignore: true,
+    volatile: true,
   },
   Role: {
     valueType: z.string(),
