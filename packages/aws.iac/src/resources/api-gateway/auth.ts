@@ -84,14 +84,6 @@ export const RouteAuth = apiSchema
       const command = new sdk.DeleteAuthorizerCommand(params);
       await apiGatewayClient.send(command);
     },
-    retryLaterOnError: [
-      {
-        name: "ConflictException",
-        message:
-          "Unable to complete operation due to concurrent modification. Please try again later.",
-        reason: "Waiting for API gateway to propagate",
-      },
-    ],
   })
   .requireDependencies<AuthorizerDependencies>()
   .setIntrinsicConfig(({ deps }) => ({
