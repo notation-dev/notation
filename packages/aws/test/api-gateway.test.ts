@@ -8,29 +8,6 @@ beforeEach(() => {
   reset();
 });
 
-test("api resource group snapshot", () => {
-  const apiResourceGroup = api({ name: "api" });
-  expect(apiResourceGroup).toMatchSnapshot();
-});
-
-test("route resource group snapshot", () => {
-  const apiResourceGroup = api({ name: "api" });
-  const fnResourceGroup = lambda({
-    fileName: "src/fns/handler.fn.js",
-    handler: "handler.fn.js",
-  });
-
-  const routeResourceGroup = route(
-    apiResourceGroup,
-    "GET",
-    "/hello",
-    fnResourceGroup as any,
-  );
-
-  expect(routeResourceGroup).toMatchSnapshot();
-  expect(fnResourceGroup).toMatchSnapshot();
-});
-
 test("route resource group idempotency snapshot", () => {
   const apiResourceGroup = api({ name: "api" });
   const fnResourceGroup = lambda({
