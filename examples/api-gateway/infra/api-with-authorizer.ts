@@ -1,5 +1,5 @@
 import { api, jwtAuthorizerConfig, router } from "@notation/aws/api-gateway";
-import { getTodos, getTodoCount } from "runtime/todo/todos.fn";
+import { getTodoCount, getTodos } from "runtime/todos.fn";
 
 const todoApi = api({ name: "todo-api-with-authorizer" });
 const todoRouter = router(todoApi);
