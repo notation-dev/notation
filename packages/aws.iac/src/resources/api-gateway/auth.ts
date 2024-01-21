@@ -1,101 +1,101 @@
 import * as sdk from "@aws-sdk/client-apigatewayv2";
 import { AwsSchema } from "src/utils/types";
 import { resource } from "@notation/core";
-import z from 'zod'
+import z from "zod";
 import { apiGatewayClient } from "src/utils/aws-clients";
 import { ApiInstance } from "./api";
 
 type AuthorizerSdkSchema = AwsSchema<{
-    Key: sdk.GetAuthorizerRequest,
-    CreateParams: sdk.CreateAuthorizerRequest,
-    UpdateParams: sdk.UpdateAuthorizerRequest,
-    ReadResult: sdk.GetAuthorizerResponse
-}>
+  Key: sdk.GetAuthorizerRequest;
+  CreateParams: sdk.CreateAuthorizerRequest;
+  UpdateParams: sdk.UpdateAuthorizerRequest;
+  ReadResult: sdk.GetAuthorizerResponse;
+}>;
 
 type AuthorizerDependencies = {
-    api: ApiInstance
-}
+  api: ApiInstance;
+};
 
 const authorizer = resource<AuthorizerSdkSchema>({
-        type: "aws/apiGateway/Authorizer",
-    }
-)
+  type: "aws/apiGateway/Authorizer",
+});
 
 const apiSchema = authorizer.defineSchema({
-    ApiId: {
-        "valueType": z.string(),
-        "presence": "required",
-        "propertyType": "param",
-        "secondaryKey": true
-    },
-    AuthorizerId: {
-        valueType: z.string(),
-        propertyType: "computed",
-        presence: "required",
-        primaryKey: true,
-    },
-    Name: {
-        "valueType": z.string(),
-        "propertyType": "param",
-        "presence": "required"
-    },
-    AuthorizerType: {
-        "valueType": z.enum([sdk.AuthorizerType.JWT, sdk.AuthorizerType.REQUEST]),
-        "propertyType": "param",
-        "presence": "required"
-    },
-    IdentitySource: {
-        "valueType": z.array(z.string()),
-        "presence": "required",
-        "propertyType": "param"
-    },
-    JwtConfiguration: {
-        "valueType": z.object({
-            Audience: z.array(z.string()),
-            Issuer: z.string(),
-        }).optional(),
-        "propertyType": "param",
-        "presence": "optional"
-    }
-} as const)
+  ApiId: {
+    valueType: z.string(),
+    presence: "required",
+    propertyType: "param",
+    secondaryKey: true,
+  },
+  AuthorizerId: {
+    valueType: z.string(),
+    propertyType: "computed",
+    presence: "required",
+    primaryKey: true,
+  },
+  Name: {
+    valueType: z.string(),
+    propertyType: "param",
+    presence: "required",
+  },
+  AuthorizerType: {
+    valueType: z.enum([sdk.AuthorizerType.JWT, sdk.AuthorizerType.REQUEST]),
+    propertyType: "param",
+    presence: "required",
+  },
+  IdentitySource: {
+    valueType: z.array(z.string()),
+    presence: "required",
+    propertyType: "param",
+  },
+  JwtConfiguration: {
+    valueType: z
+      .object({
+        Audience: z.array(z.string()),
+        Issuer: z.string(),
+      })
+      .optional(),
+    propertyType: "param",
+    presence: "optional",
+  },
+} as const);
 
-export const RouteAuth = apiSchema.defineOperations({
+export const RouteAuth = apiSchema
+  .defineOperations({
     create: async (params) => {
-        console.log("test")
-        console.log(params)
-        const command = new sdk.CreateAuthorizerCommand(params)
-        const result = await apiGatewayClient.send(command)
+      const command = new sdk.CreateAuthorizerCommand(params);
+      const result = await apiGatewayClient.send(command);
 
-        console.log(`Authorizer ID ${result.AuthorizerId}` )
-        return {
-            AuthorizerId: result.AuthorizerId!
-        }
+      return {
+        AuthorizerId: result.AuthorizerId!,
+      };
     },
     read: async (key) => {
-        const command = new sdk.GetAuthorizerCommand(key)
-        const result = await apiGatewayClient.send(command)
-        
-        return result
+      const command = new sdk.GetAuthorizerCommand(key);
+      const result = await apiGatewayClient.send(command);
+
+      return result;
     },
     update: async (key, params) => {
-        const command = new sdk.CreateAuthorizerCommand({ ...key, ...params })
-        await apiGatewayClient.send(command)
+      const command = new sdk.CreateAuthorizerCommand({ ...key, ...params });
+      await apiGatewayClient.send(command);
     },
     delete: async (params) => {
-        const command = new sdk.DeleteAuthorizerCommand(params)
-        await apiGatewayClient.send(command)
+      const command = new sdk.DeleteAuthorizerCommand(params);
+      await apiGatewayClient.send(command);
     },
     retryLaterOnError: [
-        {
-            "name": "ConflictException",
-            "message": "Unable to complete operation due to concurrent modification. Please try again later.",
-            "reason": "Waiting for API gateway to propagate"
-        }
-    ]
-})
-.requireDependencies<AuthorizerDependencies>()
-.setIntrinsicConfig(({ deps }) => ({
-    ApiId: deps.api.output.ApiId
-}))
+      {
+        name: "ConflictException",
+        message:
+          "Unable to complete operation due to concurrent modification. Please try again later.",
+        reason: "Waiting for API gateway to propagate",
+      },
+    ],
+  })
+  .requireDependencies<AuthorizerDependencies>()
+  .setIntrinsicConfig(({ deps }) => ({
+    ApiId: deps.api.output.ApiId,
+  }));
 
-export type AuthInstance = InstanceType<typeof RouteAuth>
+export type AuthInstance = InstanceType<typeof RouteAuth>;

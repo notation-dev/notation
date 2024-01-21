@@ -3,7 +3,7 @@ import * as aws from "@notation/aws.iac";
 import { lambda } from "src/lambda";
 import { api } from "./api";
 import { AuthorizerConfig } from "./auth";
-import {mapAuthConfig, mapAuthType} from './utils'
+import { mapAuthConfig, mapAuthType } from "./utils";
 
 export const route = (
   apiGroup: ReturnType<typeof api>,
@@ -46,19 +46,17 @@ export const route = (
   }
 
   if (auth) {
-    const authConfig = mapAuthConfig(auth)
+    const authConfig = mapAuthConfig(auth);
 
-    const authorizer = new aws.apiGateway.RouteAuth(
-      {
-        id: `${routeId}-${apiResource.id}-authorizer`,
-        config: authConfig,
-        dependencies: {
-          api: apiResource
-        }
-      }
-    )
+    const authorizer = new aws.apiGateway.RouteAuth({
+      id: `${routeId}-${apiResource.id}-authorizer`,
+      config: authConfig,
+      dependencies: {
+        api: apiResource,
+      },
+    });
 
-    routeGroup.add(authorizer)
+    routeGroup.add(authorizer);
   }
 
   if (!integration) {
@@ -73,19 +71,19 @@ export const route = (
     );
   }
 
-  const authorizerResource = routeGroup.findResource(aws.apiGateway.RouteAuth)
+  const authorizerResource = routeGroup.findResource(aws.apiGateway.RouteAuth);
 
   routeGroup.add(
     new aws.apiGateway.Route({
       id: routeId,
       config: {
         RouteKey: `${method} ${path}`,
-        AuthorizationType: mapAuthType(auth)
+        AuthorizationType: mapAuthType(auth),
       },
       dependencies: {
         api: apiResource,
         lambdaIntegration: integration,
-        auth: authorizerResource
+        auth: authorizerResource,
       },
     }),
   );

@@ -16,7 +16,7 @@ type RouteSdkSchema = AwsSchema<{
 type RouteDependencies = {
   api: ApiInstance;
   lambdaIntegration: LambdaIntegrationInstance;
-  auth?: AuthInstance
+  auth?: AuthInstance;
 };
 
 const route = resource<RouteSdkSchema>({
@@ -99,13 +99,12 @@ export const routeSchema = route.defineSchema({
     valueType: z.string(),
     propertyType: "param",
     presence: "optional",
-  }
+  },
 } as const);
 
 export const Route = routeSchema
   .defineOperations({
     create: async (params) => {
-      console.log(params)
       const command = new sdk.CreateRouteCommand(params);
       const result = await apiGatewayClient.send(command);
 

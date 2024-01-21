@@ -4,7 +4,12 @@ import { AuthorizerConfig } from "./auth";
 
 export const router = (apiGroup: ReturnType<typeof api>) => {
   const createRouteCallback =
-    (method: string) => (path: `/${string}`, handler: ApiGatewayHandler, authorizer: AuthorizerConfig = undefined) => {
+    (method: string) =>
+    (
+      path: `/${string}`,
+      handler: ApiGatewayHandler,
+      authorizer: AuthorizerConfig = undefined,
+    ) => {
       return route(apiGroup, method, path, authorizer, handler);
     };
 

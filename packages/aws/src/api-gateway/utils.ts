@@ -1,7 +1,7 @@
-import { AuthorizerConfig, JWTAuthorizerConfig } from "./auth"
+import { AuthorizerConfig, JWTAuthorizerConfig } from "./auth";
 
 export const mapAuthConfig = (config: JWTAuthorizerConfig) => {
-  const jwtType: "JWT" = "JWT"
+  const jwtType: "JWT" = "JWT";
 
   return {
     Name: config.name,
@@ -9,11 +9,11 @@ export const mapAuthConfig = (config: JWTAuthorizerConfig) => {
     IdentitySource: [config.tokenSourceExpression],
     JwtConfiguration: {
       Audience: config.audience,
-      Issuer: config.issuer
-    }
-  }
-}
+      Issuer: config.issuer,
+    },
+  };
+};
 
 export const mapAuthType = (config: AuthorizerConfig) => {
-  return config?.type === "jwt" ? "JWT" : "NONE"
-}
+  return config?.type === "jwt" ? "JWT" : "NONE";
+};
