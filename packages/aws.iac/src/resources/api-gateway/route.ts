@@ -128,8 +128,6 @@ export const Route = routeSchema
   .requireDependencies<RouteDependencies>()
   .setIntrinsicConfig(({ deps }) => ({
     AuthorizerId: deps.auth?.output.AuthorizerId,
-    // Note: there is an 'IAM' type but we don't yet support it.
-    AuthorizationType: deps.auth ? "JWT" : "NONE",
     ApiId: deps.api.output.ApiId,
     // todo: this is too opinionated, should be somewhere else
     Target: `integrations/${deps.lambdaIntegration.output.IntegrationId}`,

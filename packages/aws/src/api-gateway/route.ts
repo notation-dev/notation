@@ -3,7 +3,7 @@ import * as aws from "@notation/aws.iac";
 import { lambda } from "src/lambda";
 import { api } from "./api";
 import { AuthorizerConfig } from "./auth";
-import {mapAuthConfig} from './utils'
+import {mapAuthConfig, mapAuthType} from './utils'
 
 export const route = (
   apiGroup: ReturnType<typeof api>,
@@ -79,7 +79,8 @@ export const route = (
     new aws.apiGateway.Route({
       id: routeId,
       config: {
-        RouteKey: `${method} ${path}`
+        RouteKey: `${method} ${path}`,
+        AuthorizationType: mapAuthType(auth)
       },
       dependencies: {
         api: apiResource,

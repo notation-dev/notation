@@ -12,5 +12,8 @@ export const mapAuthConfig = (config: JWTAuthorizerConfig) => {
       Issuer: config.issuer
     }
   }
+}
 
+export const mapAuthType = (config: AuthorizerConfig) => {
+  return config?.type === "jwt" ? "JWT" : "NONE"
 }
