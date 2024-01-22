@@ -25,8 +25,7 @@ export const jwtAuthenticatedUserRouter = (
   jwtAuthorizerConfig: JWTAuthorizerConfig,
 ) => {
   const createRouteCallback =
-    (method: string) =>
-    (path: `/${string}`, handler: JWTAuthorizedApiGatewayHandler) => {
+    (method: string) => (path: `/${string}`, handler: ApiGatewayHandler) => {
       return jwtAuthorizedRoute(
         apiGroup,
         method,

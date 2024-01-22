@@ -6,20 +6,16 @@ import * as aws from "@notation/aws.iac";
 import { lambda } from "src/lambda";
 import { api } from "./api";
 import { AuthorizerConfig, JWTAuthorizerConfig, NO_AUTH } from "./auth";
-import { mapAuthConfig, mapAuthType, toApiGatewayHandler } from "./utils";
+import { mapAuthConfig, mapAuthType } from "./utils";
 
 export const jwtAuthorizedRoute = (
   apiGroup: ReturnType<typeof api>,
   method: string, // todo: http methods only
   path: `/${string}`,
   auth: JWTAuthorizerConfig,
-  handler: JWTAuthorizedApiGatewayHandler,
+  handler: ApiGatewayHandler,
 ) => {
-  // We require a 'JWTAuthorizedApiGatewayHandler' to be passed in for type safety (since only a jwtAuthorizedRoute notation resource
-  // will have the JWT header.) However, the AWS lambda resource itself must have the API gateway handler type for compatibility.
-  const apiGatewayHandler = toApiGatewayHandler(handler);
-
-  return routeResource(apiGroup, method, path, auth, apiGatewayHandler);
+  return routeResource(apiGroup, method, path, auth, handler);
 };
 
 export const route = (
@@ -38,7 +34,6 @@ const routeResource = (
   auth: AuthorizerConfig,
   handler: ApiGatewayHandler,
 ) => {
-
   const apiResource = apiGroup.findResource(aws.apiGateway.Api)!;
 
   // at compile time becomes infra module

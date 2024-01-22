@@ -9,7 +9,15 @@ beforeEach(() => {
 test("handlers wrap user-provided handlers", async () => {
   const fn = async () => ({ body: "{}" });
   for (const handler of Object.values(handle)) {
-    const result = await handler(fn)({} as any, {} as any);
+    const result = await handler(fn)(
+      {
+        headers: {
+          Authorization:
+            "Bearer eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJzdWIiOiAiMTIzNDU2Nzg5MCIsICJuYW1lIjogIkpvaG4gRG9lIiwgImlhdCI6IDE1MTYyMzkwMjJ9.vBbO0bfWhxupD6Gp6gIyWzgSZDvQewYV23j9LKm7nV8",
+        },
+      } as any,
+      {} as any,
+    );
     expect(result).toEqual({ body: "{}" });
   }
 });
