@@ -15,9 +15,9 @@ test("route resource group idempotency snapshot", () => {
     handler: "handler.fn.js",
   });
 
-  route(apiResourceGroup, "GET", "/hello", undefined, fnResourceGroup as any);
+  route(apiResourceGroup, "GET", "/hello", fnResourceGroup as any);
   const fnResourceGroupSnapshot = JSON.stringify(fnResourceGroup);
-  route(apiResourceGroup, "POST", "/hello", undefined, fnResourceGroup as any);
+  route(apiResourceGroup, "POST", "/hello", fnResourceGroup as any);
   const fnResourceGroupSnapshot2 = JSON.stringify(fnResourceGroup);
 
   expect(fnResourceGroupSnapshot).toEqual(fnResourceGroupSnapshot2);

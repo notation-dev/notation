@@ -18,6 +18,6 @@ const userAuthConfig = jwtAuthorizerConfig(
 );
 
 const userApi = api({ name: "user-api" });
-const userApiRouter = jwtAuthenticatedUserRouter(userApi);
+const userApiRouter = jwtAuthenticatedUserRouter(userApi, userAuthConfig);
 
-userApiRouter.get("/user", getUserHandler, userAuthConfig);
+userApiRouter.get("/user", getUserHandler);
