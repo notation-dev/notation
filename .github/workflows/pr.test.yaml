@@ -37,17 +37,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
 
-      - name: Install bun
-        run: pnpm install bun -g
-
       - name: Install
         run: pnpm install
 
       - name: Build
-        run: bun run build
+        run: pnpm build
 
       - name: Install local bin scripts
         run: pnpm install
 
       - name: Test
-        run: bun test
+        run: pnpm test:once
