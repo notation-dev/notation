@@ -13,13 +13,14 @@ export const jwtAuthorizerConfig = (
   issuer: string,
   audience: string[],
   authorizationHeaderField = "Authorization",
-) => ({
-  type: "jwt" as "jwt",
-  name: name,
-  tokenSourceExpression: `$request.header.${authorizationHeaderField}`,
-  issuer: issuer,
-  audience: audience,
-});
+) =>
+  ({
+    type: "jwt",
+    name: name,
+    tokenSourceExpression: `$request.header.${authorizationHeaderField}`,
+    issuer: issuer,
+    audience: audience,
+  }) as const;
 
 export const jwtWebsocketAuthorizerConfig = (
   name: string,
