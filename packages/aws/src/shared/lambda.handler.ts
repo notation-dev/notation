@@ -1,3 +1,4 @@
+import { JwtPayload } from "aws-jwt-verify/jwt-model";
 import type {
   Context,
   APIGatewayProxyEventV2,
@@ -11,6 +12,16 @@ import type {
 
 export type ApiGatewayHandler = (
   event: APIGatewayProxyEventV2,
+  context: Context,
+) => APIGatewayProxyResultV2 | Promise<APIGatewayProxyResultV2>;
+
+export type EventWithJWTToken = {
+  event: APIGatewayProxyEventV2;
+  token: JwtPayload;
+};
+
+export type JWTAuthorizedApiGatewayHandler = (
+  event: EventWithJWTToken,
   context: Context,
 ) => APIGatewayProxyResultV2 | Promise<APIGatewayProxyResultV2>;
 

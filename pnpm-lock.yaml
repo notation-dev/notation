@@ -66,6 +66,22 @@ importers:
         specifier: ^20.8.4
         version: 20.8.8
 
+  examples/api-gateway-authorizer:
+    dependencies:
+      "@notation/aws":
+        specifier: workspace:*
+        version: link:../../packages/aws
+      "@notation/cli":
+        specifier: workspace:*
+        version: link:../../packages/cli
+      "@notation/core":
+        specifier: workspace:*
+        version: link:../../packages/core
+    devDependencies:
+      "@types/node":
+        specifier: ^20.8.4
+        version: 20.8.8
+
   examples/event-bridge:
     dependencies:
       "@notation/aws":
@@ -96,6 +112,9 @@ importers:
       "@types/aws-lambda":
         specifier: ^8.10.125
         version: 8.10.125
+      aws-jwt-verify:
+        specifier: ^4.0.0
+        version: 4.0.0
 
   packages/aws.iac:
     dependencies:
@@ -4673,6 +4692,14 @@ packages:
       fastq: 1.15.0
     transitivePeerDependencies:
       - supports-color
+    dev: false
+
+  /aws-jwt-verify@4.0.0:
+    resolution:
+      {
+        integrity: sha512-1kCv+Ub3jBaQ6HnIjfAXswjp7xD0LO4GxwbQZ/o9IoJpb8/ZBUhHu5GQ4k2O7jOVTS/KOz86uw4NV71V3s6V3g==,
+      }
+    engines: { node: ">=14.0.0" }
     dev: false
 
   /balanced-match@1.0.2:

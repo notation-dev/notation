@@ -1,11 +1,37 @@
-import type { ApiGatewayHandler } from "src/shared";
+import type {
+  ApiGatewayHandler,
+  JWTAuthorizedApiGatewayHandler,
+} from "src/shared";
 import * as aws from "@notation/aws.iac";
 import { lambda } from "src/lambda";
 import { api } from "./api";
-import { AuthorizerConfig } from "./auth";
-import { mapAuthConfig, mapAuthType } from "./utils";
+import { AuthorizerConfig, JWTAuthorizerConfig, NO_AUTH } from "./auth";
+import { mapAuthConfig, mapAuthType, toApiGatewayHandler } from "./utils";
+
+export const jwtAuthorizedRoute = (
+  apiGroup: ReturnType<typeof api>,
+  method: string, // todo: http methods only
+  path: `/${string}`,
+  auth: JWTAuthorizerConfig,
+  handler: JWTAuthorizedApiGatewayHandler,
+) => {
+  // We require a 'JWTAuthorizedApiGatewayHandler' to be passed in for type safety (since only a jwtAuthorizedRoute notation resource
+  // will have the JWT header.) However, the AWS lambda resource itself must have the API gateway handler type for compatibility.
+  const apiGatewayHandler = toApiGatewayHandler(handler);
+
+  return routeResource(apiGroup, method, path, auth, apiGatewayHandler);
+};
 
 export const route = (
+  apiGroup: ReturnType<typeof api>,
+  method: string, // todo: http methods only
+  path: `/${string}`,
+  handler: ApiGatewayHandler,
+) => {
+  return routeResource(apiGroup, method, path, NO_AUTH, handler);
+};
+
+const routeResource = (
   apiGroup: ReturnType<typeof api>,
   method: string, // todo: http methods only
   path: `/${string}`,
@@ -45,7 +71,7 @@ export const route = (
     );
   }
 
-  if (auth) {
+  if (auth.type != "NONE") {
     const authConfig = mapAuthConfig(auth);
 
     const authorizer = new aws.apiGateway.RouteAuth({
@@ -77,6 +103,7 @@ export const route = (
     new aws.apiGateway.Route({
       id: routeId,
       config: {
+        AuthorizationScopes: auth.scopes,
         RouteKey: `${method} ${path}`,
         AuthorizationType: mapAuthType(auth),
       },
