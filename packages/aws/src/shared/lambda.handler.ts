@@ -1,4 +1,3 @@
-import { JwtPayload } from "aws-jwt-verify/jwt-model";
 import type {
   Context,
   APIGatewayProxyEventV2,
@@ -9,6 +8,8 @@ import type {
   SQSEvent,
   SQSBatchResponse,
 } from "aws-lambda";
+
+import { JwtPayload } from "aws-jwt-verify/jwt-model";
 
 export type ApiGatewayHandler = (
   event: APIGatewayProxyEventV2,
