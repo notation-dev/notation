@@ -27,7 +27,7 @@ export const mapAuthType = (config: AuthorizerConfig) => {
 export const toApiGatewayHandler = (
   handler: JWTAuthorizedApiGatewayHandler,
 ): ApiGatewayHandler => {
-  return (event: APIGatewayProxyEventV2, context: Context) => {
+  const apiGatewayHandler: ApiGatewayHandler = (event: APIGatewayProxyEventV2, context: Context) => {
     const authorizationHeader = event.headers.Authorization!;
 
     // Remove the 'Bearer ' prefix that preceeds the token itself
@@ -41,4 +41,6 @@ export const toApiGatewayHandler = (
 
     return handler(eventWithJwt, context);
   };
+
+  return apiGatewayHandler
 };

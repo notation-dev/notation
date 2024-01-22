@@ -38,6 +38,7 @@ const routeResource = (
   auth: AuthorizerConfig,
   handler: ApiGatewayHandler,
 ) => {
+
   const apiResource = apiGroup.findResource(aws.apiGateway.Api)!;
 
   // at compile time becomes infra module

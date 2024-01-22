@@ -1,5 +1,6 @@
 import type { LambdaConfig } from "@notation/aws/lambda.fn";
-import { handle, json, EventWithJWTToken } from "@notation/aws/lambda.fn";
+import { handle, json } from "@notation/aws/lambda.fn";
+import { EventWithJWTToken } from "@notation/aws/shared";
 import { Context } from "aws-lambda";
 
 export const getUserHandler = handle.jwtAuthorizedApiRequest(
