@@ -19,12 +19,11 @@ export const jwtAuthorizerConfig = (
   issuer: string,
   audience: string[],
   scopes = [],
-  authorizationHeaderField = "Authorization",
 ) =>
   ({
     type: "jwt",
     name: name,
-    tokenSourceExpression: `$request.header.${authorizationHeaderField}`,
+    tokenSourceExpression: `$request.header.Authorization`,
     issuer: issuer,
     scopes: scopes,
     audience: audience,
