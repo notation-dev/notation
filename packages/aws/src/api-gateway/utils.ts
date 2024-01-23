@@ -6,7 +6,7 @@ export const mapAuthConfig = (config: JWTAuthorizerConfig) => {
   return {
     Name: config.name,
     AuthorizerType: jwtType,
-    IdentitySource: [config.tokenSourceExpression],
+    IdentitySource: ["$request.header.Authorization"],
     JwtConfiguration: {
       Audience: config.audience,
       Issuer: config.issuer,
