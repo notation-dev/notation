@@ -30,9 +30,9 @@ test("jwtAuthorizedApiRequest passes through JWT token as expected", async () =>
   const jwtTokenHandler = handle.jwtAuthorizedApiRequest(
     (event: EventWithJWTToken, context: Context) => {
       return {
-        body: {
+        body: JSON.stringify({
           name: event.token.name,
-        },
+        }),
       };
     },
   );
@@ -46,7 +46,7 @@ test("jwtAuthorizedApiRequest passes through JWT token as expected", async () =>
     {} as Context,
   );
 
-  expect(result).toEqual({ body: { name: "John Doe" } });
+  expect(result).toEqual({ body: JSON.stringify({ name: "John Doe" }) });
 });
 
 test("json returns a JSON string and a 200 status code", () => {
