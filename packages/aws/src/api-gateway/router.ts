@@ -2,13 +2,14 @@ import type {
   ApiGatewayHandler,
   JWTAuthorizedApiGatewayHandler,
 } from "src/shared";
-import { api, jwtAuthorizedRoute, route } from ".";
+import { api, route } from ".";
 import { JWTAuthorizerConfig } from "./auth";
+import { NO_AUTH } from "dist/api-gateway";
 
 export const router = (apiGroup: ReturnType<typeof api>) => {
   const createRouteCallback =
     (method: string) => (path: `/${string}`, handler: ApiGatewayHandler) => {
-      return route(apiGroup, method, path, handler);
+      return route(apiGroup, method, path, NO_AUTH, handler);
     };
 
   return {
@@ -26,13 +27,7 @@ export const jwtAuthenticatedUserRouter = (
 ) => {
   const createRouteCallback =
     (method: string) => (path: `/${string}`, handler: ApiGatewayHandler) => {
-      return jwtAuthorizedRoute(
-        apiGroup,
-        method,
-        path,
-        jwtAuthorizerConfig,
-        handler,
-      );
+      return route(apiGroup, method, path, jwtAuthorizerConfig, handler);
     };
 
   return {

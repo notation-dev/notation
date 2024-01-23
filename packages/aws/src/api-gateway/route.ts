@@ -8,26 +8,7 @@ import { api } from "./api";
 import { AuthorizerConfig, JWTAuthorizerConfig, NO_AUTH } from "./auth";
 import { mapAuthConfig, mapAuthType } from "./utils";
 
-export const jwtAuthorizedRoute = (
-  apiGroup: ReturnType<typeof api>,
-  method: string, // todo: http methods only
-  path: `/${string}`,
-  auth: JWTAuthorizerConfig,
-  handler: ApiGatewayHandler,
-) => {
-  return routeResource(apiGroup, method, path, auth, handler);
-};
-
 export const route = (
-  apiGroup: ReturnType<typeof api>,
-  method: string, // todo: http methods only
-  path: `/${string}`,
-  handler: ApiGatewayHandler,
-) => {
-  return routeResource(apiGroup, method, path, NO_AUTH, handler);
-};
-
-const routeResource = (
   apiGroup: ReturnType<typeof api>,
   method: string, // todo: http methods only
   path: `/${string}`,
