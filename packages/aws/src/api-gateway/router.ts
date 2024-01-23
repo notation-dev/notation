@@ -1,10 +1,6 @@
-import type {
-  ApiGatewayHandler,
-  JWTAuthorizedApiGatewayHandler,
-} from "src/shared";
+import type { ApiGatewayHandler } from "src/shared";
 import { api, route } from ".";
-import { JWTAuthorizerConfig } from "./auth";
-import { NO_AUTH } from "dist/api-gateway";
+import { JWTAuthorizerConfig, NO_AUTH } from "./auth";
 
 export const router = (apiGroup: ReturnType<typeof api>) => {
   const createRouteCallback =
