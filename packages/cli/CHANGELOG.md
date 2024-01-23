@@ -1,5 +1,15 @@
 # @notation/cli
 
+## 0.6.2
+
+### Patch Changes
+
+- Fix updating std.zip resource
+- Updated dependencies
+  - @notation/core@0.5.1
+  - @notation/dashboard@0.2.0
+  - @notation/esbuild-plugins@0.4.2
+
 ## 0.6.1
 
 ### Patch Changes

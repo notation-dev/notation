@@ -1,5 +1,12 @@
 # @notation/std.iac
 
+## 0.4.3
+
+### Patch Changes
+
+- Updated dependencies
+  - @notation/core@0.5.1
+
 ## 0.4.2
 
 ### Patch Changes
