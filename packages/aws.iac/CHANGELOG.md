@@ -1,5 +1,14 @@
 # @notation/aws.iac
 
+## 0.4.3
+
+### Patch Changes
+
+- Fix updating std.zip resource
+- Updated dependencies
+  - @notation/core@0.5.1
+  - @notation/std.iac@0.4.3
+
 ## 0.4.2
 
 ### Patch Changes

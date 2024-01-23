@@ -1,5 +1,11 @@
 # create-notation
 
+## 0.0.5
+
+### Patch Changes
+
+- Fix updating std.zip resource
+
 ## 0.0.3
 
 ### Patch Changes

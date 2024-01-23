@@ -10,9 +10,10 @@ async function read(opts: { resource: BaseResource; state: State }) {
   let backoff = 1000;
 
   if (!resource.read) {
+    const params = await resource.getParams();
     const stateNode = await state.get(resource.id);
-    if (!stateNode) return {};
-    return stateNode.output;
+    if (!stateNode) return params;
+    return { ...stateNode.output, ...params };
   }
 
   async function getSettledReadResult() {
