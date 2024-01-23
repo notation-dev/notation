@@ -20,9 +20,6 @@ importers:
       '@types/node':
         specifier: ^20.7.0
         version: 20.7.0
-      bun-types:
-        specifier: ^1.0.3
-        version: 1.0.3
       execa:
         specifier: ^8.0.1
         version: 8.0.1
@@ -311,22 +308,6 @@ importers:
         version: 3.22.4
 
   packages/tsconfig: {}
-
-  test/compiler.test.app:
-    dependencies:
-      '@notation/aws':
-        specifier: workspace:*
-        version: link:../../packages/aws
-      '@notation/cli':
-        specifier: workspace:*
-        version: link:../../packages/cli
-      '@notation/core':
-        specifier: workspace:*
-        version: link:../../packages/core
-    devDependencies:
-      '@types/node':
-        specifier: ^20.8.4
-        version: 20.8.8
 
 packages:
 
@@ -3744,10 +3725,6 @@ packages:
     dependencies:
       base64-js: 1.5.1
       ieee754: 1.2.1
-    dev: false
-
-  /bun-types@1.0.3:
-    resolution: {integrity: sha512-XlyKVdYCHa7K5PHYGcwOVOrGE/bMnLS51y7zFA3ZAAXyiQ6dTaNXNCWTTufgII/6ruN770uhAXphQmzvU/r2fQ==}
     dev: false
 
   /bundle-require@4.0.1(esbuild@0.18.20):
