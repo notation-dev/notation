@@ -39,7 +39,7 @@
 
 ## Getting Started
 
-Head over to [notation.dev](https://notation.dev/docs) for documentation and the getting started guide.
+Head over to [notation.dev](https://notation.dev) for documentation and the getting started guide.
 
 Or, just dive right in:
 
