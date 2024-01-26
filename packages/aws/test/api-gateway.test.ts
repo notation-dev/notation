@@ -1,7 +1,8 @@
 import { test, expect, beforeEach } from "vitest";
 import { reset } from "@notation/core";
 import { apiGateway } from "@notation/aws.iac";
-import { NO_AUTH, api, route, router } from "src/api-gateway";
+import { NO_AUTH, api, router } from "src/api-gateway";
+import { route } from "src/api-gateway/route";
 import { lambda } from "src/lambda";
 
 beforeEach(() => {
