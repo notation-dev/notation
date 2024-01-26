@@ -1,4 +1,4 @@
-import { JWTAuthorizerConfig, api, router } from "@notation/aws/api-gateway";
+import { api, router } from "@notation/aws/api-gateway";
 import { JWTClaims, getUserHandler } from "runtime/user.fn";
 
 if (!process.env.ISSUER || !process.env.AUDIENCE) {
