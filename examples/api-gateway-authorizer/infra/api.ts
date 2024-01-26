@@ -7,15 +7,14 @@ if (!process.env.ISSUER || !process.env.AUDIENCE) {
   );
 }
 
-const userAuthConfig: JWTAuthorizerConfig = {
+const userApi = api({ name: "user-api-jwt" });
+
+const userApiRouter = router(userApi).withJWTAuthorizer<JWTClaims>({
   type: "jwt",
   issuer: process.env.ISSUER,
   audience: [process.env.AUDIENCE],
   scopes: [],
-};
-
-const userApi = api({ name: "user-api-jwt" });
-const userApiRouter =
-  router(userApi).withJWTAuthorizer<JWTClaims>(userAuthConfig);
+});
 
 userApiRouter.get("/user", getUserHandler);
+userApiRouter.get("/another", getUserHandler);

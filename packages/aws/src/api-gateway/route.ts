@@ -5,7 +5,7 @@ import type {
 import * as aws from "@notation/aws.iac";
 import { lambda } from "src/lambda";
 import { api } from "./api";
-import { AuthorizerConfig, JWTAuthorizerConfig, NO_AUTH } from "./auth";
+import { AuthorizerConfig } from "./auth";
 import { mapAuthConfig, mapAuthType } from "./utils";
 
 export const route = (
