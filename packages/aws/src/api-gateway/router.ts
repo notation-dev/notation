@@ -33,21 +33,30 @@ class AuthorizedRouteBuilder {
   }
 
   private createJWTAuthorizedRouteCallback =
-    <ClaimsType>(method: string) =>
+    <ClaimsType>(method: string, authorizer: JWTAuthorizerConfig) =>
     (
       path: `/${string}`,
       handler: JWTAuthorizedApiGatewayHandler<ClaimsType>,
     ) => {
-      return route(this.apiGroup, method, path, NO_AUTH, handler);
+      return route(this.apiGroup, method, path, authorizer, handler);
     };
 
   withJWTAuthorizer<ClaimsType>(authorizer: JWTAuthorizerConfig) {
     return {
-      get: this.createJWTAuthorizedRouteCallback<ClaimsType>("GET"),
-      post: this.createJWTAuthorizedRouteCallback<ClaimsType>("POST"),
-      put: this.createJWTAuthorizedRouteCallback<ClaimsType>("PUT"),
-      patch: this.createJWTAuthorizedRouteCallback<ClaimsType>("PATCH"),
-      delete: this.createJWTAuthorizedRouteCallback<ClaimsType>("DELETE"),
+      get: this.createJWTAuthorizedRouteCallback<ClaimsType>("GET", authorizer),
+      post: this.createJWTAuthorizedRouteCallback<ClaimsType>(
+        "POST",
+        authorizer,
+      ),
+      put: this.createJWTAuthorizedRouteCallback<ClaimsType>("PUT", authorizer),
+      patch: this.createJWTAuthorizedRouteCallback<ClaimsType>(
+        "PATCH",
+        authorizer,
+      ),
+      delete: this.createJWTAuthorizedRouteCallback<ClaimsType>(
+        "DELETE",
+        authorizer,
+      ),
     };
   }
 }

@@ -1,5 +1,5 @@
-import { api, jwtAuthorizerConfig, router } from "@notation/aws/api-gateway";
-import { getUserHandler } from "runtime/user.fn";
+import { JWTAuthorizerConfig, api, router } from "@notation/aws/api-gateway";
+import { JWTClaims, getUserHandler } from "runtime/user.fn";
 
 if (!process.env.ISSUER || !process.env.AUDIENCE) {
   throw new Error(
@@ -7,13 +7,15 @@ if (!process.env.ISSUER || !process.env.AUDIENCE) {
   );
 }
 
-const userAuthConfig = jwtAuthorizerConfig(
-  "authorizerTestTodos2",
-  process.env.ISSUER,
-  [process.env.AUDIENCE],
-);
+const userAuthConfig: JWTAuthorizerConfig = {
+  type: "jwt",
+  issuer: process.env.ISSUER,
+  audience: [process.env.AUDIENCE],
+  scopes: [],
+};
 
-const userApi = api({ name: "user-api" });
-const userApiRouter = router(userApi).withJWTAuthorizer(userAuthConfig);
+const userApi = api({ name: "user-api-jwt" });
+const userApiRouter =
+  router(userApi).withJWTAuthorizer<JWTClaims>(userAuthConfig);
 
 userApiRouter.get("/user", getUserHandler);

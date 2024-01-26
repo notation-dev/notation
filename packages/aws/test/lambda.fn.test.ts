@@ -52,19 +52,7 @@ test("jwtAuthorizedApiRequest passes through JWT token as expected", async () =>
       version: "1",
     };
 
-  const result = await jwtTokenHandler(
-    {
-      requestContext: {
-        jwt: {
-          claims: {
-            iss: "John Doe",
-          },
-          scopes: [],
-        },
-      },
-    } as any,
-    {} as Context,
-  );
+  const result = await jwtTokenHandler(input, {} as Context);
 
   expect(result).toEqual({ body: JSON.stringify({ name: "John Doe" }) });
 });

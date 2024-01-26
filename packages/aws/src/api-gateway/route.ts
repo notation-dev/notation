@@ -49,7 +49,7 @@ export const route = (
   }
 
   if (auth.type != "NONE") {
-    const authConfig = mapAuthConfig(auth);
+    const authConfig = mapAuthConfig(apiResource.id, method, path, auth);
 
     const authorizer = new aws.apiGateway.RouteAuth({
       id: `${routeId}-${apiResource.id}-authorizer`,

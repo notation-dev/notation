@@ -1,10 +1,15 @@
 import { AuthorizerConfig, JWTAuthorizerConfig } from "./auth";
 
-export const mapAuthConfig = (config: JWTAuthorizerConfig) => {
+export const mapAuthConfig = (
+  apiId: string,
+  method: string,
+  path: string,
+  config: JWTAuthorizerConfig,
+) => {
   const jwtType: "JWT" = "JWT";
 
   return {
-    Name: config.name,
+    Name: `${apiId}_${method}_${path.replace("/", "")}_authorizer`,
     AuthorizerType: jwtType,
     IdentitySource: ["$request.header.Authorization"],
     JwtConfiguration: {

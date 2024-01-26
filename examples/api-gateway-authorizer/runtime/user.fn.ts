@@ -2,7 +2,7 @@ import type { LambdaConfig } from "@notation/aws/lambda.fn";
 import { handle, json } from "@notation/aws/lambda.fn";
 import { JWTAuthorizedApiGatewayHandler } from "@notation/aws/shared";
 
-type JWTClaims = {
+export type JWTClaims = {
   iss: string;
   sub: string;
 };
