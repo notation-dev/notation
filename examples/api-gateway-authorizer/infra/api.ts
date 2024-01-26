@@ -1,8 +1,4 @@
-import {
-  api,
-  jwtAuthorizerConfig,
-  jwtAuthenticatedUserRouter,
-} from "@notation/aws/api-gateway";
+import { api, jwtAuthorizerConfig, router } from "@notation/aws/api-gateway";
 import { getUserHandler } from "runtime/user.fn";
 
 if (!process.env.ISSUER || !process.env.AUDIENCE) {
@@ -18,6 +14,6 @@ const userAuthConfig = jwtAuthorizerConfig(
 );
 
 const userApi = api({ name: "user-api" });
-const userApiRouter = jwtAuthenticatedUserRouter(userApi, userAuthConfig);
+const userApiRouter = router(userApi).withJWTAuthorizer(userAuthConfig);
 
 userApiRouter.get("/user", getUserHandler);

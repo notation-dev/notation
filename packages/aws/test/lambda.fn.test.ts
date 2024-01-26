@@ -1,46 +1,66 @@
 import { test, expect, beforeEach } from "vitest";
 import { reset } from "@notation/core";
 import { handle, json } from "src/lambda.fn";
-import { EventWithJWTToken } from "src/shared";
+import { APIGatewayProxyEventV2WithJWTAuthorizerWithTypedClaims } from "src/shared";
 import { Context } from "aws-lambda";
 
 beforeEach(() => {
   reset();
 });
 
-const testToken =
-  "eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJzdWIiOiAiMTIzNDU2Nzg5MCIsICJuYW1lIjogIkpvaG4gRG9lIiwgImlhdCI6IDE1MTYyMzkwMjJ9.vBbO0bfWhxupD6Gp6gIyWzgSZDvQewYV23j9LKm7nV8";
-
 test("handlers wrap user-provided handlers", async () => {
   const fn = async () => ({ body: "{}" });
   for (const handler of Object.values(handle)) {
-    const result = await handler(fn)(
-      {
-        headers: {
-          Authorization: `Bearer ${testToken}`,
-        },
-      } as any,
-      {} as any,
-    );
+    const result = await handler(fn)({} as any, {} as any);
     expect(result).toEqual({ body: "{}" });
   }
 });
 
 test("jwtAuthorizedApiRequest passes through JWT token as expected", async () => {
-  const jwtTokenHandler = handle.jwtAuthorizedApiRequest(
-    (event: EventWithJWTToken, context: Context) => {
+  type ClaimsFields = {
+    iss: string;
+  };
+
+  const jwtTokenHandler = handle.jwtAuthorizedApiRequest<ClaimsFields>(
+    (
+      event: APIGatewayProxyEventV2WithJWTAuthorizerWithTypedClaims<ClaimsFields>,
+      context: Context,
+    ) => {
       return {
         body: JSON.stringify({
-          name: event.token.name,
+          name: event.requestContext.jwt.claims.iss,
         }),
       };
     },
   );
 
+  const input: APIGatewayProxyEventV2WithJWTAuthorizerWithTypedClaims<ClaimsFields> =
+    {
+      requestContext: {
+        jwt: {
+          claims: {
+            iss: "John Doe",
+          },
+          scopes: [],
+        },
+      },
+      headers: {},
+      routeKey: "",
+      rawPath: "",
+      isBase64Encoded: false,
+      rawQueryString: "",
+      version: "1",
+    };
+
   const result = await jwtTokenHandler(
     {
-      headers: {
-        Authorization: `Bearer ${testToken}`,
+      requestContext: {
+        jwt: {
+          claims: {
+            iss: "John Doe",
+          },
+          scopes: [],
+        },
       },
     } as any,
     {} as Context,

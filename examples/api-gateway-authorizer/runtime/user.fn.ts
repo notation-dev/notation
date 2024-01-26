@@ -1,17 +1,16 @@
 import type { LambdaConfig } from "@notation/aws/lambda.fn";
 import { handle, json } from "@notation/aws/lambda.fn";
-import {
-  JWTAuthorizedApiGatewayHandler,
-  EventWithJWTToken,
-  ApiGatewayHandler,
-} from "@notation/aws/shared";
-import { Context } from "aws-lambda";
+import { JWTAuthorizedApiGatewayHandler } from "@notation/aws/shared";
 
-export const getUserHandler: ApiGatewayHandler = handle.jwtAuthorizedApiRequest(
-  (event: EventWithJWTToken, context: Context) => {
-    return json({ userId: "" });
-  },
-);
+type JWTClaims = {
+  iss: string;
+  sub: string;
+};
+
+export const getUserHandler: JWTAuthorizedApiGatewayHandler<JWTClaims> =
+  handle.jwtAuthorizedApiRequest<JWTClaims>((event, context) => {
+    return json({ issuerId: event.requestContext.jwt.claims.iss });
+  });
 
 export const config: LambdaConfig = {
   service: "aws/lambda",

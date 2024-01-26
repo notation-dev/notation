@@ -13,7 +13,7 @@ export const route = (
   method: string, // todo: http methods only
   path: `/${string}`,
   auth: AuthorizerConfig,
-  handler: ApiGatewayHandler,
+  handler: ApiGatewayHandler | JWTAuthorizedApiGatewayHandler<any>,
 ) => {
   const apiResource = apiGroup.findResource(aws.apiGateway.Api)!;
 

@@ -7,22 +7,32 @@ import type {
   DynamoDBBatchResponse,
   SQSEvent,
   SQSBatchResponse,
+  APIGatewayProxyEventV2WithJWTAuthorizer,
+  APIGatewayEventRequestContextJWTAuthorizer,
 } from "aws-lambda";
-
-import { JwtPayload } from "aws-jwt-verify/jwt-model";
 
 export type ApiGatewayHandler = (
   event: APIGatewayProxyEventV2,
   context: Context,
 ) => APIGatewayProxyResultV2 | Promise<APIGatewayProxyResultV2>;
 
-export type EventWithJWTToken = {
-  event: APIGatewayProxyEventV2;
-  token: JwtPayload;
+export type TypedClaimsOverride<T> = {
+  requestContext: {
+    jwt: {
+      claims: T;
+      scopes: string[];
+    };
+  };
 };
 
-export type JWTAuthorizedApiGatewayHandler = (
-  event: EventWithJWTToken,
+export type APIGatewayProxyEventV2WithJWTAuthorizerWithTypedClaims<T> = Omit<
+  APIGatewayProxyEventV2WithJWTAuthorizer,
+  "requestContext"
+> &
+  TypedClaimsOverride<T>;
+
+export type JWTAuthorizedApiGatewayHandler<ClaimsType> = (
+  event: APIGatewayProxyEventV2WithJWTAuthorizerWithTypedClaims<ClaimsType>,
   context: Context,
 ) => APIGatewayProxyResultV2 | Promise<APIGatewayProxyResultV2>;
 
