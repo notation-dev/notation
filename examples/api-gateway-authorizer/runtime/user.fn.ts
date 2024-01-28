@@ -1,14 +1,12 @@
 import type { LambdaConfig } from "@notation/aws/lambda.fn";
 import { handle, json } from "@notation/aws/lambda.fn";
-
-export type JWTClaims = {
-  iss: string;
-  sub: string;
-};
+import type { JWTClaims } from "shared/jwt";
 
 export const getUserHandler = handle.jwtAuthorizedApiRequest<JWTClaims>(
-  (event, context) => {
-    return json({ issuerId: event.requestContext.jwt.claims.iss });
+  async (event) => {
+    return json({
+      message: event.requestContext.authorizer.jwt.claims.$username,
+    });
   },
 );
 

@@ -3,7 +3,8 @@
   "compilerOptions": {
     "paths": {
       "runtime/*": ["./runtime/*"],
-      "infra/*": ["./infra/*"]
+      "infra/*": ["./infra/*"],
+      "shared/*": ["./shared/*"]
     }
   }
 }
