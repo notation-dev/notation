@@ -1,7 +1,7 @@
 import { test, expect, beforeEach } from "vitest";
 import { reset } from "@notation/core";
 import { handle, json } from "src/lambda.fn";
-import { APIGatewayProxyEventV2WithJWTAuthorizerWithTypedClaims } from "src/shared";
+import { APIGatewayProxyEventV2JWT } from "src/shared";
 import { Context } from "aws-lambda";
 
 beforeEach(() => {
@@ -22,10 +22,7 @@ test("jwtAuthorizedApiRequest passes through JWT token as expected", async () =>
   };
 
   const jwtTokenHandler = handle.jwtAuthorizedApiRequest<ClaimsFields>(
-    (
-      event: APIGatewayProxyEventV2WithJWTAuthorizerWithTypedClaims<ClaimsFields>,
-      context: Context,
-    ) => {
+    (event: APIGatewayProxyEventV2JWT<ClaimsFields>, context: Context) => {
       return {
         body: JSON.stringify({
           name: event.requestContext.jwt.claims.iss,
@@ -34,23 +31,22 @@ test("jwtAuthorizedApiRequest passes through JWT token as expected", async () =>
     },
   );
 
-  const input: APIGatewayProxyEventV2WithJWTAuthorizerWithTypedClaims<ClaimsFields> =
-    {
-      requestContext: {
-        jwt: {
-          claims: {
-            iss: "John Doe",
-          },
-          scopes: [],
+  const input: APIGatewayProxyEventV2JWT<ClaimsFields> = {
+    requestContext: {
+      jwt: {
+        claims: {
+          iss: "John Doe",
         },
+        scopes: [],
       },
-      headers: {},
-      routeKey: "",
-      rawPath: "",
-      isBase64Encoded: false,
-      rawQueryString: "",
-      version: "1",
-    };
+    },
+    headers: {},
+    routeKey: "",
+    rawPath: "",
+    isBase64Encoded: false,
+    rawQueryString: "",
+    version: "1",
+  };
 
   const result = await jwtTokenHandler(input, {} as Context);
 

@@ -1,5 +1,3 @@
-import { decomposeUnverifiedJwt } from "aws-jwt-verify/jwt";
-import { APIGatewayProxyEventV2, Context } from "aws-lambda";
 import type {
   ApiGatewayHandler,
   DynamoDbBatchHandler,
@@ -8,7 +6,6 @@ import type {
   SqsHandler,
   EventBridgeHandler,
   JWTAuthorizedApiGatewayHandler,
-  APIGatewayProxyEventV2WithJWTAuthorizerWithTypedClaims,
 } from "src/shared/lambda.handler";
 
 export const handle = {

@@ -8,7 +8,6 @@ import type {
   SQSEvent,
   SQSBatchResponse,
   APIGatewayProxyEventV2WithJWTAuthorizer,
-  APIGatewayEventRequestContextJWTAuthorizer,
 } from "aws-lambda";
 
 export type ApiGatewayHandler = (
@@ -25,14 +24,14 @@ export type TypedClaimsOverride<T> = {
   };
 };
 
-export type APIGatewayProxyEventV2WithJWTAuthorizerWithTypedClaims<T> = Omit<
+export type APIGatewayJWTProxyEventV2<T> = Omit<
   APIGatewayProxyEventV2WithJWTAuthorizer,
   "requestContext"
 > &
   TypedClaimsOverride<T>;
 
 export type JWTAuthorizedApiGatewayHandler<ClaimsType> = (
-  event: APIGatewayProxyEventV2WithJWTAuthorizerWithTypedClaims<ClaimsType>,
+  event: APIGatewayJWTProxyEventV2<ClaimsType>,
   context: Context,
 ) => APIGatewayProxyResultV2 | Promise<APIGatewayProxyResultV2>;
 
