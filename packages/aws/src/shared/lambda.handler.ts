@@ -17,9 +17,11 @@ export type ApiGatewayHandler = (
 
 export type TypedClaimsOverride<T> = {
   requestContext: {
-    jwt: {
-      claims: T;
-      scopes: string[];
+    authorizer: {
+      jwt: {
+        claims: T;
+        scopes: string[];
+      };
     };
   };
 };
