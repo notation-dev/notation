@@ -76,8 +76,8 @@ export const RouteAuth = apiSchema
 
       return result;
     },
-    update: async (key, params) => {
-      const command = new sdk.CreateAuthorizerCommand({ ...key, ...params });
+    update: async (key, patch, params) => {
+      const command = new sdk.UpdateAuthorizerCommand({ ...key, ...params });
       await apiGatewayClient.send(command);
     },
     delete: async (params) => {

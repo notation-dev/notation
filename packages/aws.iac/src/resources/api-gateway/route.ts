@@ -115,7 +115,7 @@ export const Route = routeSchema
       const result = await apiGatewayClient.send(command);
       return { ...key, ...result };
     },
-    update: async (key, params) => {
+    update: async (key, patch, params) => {
       const command = new sdk.UpdateRouteCommand({ ...key, ...params });
       await apiGatewayClient.send(command);
     },
