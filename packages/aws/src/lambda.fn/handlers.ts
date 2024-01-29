@@ -13,9 +13,12 @@ export const handle = {
     (handler: ApiGatewayHandler): ApiGatewayHandler =>
     async (...args) =>
       handler(...args),
-  jwtAuthorizedApiRequest: <T>(
-    handler: JWTAuthorizedApiGatewayHandler<T>,
-  ): JWTAuthorizedApiGatewayHandler<T> => handler,
+  jwtAuthorizedApiRequest:
+    <T>(
+      handler: JWTAuthorizedApiGatewayHandler<T>,
+    ): JWTAuthorizedApiGatewayHandler<T> =>
+    async (...args) =>
+      handler(...args),
   eventBridgeScheduledEvent:
     (
       handler: EventBridgeHandler<"Scheduled Event", any>,
