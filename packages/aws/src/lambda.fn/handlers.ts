@@ -5,11 +5,18 @@ import type {
   SqsBatchHandler,
   SqsHandler,
   EventBridgeHandler,
+  JWTAuthorizedApiGatewayHandler,
 } from "src/shared/lambda.handler";
 
 export const handle = {
   apiRequest:
     (handler: ApiGatewayHandler): ApiGatewayHandler =>
+    async (...args) =>
+      handler(...args),
+  jwtAuthorizedApiRequest:
+    <T>(
+      handler: JWTAuthorizedApiGatewayHandler<T>,
+    ): JWTAuthorizedApiGatewayHandler<T> =>
     async (...args) =>
       handler(...args),
   eventBridgeScheduledEvent:

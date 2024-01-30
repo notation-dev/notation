@@ -4,6 +4,7 @@ import * as sdk from "@aws-sdk/client-apigatewayv2";
 import { apiGatewayClient } from "src/utils/aws-clients";
 import { ApiInstance, LambdaIntegrationInstance } from ".";
 import { AwsSchema } from "src/utils/types";
+import { AuthInstance } from "./auth";
 
 type RouteSdkSchema = AwsSchema<{
   Key: sdk.DeleteRouteRequest;
@@ -15,6 +16,7 @@ type RouteSdkSchema = AwsSchema<{
 type RouteDependencies = {
   api: ApiInstance;
   lambdaIntegration: LambdaIntegrationInstance;
+  auth?: AuthInstance;
 };
 
 const route = resource<RouteSdkSchema>({
@@ -105,6 +107,7 @@ export const Route = routeSchema
     create: async (params) => {
       const command = new sdk.CreateRouteCommand(params);
       const result = await apiGatewayClient.send(command);
+
       return { RouteId: result.RouteId! };
     },
     read: async (key) => {
@@ -112,7 +115,7 @@ export const Route = routeSchema
       const result = await apiGatewayClient.send(command);
       return { ...key, ...result };
     },
-    update: async (key, params) => {
+    update: async (key, patch, params) => {
       const command = new sdk.UpdateRouteCommand({ ...key, ...params });
       await apiGatewayClient.send(command);
     },
@@ -123,6 +126,7 @@ export const Route = routeSchema
   })
   .requireDependencies<RouteDependencies>()
   .setIntrinsicConfig(({ deps }) => ({
+    AuthorizerId: deps.auth?.output.AuthorizerId,
     ApiId: deps.api.output.ApiId,
     // todo: this is too opinionated, should be somewhere else
     Target: `integrations/${deps.lambdaIntegration.output.IntegrationId}`,

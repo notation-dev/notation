@@ -1,6 +1,8 @@
 import { test, expect, beforeEach } from "vitest";
 import { reset } from "@notation/core";
 import { handle, json } from "src/lambda.fn";
+import { APIGatewayProxyEventV2JWT } from "src/shared";
+import { Context } from "aws-lambda";
 
 beforeEach(() => {
   reset();
@@ -12,6 +14,43 @@ test("handlers wrap user-provided handlers", async () => {
     const result = await handler(fn)({} as any, {} as any);
     expect(result).toEqual({ body: "{}" });
   }
+});
+
+test("jwtAuthorizedApiRequest passes through JWT token as expected", async () => {
+  type ClaimsFields = {
+    iss: string;
+  };
+
+  const jwtTokenHandler = handle.jwtAuthorizedApiRequest<ClaimsFields>(
+    (event: APIGatewayProxyEventV2JWT<ClaimsFields>, context: Context) => {
+      return {
+        body: JSON.stringify({
+          name: event.requestContext.jwt.claims.iss,
+        }),
+      };
+    },
+  );
+
+  const input: APIGatewayProxyEventV2JWT<ClaimsFields> = {
+    requestContext: {
+      jwt: {
+        claims: {
+          iss: "John Doe",
+        },
+        scopes: [],
+      },
+    },
+    headers: {},
+    routeKey: "",
+    rawPath: "",
+    isBase64Encoded: false,
+    rawQueryString: "",
+    version: "1",
+  };
+
+  const result = await jwtTokenHandler(input, {} as Context);
+
+  expect(result).toEqual({ body: JSON.stringify({ name: "John Doe" }) });
 });
 
 test("json returns a JSON string and a 200 status code", () => {

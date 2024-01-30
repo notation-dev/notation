@@ -1,13 +1,19 @@
-import type { ApiGatewayHandler } from "src/shared";
+import type {
+  ApiGatewayHandler,
+  JWTAuthorizedApiGatewayHandler,
+} from "src/shared";
 import * as aws from "@notation/aws.iac";
 import { lambda } from "src/lambda";
 import { api } from "./api";
+import { AuthorizerConfig } from "./auth";
+import { mapAuthConfig, mapAuthType } from "./utils";
 
 export const route = (
   apiGroup: ReturnType<typeof api>,
   method: string, // todo: http methods only
   path: `/${string}`,
-  handler: ApiGatewayHandler,
+  auth: AuthorizerConfig,
+  handler: ApiGatewayHandler | JWTAuthorizedApiGatewayHandler<any>,
 ) => {
   const apiResource = apiGroup.findResource(aws.apiGateway.Api)!;
 
@@ -42,6 +48,20 @@ export const route = (
     );
   }
 
+  if (auth.type != "NONE") {
+    const authConfig = mapAuthConfig(apiResource.id, method, path, auth);
+
+    const authorizer = new aws.apiGateway.RouteAuth({
+      id: `${routeId}-${apiResource.id}-authorizer`,
+      config: authConfig,
+      dependencies: {
+        api: apiResource,
+      },
+    });
+
+    routeGroup.add(authorizer);
+  }
+
   if (!integration) {
     integration = lambdaGroup.add(
       new aws.apiGateway.LambdaIntegration({
@@ -54,15 +74,20 @@ export const route = (
     );
   }
 
+  const authorizerResource = routeGroup.findResource(aws.apiGateway.RouteAuth);
+
   routeGroup.add(
     new aws.apiGateway.Route({
       id: routeId,
       config: {
+        AuthorizationScopes: auth.scopes,
         RouteKey: `${method} ${path}`,
+        AuthorizationType: mapAuthType(auth),
       },
       dependencies: {
         api: apiResource,
         lambdaIntegration: integration,
+        auth: authorizerResource,
       },
     }),
   );
