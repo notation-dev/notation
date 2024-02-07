@@ -73,6 +73,10 @@ Join us on [Discord](https://discord.gg/mGzDWShPzm) to:
 - Share your projects
 - Discuss contributions
 
+## Contributors
+
+![Alt](https://repobeats.axiom.co/api/embed/88e49631b680ea9399a95763cf4e5c2073f45f89.svg "Repobeats analytics image")
+
 ## License
 
 [Apache 2.0](https://choosealicense.com/licenses/apache-2.0/)
