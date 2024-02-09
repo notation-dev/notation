@@ -11,25 +11,65 @@
 </p>
 
 <p align="center">
-  <a href="https://www.notation.dev/docs/">
-    <img alt="Docs" src="https://img.shields.io/badge/docs-get%20started-brightgreen"/>
-  </a><a href="https://discord.gg/mGzDWShPzm">
-    <img alt="Discord" src="https://img.shields.io/discord/1154880135678406676">
-  </a><a href="https://github.com/notation-dev/notation/discussions">
-    <img alt="Discussions" src="https://img.shields.io/github/discussions/notation-dev/notation"/>
-  </a><a href="https://twitter.com/intent/tweet?url=https://www.notation.dev">
-    <img alt="tweet" src="https://img.shields.io/twitter/url/http/shields.io.svg?style=social"/>
-  </a>
+  Notation is an infrastructure-as-code tool that simplifies serverless development. 
+  <br />It pairs the benefits of serverless – scalable, managed infrastructure – with a first-class developer experience.
 </p>
 
-<p align="center"><em>Build and deploy serverless applications with TypeScript</em></p>
+<p align="center">
+  <a href="https://www.notation.dev/docs/"><img alt="Docs" src="https://img.shields.io/badge/docs-get%20started-brightgreen"/></a>
+  <a href="https://discord.gg/mGzDWShPzm"><img alt="Discord" src="https://img.shields.io/discord/1154880135678406676"></a>
+  <a href="https://github.com/notation-dev/notation/discussions"><img alt="Discussions" src="https://img.shields.io/github/discussions/notation-dev/notation"/></a>
+  <a href="https://twitter.com/intent/tweet?url=https://www.notation.dev"><img alt="tweet" src="https://img.shields.io/twitter/url/http/shields.io.svg?style=social"/></a>
+</p>
 
-## Features
+## Concepts
 
-- &nbsp;🧩&nbsp;&nbsp; **Infrastructure from code:** Write application-like code and let Notation figure out the infra
-- &nbsp;🔗&nbsp;&nbsp; **Integrated services:** Connect cloud services without learning proprietary platforms
-- &nbsp;🤝&nbsp;&nbsp; **End-to-end types:** Catch errors before you deploy to production – everything in a unified type space
-- &nbsp;⚡️&nbsp;&nbsp; **Hot module swapping:** Develop locally, and get near-instant infra changes on production infrastructure
+### 1. Inference
+
+_A.k.a. Cloud Bureaucracy Compiler_
+
+Cloud platforms are famously complicated. AWS was, after all, designed for Amazon – a massive corporation – not for small, nimble teams.
+
+Should we just add an abstraction layer on top of the cloud platforms then? Not so fast.
+
+<img alt="Notation infra graph" src=".github/assets/graph-code.png" width="600">
+
+Too much abstraction results in less powerful tools. We prefer instead to think about inference.
+
+Take the example above: Notation infers – from the relationship between the lambda and the event bridge rule – all the required resources and cloud implementation details (e.g. valid ARN strings, JSON policy documents etc).
+
+### 2. Cohesion
+
+_A.k.a Infrastructure as LEGO_
+
+In a modern serverless stack, your application code is composed of:
+
+1. Code that defines infrastructure (provisioning code)
+2. Code that runs on infrastructure (runtime code)
+
+In practice, these concerns are tightly coupled. Both must work together as a cohesive unit.
+
+<img alt="Notation infra/runtime code" src=".github/assets/infra-runtime-code.png" width="600">
+
+Notation unifies runtime and infra modules within the same type space. That means if you try to connect two resources that are not compatible, the compiler will quickly let you know. Otherwise, everything slots into place, secured by well-designed types.
+
+### 3. Iteration
+
+_A.k.a. Hot Infra Swapping_
+
+Most tools in this space are built on top of Terraform. Notation's IaC layer is built ambitiously from the ground up. This enables us to deliver faster development cycles.
+
+<img alt="Notation hot infrastructure replacement" src=".github/assets/hot-infra.gif" width="600">
+
+With hot infra swapping, you can quickly spin up an ephemeral stack on production infrastructure, then watch it update in realtime as you code.
+
+## Getting Started
+
+Head over to [notation.dev](https://notation.dev) for documentation and guides, or dive right in:
+
+```sh
+npx create notation@alpha
+```
 
 ## Demo
 
@@ -37,41 +77,21 @@
 <img alt="Notation demo thumbnail" src=".github/assets/video-thumbnail.png" width="600">
 </a>
 
-## Getting Started
-
-Head over to [notation.dev](https://notation.dev) for documentation and the getting started guide.
-
-Or, just dive right in:
-
-```sh
-npx create notation@alpha
-```
-
-## Status
-
-> [!NOTE]
-> Notation is currently in early-stage development. Alpha versions are for testing and fun!<br />
-> 0.x.x minor version bumps will contain breaking changes.
-
 ## Community
 
-Join us on [GitHub Discussions](https://github.com/notation-dev/notation/discussions) to:
+- [Discussions](https://github.com/notation-dev/notation/discussions): ask questions, give feedback on our RFCs, suggest ideas
 
-- ask questions
-- give feedback on our RFCs
-- tell us how Notation could be better
+- [Issues](https://github.com/notation-dev/notation/issues/new): report bugs,
+  suggest new features, or help us improve the docs
 
-Use [Github Issues](https://github.com/notation-dev/notation/issues/new) to:
+- [Discord](https://discord.gg/mGzDWShPzm): ask for advice, share your projects,
+  discuss contributions
 
-- report a bug
-- suggest a new feature
-- help us improve the docs
+## Questions and Feedback
 
-Join us on [Discord](https://discord.gg/mGzDWShPzm) to:
+Feel free to book a call to discuss Notation. We'd love to hear your feedback or answer any questions you have.
 
-- Ask for advice
-- Share your projects
-- Discuss contributions
+<a href="https://cal.com/djgrant/notation-chat"><img alt="Book us with Cal.com" src="https://cal.com/book-with-cal-dark.svg" /></a>
 
 ## License
 
