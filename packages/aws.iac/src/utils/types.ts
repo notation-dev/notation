@@ -5,16 +5,30 @@
  */
 export type AwsSchema<S extends SdkSchema> = {
   Key: S["Key"];
-  CreateParams: NonUndefined<S["CreateParams"]>;
+  CreateParams: ExcludeUndefined<S["CreateParams"]>;
   UpdateParams: S["UpdateParams"] extends undefined
-    ? NonUndefined<S["UpdateParams"]>
+    ? ExcludeUndefined<S["UpdateParams"]>
     : never;
-  ReadResult: S["ReadResult"] extends undefined ? {} : S["ReadResult"];
+  ReadResult: S["ReadResult"] extends undefined
+    ? {}
+    : ExcludeUndefined<S["ReadResult"]>;
 };
 
-type NonUndefined<T> = {
-  [P in keyof T]: Exclude<T[P], undefined>;
-};
+/**
+ *  Unwraps type
+ */
+type Prettify<T> = {
+  [K in keyof T]: T[K];
+} & {};
+
+/**
+ * Excludes undefined from object properties
+ * For forcing exact optional types and removing
+ * the undefined that AWS's SDK adds to every property
+ */
+export type ExcludeUndefined<T> = Prettify<{
+  [P in keyof T]: ExcludeUndefined<Exclude<T[P], undefined>>;
+}>;
 
 type SdkSchema = {
   Key: any;
