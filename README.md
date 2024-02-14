@@ -11,8 +11,7 @@
 </p>
 
 <p align="center">
-  Notation is an infrastructure toolkit that brings together the most popular serverless products. 
-  <br />It pairs the benefits of serverless – scalable, managed infrastructure – with a first-class developer experience.
+  Notation is an open source infrastructure toolkit for building serverless applications.<br />It pairs scalable, managed services with a first-class developer experience.
 </p>
 
 <p align="center">
