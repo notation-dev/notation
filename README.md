@@ -1,89 +1,86 @@
-<br />
-
-<p align="center">
+<h1>
   <a href="https://www.notation.dev">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset=".github/assets/notation-logo-dark.svg">
-      <source media="(prefers-color-scheme: light)" srcset=".github/assets/notation-logo.svg">
-      <img alt="Notation Logo" src=".github/assets/notation-logo.svg">
+      <source media="(prefers-color-scheme: dark)" srcset=".github/assets/notation-logo-dark.svg" height="40">
+      <source media="(prefers-color-scheme: light)" srcset=".github/assets/notation-logo.svg" height="40">
+      <img alt="Notation Logo" src=".github/assets/notation-logo.svg" height="40" />
     </picture>
-  </a>
-</p>
-
-<p align="center">
-  Notation is an open source infrastructure toolkit for building serverless applications.<br />It pairs scalable, managed services with a first-class developer experience.
-</p>
-
-<p align="center">
-  <a href="https://www.notation.dev/docs/"><img alt="Docs" src="https://img.shields.io/badge/docs-get%20started-brightgreen"/></a>
-  <a href="https://discord.gg/mGzDWShPzm"><img alt="Discord" src="https://img.shields.io/discord/1154880135678406676"></a>
+  </a>    
+  <br />
+  <a href="https://github.com/notation_dev/notation/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-Apache%202-blue" /></a>
+  <a href="https://www.npmjs.com/package/@notation/core"><img src="https://img.shields.io/npm/v/@notation/core.svg?style=flat" /></a>
   <a href="https://github.com/notation-dev/notation/discussions"><img alt="Discussions" src="https://img.shields.io/github/discussions/notation-dev/notation"/></a>
-  <a href="https://twitter.com/intent/tweet?url=https://www.notation.dev"><img alt="tweet" src="https://img.shields.io/twitter/url/http/shields.io.svg?style=social"/></a>
-</p>
+  <a href="https://discord.gg/mGzDWShPzm"><img alt="Discord" src="https://img.shields.io/discord/1154880135678406676"></a>
+</h1>
 
-## Concepts
+[Website](https://notation.dev)<sup>↗</sup>&nbsp;•&nbsp;
+[Quick Start](#quick-start)<sup>↓</sup>&nbsp;•&nbsp;
+[Slow Start](https://notation.dev/docs/guide)<sup>↗</sup>&nbsp;•&nbsp;
+[Examples](https://github.com/notation-dev/notation/tree/main/examples)&nbsp;•&nbsp;
+[Discord](https://discord.gg/mGzDWShPzm)<sup>↗</sup>&nbsp;•&nbsp;
+[Twitter](https://twitter.com/notation_dev)<sup>↗</sup>
 
-### 1. Inference
+<br />
 
-_A.k.a. Cloud Bureaucracy Compiler_
+**Notation is an open source toolkit for building serverless applications.**<br />
+It pairs scalable, managed infrastructure with a first-class developer experience.
 
-Cloud platforms are famously complicated. AWS was, after all, designed for Amazon – a massive corporation – not for small, nimble teams.
+<br />
 
-Should we just add an abstraction layer on top of the cloud platforms then? Not so fast.
+<img alt="Notation infra graph" src=".github/assets/code-graph.png">
 
-<img alt="Notation infra graph" src=".github/assets/graph-code.png" width="600">
+## What's in the toolkit?
 
-Too much abstraction results in less powerful tools. We prefer instead to think about inference.
+Notation provides the following tools:
 
-Take the example above: Notation infers – from the relationship between the lambda and the event bridge rule – all the required resources and cloud implementation details (e.g. valid ARN strings, JSON policy documents etc).
+- **[Infrastructure Compiler](#-infrastructure-compiler)<sup>↓</sup>**: Production-ready infra, generated from application-like code
+- **[Serverless Providers](#-serverless-providers)<sup>↓</sup>**: Popular serverless technologies, unified in a type-safe framework
+- **[Cloud Provisioner](#-cloud-provisioner)<sup>↓</sup>**: Cross-platform deployments, with _hot infra replacement_ in watch mode
 
-### 2. Cohesion
-
-_A.k.a Infrastructure as LEGO_
-
-In a modern serverless stack, your application code is composed of:
-
-1. Code that defines infrastructure (provisioning code)
-2. Code that runs on infrastructure (runtime code)
-
-In practice, these concerns are tightly coupled. Both must work together as a cohesive unit.
-
-<img alt="Notation infra/runtime code" src=".github/assets/infra-runtime-code.png" width="600">
-
-Notation unifies runtime and infra modules within the same type space. That means if you try to connect two resources that are not compatible, the compiler will quickly let you know. Otherwise, everything slots into place, secured by well-designed types.
-
-### 3. Iteration
-
-_A.k.a. Hot Infra Swapping_
-
-Most tools in this space are built on top of Terraform. Notation's IaC layer is built ambitiously from the ground up. This enables us to deliver faster development cycles.
-
-<img alt="Notation hot infrastructure replacement" src=".github/assets/hot-infra.gif" width="600">
-
-With hot infra swapping, you can quickly spin up an ephemeral stack on production infrastructure, then watch it update in realtime as you code.
-
-## Getting Started
-
-Head over to [notation.dev](https://notation.dev) for documentation and guides, or dive right in:
+## Quick Start
 
 ```sh
-npx create notation@alpha
+npm create notation@alpha my-app
 ```
 
+See also: [Getting Started Guide](https://notation.dev/docs/guide)<sup>↗</sup>
+
 ## Demo
+
+A walkthrough of the key features of Notation.
 
 <a href="https://www.youtube.com/watch?v=dwS81CVkC88">
 <img alt="Notation demo thumbnail" src=".github/assets/video-thumbnail.png" width="600">
 </a>
 
+## Features
+
+### 🤖 Infrastructure Compiler
+
+Notation calculates cloud-specific implementation details (e.g. policy documents, ARN strings, IAM roles, permissions etc) based on best practices and the relationships between resources in your code.
+
+To see the generated orchestration graph, you can run `npm run viz`.
+
+### 🧩 Serverless Providers
+
+Notation has a growing library of serverless resources. We are currently focussing on AWS, and will expand to other providers in the future.
+
+Each resource is fully-typed, making them easy to configure and connect to other resources. Type checking also works between infrastructure modules (e.g. an event bus) and runtime modules (e.g. a serverless function).
+
+### 🚀 Cloud Provisioner
+
+Notation's provisioner is built ambitiously from the ground up, enabling faster iteration cycles.
+
+Ephemeral dev stacks can be quickly deployed, and with watch mode, you can see infrastructure changes get hot-loaded in realtime, while you code.
+
+https://github.com/notation-dev/notation/assets/1670902/fd8c955f-8aa9-4800-813a-ea96c2b398cc
+
 ## Community
 
-- [Discussions](https://github.com/notation-dev/notation/discussions): ask questions, give feedback on our RFCs, suggest ideas
-
-- [Issues](https://github.com/notation-dev/notation/issues/new): report bugs,
+- **[Discussions](https://github.com/notation-dev/notation/discussions)**: ask questions, give feedback on RFCs, suggest ideas
+- **[Issues](https://github.com/notation-dev/notation/issues/new)**: report bugs,
   suggest new features, or help us improve the docs
-
-- [Discord](https://discord.gg/mGzDWShPzm): ask for advice, share your projects,
+- **[Discord](https://discord.gg/mGzDWShPzm)<sup>↗</sup>**: ask for advice, share your projects,
   discuss contributions
 
 ## Questions and Feedback
