@@ -27,7 +27,7 @@ It pairs scalable, managed infrastructure with a first-class developer experienc
 
 <br />
 
-<img alt="Notation infra graph" src=".github/assets/code-graph.png">
+<img alt="Notation infra graph" src=".github/assets/code-infra-graph.png">
 
 ## What's in the toolkit?
 
@@ -35,7 +35,7 @@ Notation provides the following tools:
 
 - **[Infrastructure Compiler](#-infrastructure-compiler)<sup>↓</sup>**: Production-ready infra, generated from application-like code
 - **[Serverless Providers](#-serverless-providers)<sup>↓</sup>**: Popular serverless technologies, unified in a type-safe framework
-- **[Cloud Provisioner](#-cloud-provisioner)<sup>↓</sup>**: Cross-platform deployments, with _hot infra replacement_ in watch mode
+- **[Cloud Provisioner](#-cloud-provisioner)<sup>↓</sup>**: Cross-platform deployments, with _hot infra replacement_ for local dev
 
 ## Quick Start
 
@@ -57,21 +57,20 @@ A walkthrough of the key features of Notation.
 
 ### 🤖 Infrastructure Compiler
 
-- Generates cloud-specific implementation details – policy documents, ARN strings, IAM roles, permissions etc.
-- The compiled infrastructure is derived from best practices, and relationships between resources in your code
-- Run `npm run viz` to visualize the generated infrastructure graph
+- Generates cloud-specific implementation details
+- Uses inference and best practices to compile policy documents, ARN strings, IAM roles, permissions etc.
 
 ### 🧩 Serverless Providers
 
-- Import serverless resources – e.g. lambda, event bridge, API gateway – directly into your code
+- A selection of popular serverless resources – e.g. lambda, event bridge, API gateway
 - Resources are fully-typed, making them easy to configure and connect to other resources
-- Type checking even works between infrastructure and runtime modules (e.g. connecting a lambda to an SQS queue, it would check the lambda handler accepts SQS events)
+- Type checking even works between infrastructure and runtime modules
 
 ### 🚀 Cloud Provisioner
 
+- Deploys production and ephemeral dev stacks
 - Built from the ground up and designed for fast iteration cycles
-- Ephemeral dev stacks can be quickly deployed locally and from CI
-- Hot infra replacement lets you modify live infra while you code
+- Hot infra replacement updates live dev stacks while you code
 
 https://github.com/notation-dev/notation/assets/1670902/fd8c955f-8aa9-4800-813a-ea96c2b398cc
 
