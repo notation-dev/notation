@@ -57,21 +57,21 @@ A walkthrough of the key features of Notation.
 
 ### 🤖 Infrastructure Compiler
 
-Notation calculates cloud-specific implementation details (e.g. policy documents, ARN strings, IAM roles, permissions etc) based on best practices and the relationships between resources in your code.
-
-To see the generated orchestration graph, you can run `npm run viz`.
+- Generates cloud-specific implementation details – policy documents, ARN strings, IAM roles, permissions etc.
+- The compiled infrastructure is derived from best practices, and relationships between resources in your code
+- Run `npm run viz` to visualize the generated infrastructure graph
 
 ### 🧩 Serverless Providers
 
-Notation has a growing library of serverless resources. We are currently focussing on AWS, and will expand to other providers in the future.
-
-Each resource is fully-typed, making them easy to configure and connect to other resources. Type checking also works between infrastructure modules (e.g. an event bus) and runtime modules (e.g. a serverless function).
+- Import serverless resources – e.g. lambda, event bridge, API gateway – directly into your code
+- Resources are fully-typed, making them easy to configure and connect to other resources
+- Type checking even works between infrastructure and runtime modules (e.g. connecting a lambda to an SQS queue, it would check the lambda handler accepts SQS events)
 
 ### 🚀 Cloud Provisioner
 
-Notation's provisioner is built ambitiously from the ground up, enabling faster iteration cycles.
-
-Ephemeral dev stacks can be quickly deployed, and with watch mode, you can see infrastructure changes get hot-loaded in realtime, while you code.
+- Built from the ground up and designed for fast iteration cycles
+- Ephemeral dev stacks can be quickly deployed locally and from CI
+- Hot infra replacement lets you modify live infra while you code
 
 https://github.com/notation-dev/notation/assets/1670902/fd8c955f-8aa9-4800-813a-ea96c2b398cc
 
