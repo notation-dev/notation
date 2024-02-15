@@ -25,7 +25,13 @@ export async function refreshState(
       const { moduleName, serviceName, resourceName } = stateNode.meta;
       const provider = await import(moduleName);
       const Resource = provider[serviceName][resourceName];
-      resource = new Resource(stateNode) as Resource;
+
+      resource = new Resource({
+        id: stateNode.id,
+        meta: stateNode.meta,
+      }) as Resource;
+
+      resource.setOutput(stateNode.output);
 
       if (!dryRun) {
         await deleteResource({ resource, state, dryRun });
