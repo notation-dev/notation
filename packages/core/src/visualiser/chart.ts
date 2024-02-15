@@ -20,6 +20,7 @@ export const createMermaidFlowChart = (
     group.resources.forEach((resource) => {
       (Object.values(resource.dependencies) as BaseResource[]).forEach(
         (dep) => {
+          if (!dep) return;
           const depResource = resources.find((r) => r.id === dep.id);
           if (depResource) {
             connectionsString += `  ${resource.type}_${resource.id} --> ${depResource.type}_${dep.id}\n`;
