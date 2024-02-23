@@ -95,6 +95,7 @@ export abstract class Resource<
   abstract notFoundOnError?: ErrorMatcher[];
   abstract retryLaterOnError?: ErrorMatcher[];
   abstract setIntrinsicConfig(opts: {
+    id: string;
     config: C;
     deps: D;
   }): Record<string, any> | Promise<Record<string, any>>;
@@ -162,6 +163,7 @@ export abstract class Resource<
       return {
         ...(this.config as any as Params<S>),
         ...(await this.setIntrinsicConfig({
+          id: this.id,
           config: this.config,
           deps: this.dependencies,
         })),
@@ -245,6 +247,7 @@ export function resource<
                   DepAwareIntrinsicConfig extends Partial<Params<S>>,
                 >(
                   setIntrinsicConfig: (opts: {
+                    id: string;
                     config: Params<S>;
                     deps: Dependencies;
                   }) =>
@@ -264,6 +267,7 @@ export function resource<
                       return {
                         ...superIntrinsicConfig,
                         ...(await setIntrinsicConfig({
+                          id: this.id,
                           config: this.config as Params<S>,
                           deps: this.dependencies,
                         })),

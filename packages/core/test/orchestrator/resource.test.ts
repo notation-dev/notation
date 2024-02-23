@@ -111,6 +111,7 @@ describe("resource dependencies", () => {
 
     expect(getIntrinsicConfigMock.mock.calls[0]).toEqual([
       {
+        id: "test-resource-1",
         config: testResourceConfig,
         deps: { dep1: childTestResource },
       },
