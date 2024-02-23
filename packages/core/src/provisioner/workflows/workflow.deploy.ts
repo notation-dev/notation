@@ -84,7 +84,9 @@ export async function deployApp(
   }
 
   // 6. Has resource been removed from the orchestration graph?
-  for (const stateNode of (await state.values()).reverse()) {
+  const stateNodes = (await state.values()).reverse();
+
+  for (const stateNode of stateNodes.reverse()) {
     let resource = graph.resources.find((r) => r.id === stateNode.id);
 
     if (!resource) {
@@ -94,7 +96,6 @@ export async function deployApp(
       resource = new Resource({ config: stateNode.config }) as BaseResource;
       resource.id = stateNode.id;
       resource.setOutput(stateNode.output);
-
       await deleteResource({ resource, state, dryRun });
     }
   }
