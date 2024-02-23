@@ -19,8 +19,13 @@ async function update(opts: {
   }
 
   const params = await resource.getParams();
-  await resource.update(patch, params);
 
+  await resource.update(
+    resource.key,
+    patch,
+    params,
+    resource.toState(resource.output),
+  );
   resource.setOutput({ ...resource.key, ...params });
 
   const result = await readResource({ resource, state, quiet: true });

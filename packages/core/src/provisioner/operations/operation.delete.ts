@@ -8,7 +8,7 @@ async function delete_(opts: { resource: BaseResource; state: State }) {
   const { resource, state } = opts;
 
   try {
-    await resource.delete();
+    await resource.delete(resource.key, resource.toState(resource.output));
   } catch (err: any) {
     // @todo: declare these in the resource provider
     if (

@@ -18,7 +18,7 @@ async function read(opts: { resource: BaseResource; state: State }) {
 
   async function getSettledReadResult() {
     if (!resource.read) return {};
-    const readResult = await resource.read();
+    const readResult = await resource.read(resource.key);
 
     const needsRetry = resource.retryReadOnCondition?.some((condition) => {
       if (!condition) return false;

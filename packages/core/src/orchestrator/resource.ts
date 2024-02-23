@@ -5,6 +5,7 @@ import {
   Params,
   Result,
   Output,
+  State,
   ComputedPrimaryKey,
   CompoundKey,
 } from "./resource.schema";
@@ -59,14 +60,15 @@ export interface BaseResource {
   readonly retryLaterOnError?: ErrorMatcher[];
   readonly key: {};
   create: (params: any) => Promise<{} | void>;
-  read?: () => Promise<Result<any>>;
-  update?: (patch: any, params: any) => Promise<void>;
-  delete: () => Promise<void>;
+  read?: (key: any) => Promise<Result<any>>;
+  update?: (key: any, patch: any, params: any, state: any) => Promise<void>;
+  delete: (key: any, state: any) => Promise<void>;
   getParams(): Promise<{}>;
   toState(output: {}): {};
   toComparable(output: {}): {};
   setOutput(result: {}): void;
   setIntrinsicConfig?: (opts: {
+    id: string;
     config: any;
     deps: any;
   }) => Record<string, any> | Promise<Record<string, any>>;
@@ -87,9 +89,14 @@ export abstract class Resource<
   abstract type: `${string}/${string}/${string}`;
   abstract schema: S;
   abstract create: (params: Params<S>) => Promise<ComputedPrimaryKey<S>>;
-  abstract read?: () => Promise<Result<S>>;
-  abstract update?: (patch: Params<S>, params: Params<S>) => Promise<void>;
-  abstract delete: () => Promise<void>;
+  abstract read?: (key: CompoundKey<S>) => Promise<Result<S>>;
+  abstract update?: (
+    key: CompoundKey<S>,
+    patch: Params<S>,
+    params: Params<S>,
+    state: State<S>,
+  ) => Promise<void>;
+  abstract delete: (key: CompoundKey<S>, state: State<S>) => Promise<void>;
   abstract retryReadOnCondition?: ResultConditions<Output<S>>;
   abstract failOnError?: (ErrorMatcher & { reason: string })[];
   abstract notFoundOnError?: ErrorMatcher[];
@@ -132,27 +139,27 @@ export abstract class Resource<
     this.output = output as Output<S>;
   }
 
-  toComparable(data: Output<S>) {
+  toComparable(output: Output<S>) {
     const parsed = {} as Output<S>;
     for (const [k, v] of Object.entries(this.schema)) {
       if (this.schema[k].volatile) continue;
       if (this.schema[k].hidden) continue;
       if (this.schema[k].propertyType !== "param") continue;
-      if (k in data) {
+      if (k in output) {
         // @ts-ignore
-        parsed[k] = data[k];
+        parsed[k] = output[k];
       }
     }
     return parsed;
   }
 
-  toState(data: Output<S>) {
+  toState(output: Output<S>) {
     const parsed = {} as Output<S>;
-    for (const [k, v] of Object.entries(this.schema)) {
+    for (const [k] of Object.entries(this.schema)) {
       if (this.schema[k].hidden) continue;
-      if (k in data) {
+      if (k in output) {
         // @ts-ignore
-        parsed[k] = data[k];
+        parsed[k] = output[k];
       }
     }
     return parsed;
@@ -200,8 +207,9 @@ export function resource<
             key: CompoundKey<S>,
             patch: Params<S>,
             params: Params<S>,
+            state: State<S>,
           ) => Promise<void>;
-          delete: (primaryKey: CompoundKey<S>) => Promise<void>;
+          delete: (key: CompoundKey<S>, state: State<S>) => Promise<void>;
           retryReadOnCondition?: ResultConditions<Output<S>>;
           failOnError?: (ErrorMatcher & { reason: string })[];
           notFoundOnError?: ErrorMatcher[];
@@ -221,12 +229,9 @@ export function resource<
             type = meta.type;
             schema = schema;
             create = opts.create;
-            read = opts.read ? () => opts.read!(this.key) : undefined;
-            update = opts.update
-              ? (patch: Params<S>, params: Params<S>) =>
-                  opts.update!(this.key, patch, params)
-              : undefined;
-            delete = () => opts.delete(this.key);
+            read = opts.read ? opts.read! : undefined;
+            update = opts.update ? opts.update! : undefined;
+            delete = opts.delete;
             retryReadOnCondition = opts.retryReadOnCondition;
             failOnError = opts.failOnError;
             notFoundOnError = opts.notFoundOnError;

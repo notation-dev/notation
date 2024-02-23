@@ -66,6 +66,11 @@ export type Result<S extends Schema> = DeepPartial<
 export type Output<S extends Schema> = MapSchema<S>;
 
 /**
+ * Maps the schema to the state type, omitting hidden properties
+ */
+export type State<S extends Schema> = MapSchema<S, { hidden: true }>;
+
+/**
  * Produces a schema type that is constrained by an API's types
  */
 export type SchemaFromApi<
