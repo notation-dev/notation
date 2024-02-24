@@ -125,11 +125,17 @@ export const Route = routeSchema
     },
   })
   .requireDependencies<RouteDependencies>()
-  .setIntrinsicConfig(({ deps }) => ({
-    AuthorizerId: deps.auth?.output.AuthorizerId,
-    ApiId: deps.api.output.ApiId,
-    // todo: this is too opinionated, should be somewhere else
-    Target: `integrations/${deps.lambdaIntegration.output.IntegrationId}`,
-  }));
+  .setIntrinsicConfig(({ deps }) => {
+    const authConfig = deps.auth
+      ? { AuthorizerId: deps.auth.output.AuthorizerId }
+      : {};
+
+    return {
+      ApiId: deps.api.output.ApiId,
+      // todo: this is too opinionated, should be somewhere else
+      Target: `integrations/${deps.lambdaIntegration.output.IntegrationId}`,
+      ...authConfig,
+    };
+  });
 
 export type RouteInstance = InstanceType<typeof Route>;

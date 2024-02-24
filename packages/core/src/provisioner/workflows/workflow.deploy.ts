@@ -37,6 +37,8 @@ export async function deployApp(
       resource.toComparable(params),
     );
 
+    // todo: what should happen if a property is undefined?
+    // should it be ignored?
     const stateIsStale = Object.keys(localDiff).length > 0;
 
     if (stateIsStale) {
