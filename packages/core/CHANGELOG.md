@@ -1,5 +1,11 @@
 # @notation/core
 
+## 0.6.0
+
+### Minor Changes
+
+- 2a6fc59: Add optional JWT authorizer config to route resource
+
 ## 0.5.1
 
 ### Patch Changes

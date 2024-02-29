@@ -1,5 +1,19 @@
 # @notation/cli
 
+## 0.7.0
+
+### Minor Changes
+
+- 2a6fc59: Add optional JWT authorizer config to route resource
+
+### Patch Changes
+
+- Handle missing credentials
+- Updated dependencies [2a6fc59]
+  - @notation/esbuild-plugins@0.5.0
+  - @notation/core@0.6.0
+  - @notation/dashboard@0.2.0
+
 ## 0.6.2
 
 ### Patch Changes

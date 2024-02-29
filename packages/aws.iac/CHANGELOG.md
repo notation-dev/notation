@@ -1,5 +1,17 @@
 # @notation/aws.iac
 
+## 0.5.0
+
+### Minor Changes
+
+- 2a6fc59: Add optional JWT authorizer config to route resource
+
+### Patch Changes
+
+- Updated dependencies [2a6fc59]
+  - @notation/std.iac@0.5.0
+  - @notation/core@0.6.0
+
 ## 0.4.3
 
 ### Patch Changes
