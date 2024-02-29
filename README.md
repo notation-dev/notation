@@ -13,7 +13,7 @@
   <a href="https://discord.gg/mGzDWShPzm"><img alt="Discord" src="https://img.shields.io/discord/1154880135678406676"></a>
 </h1>
 
-### JavaScript-native development for cloud-native deployment
+### JavaScript-native developer toolkit for cloud-native deployments
 
 Notation is an experimental serverless toolkit designed for JavaScript's culture and ecosystem.
 
