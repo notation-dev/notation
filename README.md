@@ -13,6 +13,10 @@
   <a href="https://discord.gg/mGzDWShPzm"><img alt="Discord" src="https://img.shields.io/discord/1154880135678406676"></a>
 </h1>
 
+### JavaScript-native development for cloud-native deployment
+
+Notation is an experimental serverless toolkit designed for JavaScript's culture and ecosystem.
+
 [Website](https://notation.dev)<sup>↗</sup>&nbsp;•&nbsp;
 [Quick Start](#quick-start)<sup>↓</sup>&nbsp;•&nbsp;
 [Slow Start](https://notation.dev/docs/guide)<sup>↗</sup>&nbsp;•&nbsp;
@@ -22,20 +26,33 @@
 
 <br />
 
-**Notation is an open source toolkit for building serverless applications.**<br />
-It pairs scalable, managed infrastructure with a first-class developer experience.
+## Features
 
-<br />
+### Infrastructure compiler
+
+Generates cloud implementation details from intuitive-to-write code.
+
+Using inference and best practices, compiles policy documents, ARN strings, IAM roles, permissions etc.
 
 <img alt="Notation infra graph" src=".github/assets/code-infra-graph.png">
 
-## What's in the toolkit?
+<br />
 
-Notation provides the following tools:
+### Hot infra replacement
 
-- **[Infrastructure Compiler](#-infrastructure-compiler)<sup>↓</sup>**: Production-ready infra, generated from application-like code
-- **[Serverless Providers](#-serverless-providers)<sup>↓</sup>**: Popular serverless technologies, unified in a type-safe framework
-- **[Cloud Provisioner](#-cloud-provisioner)<sup>↓</sup>**: Cross-platform deployments, with _hot infra replacement_ for local dev
+Deploys both production and ephemeral dev stacks.
+
+Built from the ground up and designed for fast iteration cycles, hot infra replacement updates live dev stacks while you code.
+
+https://github.com/notation-dev/notation/assets/1670902/fd8c955f-8aa9-4800-813a-ea96c2b398cc
+
+### End-to-end types
+
+Brings together popular serverless technologies in a unified type space.
+
+Provides well-designed types for every resource, and ensures compatibility between infrastructure and runtime modules.
+
+<img alt="Notation TS error" src=".github/assets/code-error.png">
 
 ## Quick Start
 
@@ -52,27 +69,6 @@ A walkthrough of the key features of Notation.
 <a href="https://www.youtube.com/watch?v=dwS81CVkC88">
 <img alt="Notation demo thumbnail" src=".github/assets/video-thumbnail.png" width="600">
 </a>
-
-## Features
-
-### 🤖 Infrastructure Compiler
-
-- Generates cloud-specific implementation details
-- Uses inference and best practices to compile policy documents, ARN strings, IAM roles, permissions etc.
-
-### 🧩 Serverless Providers
-
-- A selection of popular serverless resources – e.g. lambda, event bridge, API gateway
-- Resources are fully-typed, making them easy to configure and connect to other resources
-- Type checking even works between infrastructure and runtime modules
-
-### 🚀 Cloud Provisioner
-
-- Deploys production and ephemeral dev stacks
-- Built from the ground up and designed for fast iteration cycles
-- Hot infra replacement updates live dev stacks while you code
-
-https://github.com/notation-dev/notation/assets/1670902/fd8c955f-8aa9-4800-813a-ea96c2b398cc
 
 ## Community
 
