@@ -19,7 +19,7 @@ export function functionInfraPlugin(opts: PluginOpts = {}): Plugin {
         const fileName = path.relative(process.cwd(), args.path);
         const outFileName = filePaths.dist.runtime.index(fileName);
         const safeFnModule = removeUnsafeReferences(fileContent);
-        const { config, exports } = parseFnModule(fileContent);
+        const { config, imports, exports } = parseFnModule(fileContent);
 
         const reservedNames = ["preload", "config"];
         const [platform, service] = (config.service as string).split("/");
@@ -31,6 +31,13 @@ export function functionInfraPlugin(opts: PluginOpts = {}): Plugin {
           if (reservedNames.includes(handlerName)) continue;
           infraCode = infraCode.concat(
             `export const ${handlerName} = ${service}({ fileName: "${outFileName}", handler: "${handlerName}", ...config });\n`,
+          );
+        }
+
+        for (const { name, module } of imports) {
+          if (!module.startsWith("infra/")) continue;
+          infraCode = infraCode.concat(
+            `import { ${name} } from "${module}";\nconsole.log(${name});\n`,
           );
         }
 

@@ -9,9 +9,14 @@ export function parseFnModule(input: string) {
   );
 
   let exports: ReturnType<typeof getExportsFromStatement> = [];
+  let imports: ReturnType<typeof getImportsFromStatement> = [];
 
   for (const statement of sourceFile.statements) {
     exports = exports.concat(getExportsFromStatement(statement));
+  }
+
+  for (const statement of sourceFile.statements) {
+    imports = imports.concat(getImportsFromStatement(statement));
   }
 
   const configExport = exports.find((exp) => exp.name === "config");
@@ -26,7 +31,34 @@ export function parseFnModule(input: string) {
     config,
     configRaw,
     exports: exports.map((exp) => exp.name),
+    imports,
   };
+}
+
+function getImportsFromStatement(node: ts.Node) {
+  const imports: Array<{ name: string; module: string }> = [];
+
+  if (ts.isImportDeclaration(node)) {
+    const module = node.moduleSpecifier.getText().slice(1, -1);
+    if (node.importClause && ts.isImportClause(node.importClause)) {
+      if (node.importClause.name) {
+        imports.push({ name: node.importClause.name.getText(), module });
+      }
+      if (node.importClause.namedBindings) {
+        if (ts.isNamespaceImport(node.importClause.namedBindings)) {
+          imports.push({
+            name: node.importClause.namedBindings.name.getText(),
+            module,
+          });
+        } else if (ts.isNamedImports(node.importClause.namedBindings)) {
+          for (const element of node.importClause.namedBindings.elements) {
+            imports.push({ name: element.name.getText(), module });
+          }
+        }
+      }
+    }
+  }
+  return imports;
 }
 
 function getExportsFromStatement(
