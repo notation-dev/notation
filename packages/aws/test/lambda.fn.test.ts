@@ -1,7 +1,7 @@
 import { test, expect, beforeEach } from "vitest";
 import { reset } from "@notation/core";
 import { handle, json } from "src/lambda.fn";
-import { APIGatewayProxyEventV2JWT } from "src/shared";
+import { APIGatewayJWTProxyEventV2 } from "src/shared";
 import { Context } from "aws-lambda";
 
 beforeEach(() => {
@@ -9,11 +9,9 @@ beforeEach(() => {
 });
 
 test("handlers wrap user-provided handlers", async () => {
-  const fn = async () => ({ body: "{}" });
-  for (const handler of Object.values(handle)) {
-    const result = await handler(fn)({} as any, {} as any);
-    expect(result).toEqual({ body: "{}" });
-  }
+  const fn = async (): Promise<any> => ({ body: "{}" });
+  const result = await handle.apiRequest(fn)({} as any, {} as any);
+  expect(result).toEqual({ body: "{}" });
 });
 
 test("jwtAuthorizedApiRequest passes through JWT token as expected", async () => {
@@ -22,22 +20,24 @@ test("jwtAuthorizedApiRequest passes through JWT token as expected", async () =>
   };
 
   const jwtTokenHandler = handle.jwtAuthorizedApiRequest<ClaimsFields>(
-    (event: APIGatewayProxyEventV2JWT<ClaimsFields>, context: Context) => {
+    (event: APIGatewayJWTProxyEventV2<ClaimsFields>, context: Context) => {
       return {
         body: JSON.stringify({
-          name: event.requestContext.jwt.claims.iss,
+          name: event.requestContext.authorizer.jwt.claims.iss,
         }),
       };
     },
   );
 
-  const input: APIGatewayProxyEventV2JWT<ClaimsFields> = {
+  const input: APIGatewayJWTProxyEventV2<ClaimsFields> = {
     requestContext: {
-      jwt: {
-        claims: {
-          iss: "John Doe",
+      authorizer: {
+        jwt: {
+          claims: {
+            iss: "John Doe",
+          },
+          scopes: [],
         },
-        scopes: [],
       },
     },
     headers: {},

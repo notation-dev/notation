@@ -81,7 +81,7 @@ function getFixture() {
         },
       ],
     },
-  ] as ResourceGroup[];
+  ] as unknown as ResourceGroup[];
 
   const resources = [
     {
@@ -113,7 +113,7 @@ function getFixture() {
       type: "ResourceTypeC",
       dependencies: {},
     },
-  ] as Resource[];
+  ] as unknown as Resource[];
 
   return { resourceGroups, resources };
 }

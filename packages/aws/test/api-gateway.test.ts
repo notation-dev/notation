@@ -32,10 +32,9 @@ test("router provides methods for each HTTP verb", () => {
     handler: "handler.fn.js",
   });
 
-  for (const method of ["GET", "POST", "PUT", "DELETE", "PATCH"]) {
-    const routerKey = method.toLowerCase() as keyof typeof apiRouter;
-    const routeGroup = apiRouter[routerKey]("/hello", handler as any);
+  for (const method of ["get", "post", "put", "delete", "patch"] as const) {
+    const routeGroup = apiRouter[method]("/hello", handler as any);
     const route = routeGroup.findResource(apiGateway.Route)!;
-    expect(route.config.RouteKey).toEqual(`${method} /hello`);
+    expect(route.config.RouteKey).toEqual(`${method.toUpperCase()} /hello`);
   }
 });
