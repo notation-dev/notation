@@ -9,7 +9,8 @@
   ],
   "scripts": {
     "build": "tsup --clean",
-    "dev": "tsup --watch"
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@notation/core": "workspace:*",

@@ -7,7 +7,8 @@
     "deploy": "notation deploy infra/api.ts",
     "destroy": "notation destroy infra/api.ts",
     "viz": "notation viz infra/api.ts",
-    "watch": "notation watch infra/api.ts"
+    "watch": "notation watch infra/api.ts",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@notation/aws": "workspace:*",
@@ -16,6 +17,5 @@
   },
   "devDependencies": {
     "@types/node": "^20.8.4"
-  },
-  "version": null
+  }
 }

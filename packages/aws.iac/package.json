@@ -4,7 +4,8 @@
   "version": "0.5.0",
   "scripts": {
     "build": "tsup --clean",
-    "dev": "tsup --watch"
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
