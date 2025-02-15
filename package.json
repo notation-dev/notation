@@ -13,7 +13,7 @@
     "changeset": "changeset",
     "version": "turbo run build && changeset version && pnpm install",
     "release": "changeset publish --tag alpha",
-    "prepare": "husky install"
+    "prepare": "husky"
   },
   "repository": {
     "type": "git",
