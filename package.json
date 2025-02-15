@@ -25,19 +25,19 @@
   },
   "homepage": "https://github.com/notation-dev/notation#readme",
   "dependencies": {
-    "@changesets/cli": "^2.26.2",
+    "@changesets/cli": "^2.27.12",
     "@notation/aws.iac": "workspace:*",
     "@notation/std.iac": "workspace:*",
-    "@types/node": "^20.7.0",
-    "execa": "^8.0.1",
-    "glob": "^10.3.10",
-    "husky": "^8.0.3",
-    "prettier": "^3.0.3",
+    "@types/node": "^22.13.4",
+    "execa": "^9.5.2",
+    "glob": "^11.0.1",
+    "husky": "^9.1.7",
+    "prettier": "^3.5.1",
     "tsconfig": "workspace:*",
-    "tsup": "^7.2.0",
-    "turbo": "^1.10.14",
-    "typescript": "^5.3.3",
-    "vite-tsconfig-paths": "^4.3.1",
-    "vitest": "^1.2.1"
+    "tsup": "^8.3.6",
+    "turbo": "^2.4.2",
+    "typescript": "^5.7.3",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^3.0.5"
   }
 }
