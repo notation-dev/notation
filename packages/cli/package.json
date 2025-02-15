@@ -18,10 +18,10 @@
     "@notation/core": "workspace:*",
     "@notation/dashboard": "workspace:*",
     "@notation/esbuild-plugins": "workspace:*",
-    "chokidar": "^3.5.3",
-    "commander": "^11.0.0",
-    "esbuild": "^0.19.3",
-    "glob": "^10.3.10"
+    "chokidar": "^4.0.3",
+    "commander": "^13.1.0",
+    "esbuild": "^0.25.0",
+    "glob": "^11.0.1"
   },
   "devDependencies": {
     "@types/which-pm-runs": "^1.0.2"
