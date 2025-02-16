@@ -17,31 +17,37 @@ export const route = (
   handler:
     | ApiGatewayHandler
     | JWTAuthorizedApiGatewayHandler<any>
-    | ReturnType<typeof lambda>,
+    // todo: narrow to lambda group
+    | aws.AwsResourceGroup,
 ) => {
   const apiResource = apiGroup.findResource(aws.apiGateway.Api)!;
+  const routeId = `${apiResource.id}-${method}-${path}`;
 
   const lambdaGroup =
     handler instanceof ResourceGroup
       ? handler
       : // at compile time, runtime module becomes infra resource group
-        (handler as any as ReturnType<typeof lambda>);
-
-  const routeGroup = new aws.AwsResourceGroup("API Gateway/Route", {
-    dependencies: { router: apiGroup.id, fn: lambdaGroup.id },
-  });
-
-  const routeId = `${apiResource.id}-${method}-${path}`;
-
-  let integration;
+        (handler as any as aws.AwsResourceGroup);
 
   const lambdaResource = lambdaGroup.findResource(aws.lambda.LambdaFunction)!;
+
+  let integration = lambdaGroup.findResource(aws.apiGateway.LambdaIntegration);
+
+  if (!integration) {
+    integration = lambdaGroup.add(
+      new aws.apiGateway.LambdaIntegration({
+        id: `${apiResource.id}-${lambdaResource.id}-integration`,
+        dependencies: {
+          api: apiResource,
+          lambda: lambdaResource,
+        },
+      }),
+    );
+  }
 
   const permission = lambdaGroup.findResource(
     aws.lambda.LambdaApiGatewayV2Permission,
   );
-
-  integration = lambdaGroup.findResource(aws.apiGateway.LambdaIntegration);
 
   if (!permission) {
     lambdaGroup.add(
@@ -55,6 +61,10 @@ export const route = (
     );
   }
 
+  const routeGroup = new aws.AwsResourceGroup("API Gateway/Route", {
+    dependencies: { router: apiGroup.id, fn: lambdaGroup.id },
+  });
+
   if (auth.type != "NONE") {
     const authConfig = mapAuthConfig(apiResource.id, method, path, auth);
 
@@ -67,18 +77,6 @@ export const route = (
     });
 
     routeGroup.add(authorizer);
-  }
-
-  if (!integration) {
-    integration = lambdaGroup.add(
-      new aws.apiGateway.LambdaIntegration({
-        id: `${apiResource.id}-${lambdaResource.id}-integration`,
-        dependencies: {
-          api: apiResource,
-          lambda: lambdaResource,
-        },
-      }),
-    );
   }
 
   const authorizerResource = routeGroup.findResource(aws.apiGateway.RouteAuth);
