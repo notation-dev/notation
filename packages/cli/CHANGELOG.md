@@ -1,5 +1,16 @@
 # @notation/cli
 
+## 0.9.0
+
+### Minor Changes
+
+- Fix dashboard
+
+### Patch Changes
+
+- Updated dependencies
+  - @notation/dashboard@0.3.0
+
 ## 0.8.0
 
 ### Minor Changes
