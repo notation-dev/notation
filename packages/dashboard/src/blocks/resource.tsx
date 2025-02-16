@@ -15,7 +15,7 @@ export function Resource(props: { resource: BaseResource }) {
         <div>
           <a
             href={getConsoleUrl(props.resource)}
-            className="text-sm text-white rounded bg-blue-400 p-2"
+            className="text-sm text-white rounded-sm bg-blue-400 p-2"
             target="_blank"
           >
             Open in AWS console→
