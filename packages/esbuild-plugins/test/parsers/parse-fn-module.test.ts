@@ -97,7 +97,6 @@ describe("parsing config", () => {
     };`;
 
     const { configRaw } = parseFnModule(input);
-    console.log(configRaw);
 
     expect(configRaw).toBe(
       `{ key1: "value1", key2: 123, key3: true, key4: false }`,
