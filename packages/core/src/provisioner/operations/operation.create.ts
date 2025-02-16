@@ -48,7 +48,6 @@ async function create(
       console.log(`[Reason]: ${retryCondition.reason}`);
       await new Promise((resolve) => setTimeout(resolve, backoff));
       backoff *= 1.5;
-      console.log(`[Backoff]: ${backoff}`);
       await create(opts, backoff);
     }
     // else if (err.name === "ConflictException") {
