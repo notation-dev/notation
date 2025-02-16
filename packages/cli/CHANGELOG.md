@@ -1,5 +1,16 @@
 # @notation/cli
 
+## 0.8.0
+
+### Minor Changes
+
+- Support externally managed lambda modules
+
+### Patch Changes
+
+- Updated dependencies
+  - @notation/esbuild-plugins@0.6.0
+
 ## 0.7.0
 
 ### Minor Changes

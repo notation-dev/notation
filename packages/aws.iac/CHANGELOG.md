@@ -1,5 +1,16 @@
 # @notation/aws.iac
 
+## 0.6.0
+
+### Minor Changes
+
+- Support externally managed lambda modules
+
+### Patch Changes
+
+- Updated dependencies
+  - @notation/std.iac@0.6.0
+
 ## 0.5.0
 
 ### Minor Changes

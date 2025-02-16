@@ -1,5 +1,11 @@
 # @notation/std.iac
 
+## 0.6.0
+
+### Minor Changes
+
+- Support externally managed lambda modules
+
 ## 0.5.0
 
 ### Minor Changes

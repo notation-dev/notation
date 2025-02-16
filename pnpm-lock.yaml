@@ -99,7 +99,7 @@ importers:
         specifier: ^22.13.4
         version: 22.13.4
 
-  examples/lambda:
+  examples/lambda-external:
     dependencies:
       '@notation/aws':
         specifier: workspace:*
