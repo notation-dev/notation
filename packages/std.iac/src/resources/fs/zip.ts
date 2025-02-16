@@ -1,6 +1,7 @@
-import { resource } from "@notation/core";
 import * as z from "zod";
-import { fs, zip } from "src/utils/zip";
+import * as fs from "node:fs/promises";
+import { resource } from "@notation/core";
+import { zip } from "src/utils/zip";
 import { getSourceSha256 } from "src/utils/hash";
 
 export type ZipSchema = {
@@ -45,21 +46,26 @@ export const Zip = zipSchema.defineOperations({
     const filePath = `${config.sourceFilePath}.zip`;
     return { sourceSha256, filePath };
   },
-  read: async (config) => {
-    return {
-      ...config,
-      file: await fs.read(config.filePath),
-    };
+  read: async (params) => {
+    try {
+      const file = await fs.readFile(params.filePath);
+      return { ...params, file };
+    } catch (error: any) {
+      if (error.code !== "ENOENT") throw error;
+      await zip.package(params.sourceFilePath, params.filePath);
+      const file = await fs.readFile(params.filePath);
+      return { ...params, file };
+    }
   },
   create: async (params) => {
     await zip.package(params.sourceFilePath, params.filePath);
   },
   update: async (config) => {
-    await fs.delete(config.filePath);
+    await fs.unlink(config.filePath);
     await zip.package(config.sourceFilePath, config.filePath);
   },
   delete: async (config) => {
-    await fs.delete(config.filePath);
+    await fs.unlink(config.filePath);
   },
 });
 
