@@ -17,3 +17,13 @@ export const externalZipLambda = lambda({
     path: "external/lambda.zip",
   },
 });
+
+export const externalPyLambda = lambda({
+  id: "external-py",
+  handler: "handler",
+  code: {
+    type: "file",
+    path: "external/lambda.py",
+  },
+  runtime: "python3.12",
+});
