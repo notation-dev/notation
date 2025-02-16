@@ -5,9 +5,11 @@ import { readResource } from ".";
 
 export const createResource = operation("Creating", create);
 
-async function create(opts: { resource: BaseResource; state: State }) {
+async function create(
+  opts: { resource: BaseResource; state: State },
+  backoff = 1000,
+) {
   const { resource, state } = opts;
-  let backoff = 1000;
 
   try {
     const params = await resource.getParams();
@@ -35,16 +37,19 @@ async function create(opts: { resource: BaseResource; state: State }) {
       output: resource.toState(resource.output),
     });
   } catch (err: any) {
-    if (
+    const retryCondition =
       resource.retryLaterOnError &&
-      resource.retryLaterOnError.some(
+      resource.retryLaterOnError.find(
         (retry) => retry.name === err.name && retry.message === err.message,
-      )
-    ) {
+      );
+
+    if (retryCondition) {
       console.log(`[Retry]: Creating ${resource.type} ${resource.id}`);
+      console.log(`[Reason]: ${retryCondition.reason}`);
       await new Promise((resolve) => setTimeout(resolve, backoff));
       backoff *= 1.5;
-      await create(opts);
+      console.log(`[Backoff]: ${backoff}`);
+      await create(opts, backoff);
     }
     // else if (err.name === "ConflictException") {
     //   // todo: provide some means to requisition the resource
@@ -54,6 +59,7 @@ async function create(opts: { resource: BaseResource; state: State }) {
     //   throw err;
     // }
     else {
+      console.log(`[Error]: ${err}`);
       throw err;
     }
   }
