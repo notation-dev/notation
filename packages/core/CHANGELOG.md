@@ -1,5 +1,11 @@
 # @notation/core
 
+## 0.6.1
+
+### Patch Changes
+
+- Remove log
+
 ## 0.6.0
 
 ### Minor Changes
