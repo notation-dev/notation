@@ -12,7 +12,10 @@ beforeEach(() => {
 test("route resource group idempotency snapshot", () => {
   const apiResourceGroup = api({ name: "api" });
   const fnResourceGroup = lambda({
-    fileName: "src/fns/handler.fn.js",
+    code: {
+      type: "file",
+      path: "src/fns/handler.fn.js",
+    },
     handler: "handler.fn.js",
   });
 
@@ -28,7 +31,10 @@ test("router provides methods for each HTTP verb", () => {
   const apiResourceGroup = api({ name: "api" });
   const apiRouter = router(apiResourceGroup);
   const handler = lambda({
-    fileName: "src/fns/handler.fn.js",
+    code: {
+      type: "file",
+      path: "src/fns/handler.fn.js",
+    },
     handler: "handler.fn.js",
   });
 

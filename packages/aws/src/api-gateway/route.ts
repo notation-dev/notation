@@ -3,7 +3,6 @@ import type {
   JWTAuthorizedApiGatewayHandler,
 } from "src/shared";
 import * as aws from "@notation/aws.iac";
-import { lambda } from "src/lambda";
 import { api } from "./api";
 import { AuthorizerConfig } from "./auth";
 import { mapAuthConfig, mapAuthType } from "./utils";
@@ -13,28 +12,40 @@ export const route = (
   method: string, // todo: http methods only
   path: `/${string}`,
   auth: AuthorizerConfig,
-  handler: ApiGatewayHandler | JWTAuthorizedApiGatewayHandler<any>,
+  handler:
+    | ApiGatewayHandler
+    | JWTAuthorizedApiGatewayHandler<any>
+    // todo: narrow to lambda group
+    | aws.AwsResourceGroup,
 ) => {
   const apiResource = apiGroup.findResource(aws.apiGateway.Api)!;
-
-  // at compile time becomes infra module
-  const lambdaGroup = handler as any as ReturnType<typeof lambda>;
-
-  const routeGroup = new aws.AwsResourceGroup("API Gateway/Route", {
-    dependencies: { router: apiGroup.id, fn: lambdaGroup.id },
-  });
-
   const routeId = `${apiResource.id}-${method}-${path}`;
 
-  let integration;
+  const lambdaGroup =
+    handler instanceof aws.AwsResourceGroup
+      ? handler
+      : // at compile time, runtime module becomes infra resource group
+        (handler as any as aws.AwsResourceGroup);
 
   const lambdaResource = lambdaGroup.findResource(aws.lambda.LambdaFunction)!;
+
+  let integration = lambdaGroup.findResource(aws.apiGateway.LambdaIntegration);
+
+  if (!integration) {
+    integration = lambdaGroup.add(
+      new aws.apiGateway.LambdaIntegration({
+        id: `${apiResource.id}-${lambdaResource.id}-integration`,
+        dependencies: {
+          api: apiResource,
+          lambda: lambdaResource,
+        },
+      }),
+    );
+  }
 
   const permission = lambdaGroup.findResource(
     aws.lambda.LambdaApiGatewayV2Permission,
   );
-
-  integration = lambdaGroup.findResource(aws.apiGateway.LambdaIntegration);
 
   if (!permission) {
     lambdaGroup.add(
@@ -48,6 +59,10 @@ export const route = (
     );
   }
 
+  const routeGroup = new aws.AwsResourceGroup("API Gateway/Route", {
+    dependencies: { router: apiGroup.id, fn: lambdaGroup.id },
+  });
+
   if (auth.type != "NONE") {
     const authConfig = mapAuthConfig(apiResource.id, method, path, auth);
 
@@ -60,18 +75,6 @@ export const route = (
     });
 
     routeGroup.add(authorizer);
-  }
-
-  if (!integration) {
-    integration = lambdaGroup.add(
-      new aws.apiGateway.LambdaIntegration({
-        id: `${apiResource.id}-${lambdaResource.id}-integration`,
-        dependencies: {
-          api: apiResource,
-          lambda: lambdaResource,
-        },
-      }),
-    );
   }
 
   const authorizerResource = routeGroup.findResource(aws.apiGateway.RouteAuth);
