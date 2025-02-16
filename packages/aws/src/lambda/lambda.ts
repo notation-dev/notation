@@ -1,6 +1,7 @@
 import * as aws from "@notation/aws.iac";
 import * as std from "@notation/std.iac";
 import crypto from "crypto";
+import path from "path";
 
 type LambdaConfig = {
   id?: string;
@@ -61,12 +62,14 @@ export const lambda = (config: LambdaConfig) => {
     }),
   );
 
+  const fileName = path.parse(filePath).name;
+
   const lambdaResource = functionGroup.add(
     new aws.lambda.LambdaFunction({
       id: lambdaId,
       config: {
         FunctionName: lambdaId,
-        Handler: `index.${config.handler}`,
+        Handler: `${fileName}.${config.handler}`,
         Runtime: "nodejs18.x",
         // todo: make this configurable and remove it as a default
         ReservedConcurrentExecutions: 1,
