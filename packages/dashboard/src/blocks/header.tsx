@@ -1,11 +1,5 @@
-import logo from "/logo.svg";
+import { logo } from "./logo";
 
 export const Header = () => (
-  <div className="flex border-b bg-neutral-50 p-3">
-    <img
-      src={logo}
-      className="h-7 relative l-[1px] select-none"
-      alt="Notation Logo"
-    />
-  </div>
+  <div className="flex border-b bg-neutral-50 p-3">{logo}</div>
 );
