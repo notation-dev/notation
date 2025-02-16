@@ -51,11 +51,6 @@ const lambdaFunctionSchema = lambdaFunction.defineSchema({
     presence: "required",
     hidden: true,
   },
-  CodeZipPath: {
-    valueType: z.string(),
-    propertyType: "param",
-    presence: "required",
-  },
   CodeSha256: {
     valueType: z.string(),
     propertyType: "param",
@@ -382,7 +377,6 @@ export const LambdaFunction = lambdaFunctionSchema
     PackageType: "Zip",
     Code: { ZipFile: deps.zipFile.output.file },
     CodeSha256: deps.zipFile.output.sourceSha256,
-    CodeZipPath: deps.zipFile.config.filePath,
     Role: deps.role.output.Arn,
   }));
 
