@@ -12,7 +12,7 @@
     "typecheck": "turbo run typecheck --continue",
     "changeset": "changeset",
     "version": "turbo run build && changeset version && pnpm install",
-    "release": "changeset publish --tag alpha",
+    "release": "changeset publish",
     "prepare": "husky"
   },
   "repository": {
