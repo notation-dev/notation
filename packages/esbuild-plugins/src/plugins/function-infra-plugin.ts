@@ -30,7 +30,7 @@ export function functionInfraPlugin(opts: PluginOpts = {}): Plugin {
         for (const handlerName of exports) {
           if (reservedNames.includes(handlerName)) continue;
           infraCode = infraCode.concat(
-            `export const ${handlerName} = ${service}({ fileName: "${outFileName}", handler: "${handlerName}", ...config });\n`,
+            `export const ${handlerName} = ${service}({ code: { type: "file", path: "${outFileName}" }, handler: "${handlerName}", ...config });\n`,
           );
         }
 

@@ -21,7 +21,7 @@ export type LambdaFunctionSchema = AwsSchema<{
 
 export type LambdaDependencies = {
   role: LambdaIamRoleInstance;
-  zipFile: fs.ZipFileInstance;
+  zipFile: fs.ZipFileInstance | fs.FileInstance;
 };
 
 const lambdaFunction = resource<LambdaFunctionSchema>({
@@ -290,20 +290,20 @@ const lambdaFunctionSchema = lambdaFunction.defineSchema({
 export const LambdaFunction = lambdaFunctionSchema
   .defineOperations({
     create: async (params) => {
-      const zip = await fs.getZip(params.CodeZipPath);
       const command = new sdk.CreateFunctionCommand({
         ...params,
-        Code: { ZipFile: zip },
+        Code: { ZipFile: params.Code.ZipFile },
       });
+
       await lambdaClient.send(command);
 
-      if (params.ReservedConcurrentExecutions) {
-        const concurrencyCommand = new sdk.PutFunctionConcurrencyCommand({
-          FunctionName: params.FunctionName,
-          ReservedConcurrentExecutions: params.ReservedConcurrentExecutions,
-        });
-        await lambdaClient.send(concurrencyCommand);
-      }
+      // if (params.ReservedConcurrentExecutions) {
+      //   const concurrencyCommand = new sdk.PutFunctionConcurrencyCommand({
+      //     FunctionName: params.FunctionName,
+      //     ReservedConcurrentExecutions: params.ReservedConcurrentExecutions,
+      //   });
+      //   await lambdaClient.send(concurrencyCommand);
+      // }
     },
 
     read: async (key) => {
@@ -339,10 +339,9 @@ export const LambdaFunction = lambdaFunctionSchema
       }
 
       if (CodeSha256) {
-        const zip = await fs.getZip(params.CodeZipPath);
         const codeCommand = new sdk.UpdateFunctionCodeCommand({
           ...key,
-          ZipFile: zip,
+          ZipFile: params.Code.ZipFile,
         });
         await lambdaClient.send(codeCommand);
       }
@@ -381,7 +380,7 @@ export const LambdaFunction = lambdaFunctionSchema
   .requireDependencies<LambdaDependencies>()
   .setIntrinsicConfig(async ({ deps }) => ({
     PackageType: "Zip",
-    Code: { ZipFile: undefined },
+    Code: { ZipFile: deps.zipFile.output.file },
     CodeSha256: deps.zipFile.output.sourceSha256,
     CodeZipPath: deps.zipFile.config.filePath,
     Role: deps.role.output.Arn,

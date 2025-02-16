@@ -2,22 +2,48 @@ import * as aws from "@notation/aws.iac";
 import * as std from "@notation/std.iac";
 import crypto from "crypto";
 
-export const lambda = (config: { fileName: string; handler: string }) => {
+type LambdaConfig = {
+  id?: string;
+  handler: string;
+  code: {
+    type: "file" | "zip";
+    path: string;
+  };
+};
+
+export const lambda = (config: LambdaConfig) => {
   const functionGroup = new aws.AwsResourceGroup("Lambda", { config });
-  const filePathHash = crypto
-    .createHash("BLAKE2s256")
-    .update(config.fileName)
-    .digest("hex")
-    .slice(0, 8);
+  const filePath = config.code.path;
 
-  const lambdaId = `${config.handler}-${filePathHash}`;
+  let lambdaId = config.id;
 
-  const zipFile = functionGroup.add(
-    new std.fs.Zip({
-      id: `${lambdaId}-zip`,
-      config: { filePath: config.fileName },
-    }),
-  );
+  if (!lambdaId) {
+    const filePathHash = crypto
+      .createHash("BLAKE2s256")
+      .update(filePath)
+      .digest("hex")
+      .slice(0, 8);
+
+    lambdaId = `${config.handler}-${filePathHash}`;
+  }
+
+  let zipFile: std.fs.ZipFileInstance | std.fs.FileInstance;
+
+  if (config.code.type === "file") {
+    zipFile = functionGroup.add(
+      new std.fs.Zip({
+        id: `${lambdaId}-zip`,
+        config: { sourceFilePath: filePath },
+      }),
+    );
+  } else {
+    zipFile = functionGroup.add(
+      new std.fs.File({
+        id: `${lambdaId}-zip`,
+        config: { filePath },
+      }),
+    );
+  }
 
   const role = functionGroup.add(
     new aws.lambda.LambdaIamRole({
@@ -42,6 +68,7 @@ export const lambda = (config: { fileName: string; handler: string }) => {
         FunctionName: lambdaId,
         Handler: `index.${config.handler}`,
         Runtime: "nodejs18.x",
+        // todo: make this configurable and remove it as a default
         ReservedConcurrentExecutions: 1,
       },
       dependencies: {
