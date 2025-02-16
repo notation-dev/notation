@@ -3,11 +3,9 @@ import type {
   JWTAuthorizedApiGatewayHandler,
 } from "src/shared";
 import * as aws from "@notation/aws.iac";
-import { lambda } from "src/lambda";
 import { api } from "./api";
 import { AuthorizerConfig } from "./auth";
 import { mapAuthConfig, mapAuthType } from "./utils";
-import { ResourceGroup } from "@notation/core";
 
 export const route = (
   apiGroup: ReturnType<typeof api>,
@@ -24,7 +22,7 @@ export const route = (
   const routeId = `${apiResource.id}-${method}-${path}`;
 
   const lambdaGroup =
-    handler instanceof ResourceGroup
+    handler instanceof aws.AwsResourceGroup
       ? handler
       : // at compile time, runtime module becomes infra resource group
         (handler as any as aws.AwsResourceGroup);
