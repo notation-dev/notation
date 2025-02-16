@@ -1,15 +1,15 @@
 import { lambda } from "@notation/aws/lambda";
 
-lambda({
+export const externalJsLambda = lambda({
   id: "external-js",
   handler: "handler",
   code: {
     type: "file",
-    path: "external/lambda.js",
+    path: "external/lambda.mjs",
   },
 });
 
-lambda({
+export const externalZipLambda = lambda({
   id: "external-zip",
   handler: "handler",
   code: {

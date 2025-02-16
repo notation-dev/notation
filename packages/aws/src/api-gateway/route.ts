@@ -7,18 +7,25 @@ import { lambda } from "src/lambda";
 import { api } from "./api";
 import { AuthorizerConfig } from "./auth";
 import { mapAuthConfig, mapAuthType } from "./utils";
+import { ResourceGroup } from "@notation/core";
 
 export const route = (
   apiGroup: ReturnType<typeof api>,
   method: string, // todo: http methods only
   path: `/${string}`,
   auth: AuthorizerConfig,
-  handler: ApiGatewayHandler | JWTAuthorizedApiGatewayHandler<any>,
+  handler:
+    | ApiGatewayHandler
+    | JWTAuthorizedApiGatewayHandler<any>
+    | ReturnType<typeof lambda>,
 ) => {
   const apiResource = apiGroup.findResource(aws.apiGateway.Api)!;
 
-  // at compile time becomes infra module
-  const lambdaGroup = handler as any as ReturnType<typeof lambda>;
+  const lambdaGroup =
+    handler instanceof ResourceGroup
+      ? handler
+      : // at compile time, runtime module becomes infra resource group
+        (handler as any as ReturnType<typeof lambda>);
 
   const routeGroup = new aws.AwsResourceGroup("API Gateway/Route", {
     dependencies: { router: apiGroup.id, fn: lambdaGroup.id },

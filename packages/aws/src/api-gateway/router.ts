@@ -5,10 +5,15 @@ import type {
 import { route } from "./route";
 import { api } from "./api";
 import { AuthorizerConfig, JWTAuthorizerConfig, NO_AUTH } from "./auth";
+import { lambda } from "src/lambda";
 
 export const router = (apiGroup: ReturnType<typeof api>) => {
   const createRouteCallback =
-    (method: string) => (path: `/${string}`, handler: ApiGatewayHandler) => {
+    (method: string) =>
+    (
+      path: `/${string}`,
+      handler: ApiGatewayHandler | ReturnType<typeof lambda>,
+    ) => {
       return route(apiGroup, method, path, NO_AUTH, handler);
     };
 
