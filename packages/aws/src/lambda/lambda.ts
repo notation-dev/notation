@@ -10,9 +10,10 @@ type LambdaConfig = {
     type: "file" | "zip";
     path: string;
   };
+  runtime?: aws.lambda.LambdaFunctionConfig["Runtime"];
 };
 
-export const lambda = (config: LambdaConfig) => {
+export const lambda = (config: LambdaConfig): aws.AwsResourceGroup => {
   const functionGroup = new aws.AwsResourceGroup("Lambda", { config });
   const filePath = config.code.path;
 
@@ -63,6 +64,7 @@ export const lambda = (config: LambdaConfig) => {
   );
 
   const fileName = path.parse(filePath).name;
+  const runtime = config.runtime || "nodejs22.x";
 
   const lambdaResource = functionGroup.add(
     new aws.lambda.LambdaFunction({
@@ -70,7 +72,7 @@ export const lambda = (config: LambdaConfig) => {
       config: {
         FunctionName: lambdaId,
         Handler: `${fileName}.${config.handler}`,
-        Runtime: "nodejs18.x",
+        Runtime: runtime,
         // todo: make this configurable and remove it as a default
         ReservedConcurrentExecutions: 1,
       },

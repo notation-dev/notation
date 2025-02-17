@@ -188,6 +188,7 @@ const lambdaFunctionSchema = lambdaFunction.defineSchema({
   Runtime: {
     valueType: z.enum([
       "dotnet6",
+      "dotnet8",
       "dotnetcore1.0",
       "dotnetcore2.0",
       "dotnetcore2.1",
@@ -205,6 +206,7 @@ const lambdaFunctionSchema = lambdaFunction.defineSchema({
       "nodejs16.x",
       "nodejs18.x",
       "nodejs20.x",
+      "nodejs22.x",
       "nodejs4.3",
       "nodejs4.3-edge",
       "nodejs6.10",
@@ -216,6 +218,7 @@ const lambdaFunctionSchema = lambdaFunction.defineSchema({
       "python3.10",
       "python3.11",
       "python3.12",
+      "python3.13",
       "python3.6",
       "python3.7",
       "python3.8",
@@ -223,6 +226,7 @@ const lambdaFunctionSchema = lambdaFunction.defineSchema({
       "ruby2.5",
       "ruby2.7",
       "ruby3.2",
+      "ruby3.3",
     ]),
     propertyType: "param",
     presence: "optional",
@@ -381,3 +385,7 @@ export const LambdaFunction = lambdaFunctionSchema
   }));
 
 export type LambdaFunctionInstance = InstanceType<typeof LambdaFunction>;
+
+export type LambdaFunctionConfig = ConstructorParameters<
+  typeof LambdaFunction
+>[0]["config"];
