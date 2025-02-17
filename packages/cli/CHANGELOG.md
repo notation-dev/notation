@@ -1,5 +1,13 @@
 # @notation/cli
 
+## 0.11.0
+
+### Patch Changes
+
+- @notation/core@0.11.0
+- @notation/dashboard@0.11.0
+- @notation/esbuild-plugins@0.11.0
+
 ## 0.10.0
 
 ### Minor Changes

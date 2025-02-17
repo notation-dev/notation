@@ -1,5 +1,16 @@
 # @notation/aws.iac
 
+## 0.11.0
+
+### Minor Changes
+
+- 5dcb935: Support alternative runtimes
+
+### Patch Changes
+
+- @notation/core@0.11.0
+- @notation/std.iac@0.11.0
+
 ## 0.10.0
 
 ### Minor Changes
