@@ -1,5 +1,15 @@
 # @notation/cli
 
+## 0.11.1
+
+### Patch Changes
+
+- Hide large buffers from state file
+- Updated dependencies
+  - @notation/core@0.11.1
+  - @notation/dashboard@0.11.1
+  - @notation/esbuild-plugins@0.11.1
+
 ## 0.11.0
 
 ### Patch Changes

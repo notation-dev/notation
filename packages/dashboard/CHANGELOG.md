@@ -1,5 +1,11 @@
 # @notation/dashboard
 
+## 0.11.1
+
+### Patch Changes
+
+- Hide large buffers from state file
+
 ## 0.11.0
 
 ## 0.10.0

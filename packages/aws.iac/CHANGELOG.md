@@ -1,5 +1,14 @@
 # @notation/aws.iac
 
+## 0.11.1
+
+### Patch Changes
+
+- Hide large buffers from state file
+- Updated dependencies
+  - @notation/core@0.11.1
+  - @notation/std.iac@0.11.1
+
 ## 0.11.0
 
 ### Minor Changes

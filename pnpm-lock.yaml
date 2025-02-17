@@ -99,15 +99,6 @@ importers:
         specifier: ^22.13.4
         version: 22.13.4
 
-  examples/framework-exograph:
-    dependencies:
-      '@notation/aws':
-        specifier: workspace:*
-        version: link:../../packages/aws
-      '@notation/cli':
-        specifier: workspace:*
-        version: link:../../packages/cli
-
   examples/lambda-external:
     dependencies:
       '@notation/aws':
