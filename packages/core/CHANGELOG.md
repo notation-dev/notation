@@ -1,5 +1,11 @@
 # @notation/core
 
+## 0.10.0
+
+### Minor Changes
+
+- Fix package versions
+
 ## 0.6.1
 
 ### Patch Changes

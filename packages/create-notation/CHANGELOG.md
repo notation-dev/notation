@@ -1,5 +1,11 @@
 # create-notation
 
+## 0.2.0
+
+### Minor Changes
+
+- Fix package versions
+
 ## 0.1.0
 
 ### Minor Changes

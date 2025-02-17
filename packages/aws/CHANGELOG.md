@@ -1,5 +1,18 @@
 # @notation/aws
 
+## 0.10.0
+
+### Minor Changes
+
+- Fix package versions
+
+### Patch Changes
+
+- Updated dependencies
+  - @notation/aws.iac@0.10.0
+  - @notation/core@0.10.0
+  - @notation/std.iac@0.10.0
+
 ## 0.7.1
 
 ### Patch Changes

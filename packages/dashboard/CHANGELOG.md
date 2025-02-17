@@ -1,5 +1,11 @@
 # @notation/dashboard
 
+## 0.10.0
+
+### Minor Changes
+
+- Fix package versions
+
 ## 0.3.0
 
 ### Minor Changes
