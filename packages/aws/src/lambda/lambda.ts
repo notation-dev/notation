@@ -10,25 +10,7 @@ type LambdaConfig = {
     type: "file" | "zip";
     path: string;
   };
-  // todo: import type from aws.iac
-  runtime?:
-    | "nodejs22.x"
-    | "nodejs20.x"
-    | "nodejs18.x"
-    | "python3.13"
-    | "python3.12"
-    | "python3.11"
-    | "python3.10"
-    | "python3.9"
-    | "java21"
-    | "java17"
-    | "java11"
-    | "java8.al2"
-    | "dotnet8"
-    | "ruby3.3"
-    | "ruby3.2"
-    | "provided.al2023"
-    | "provided.al2";
+  runtime?: aws.lambda.LambdaFunctionConfig["Runtime"];
 };
 
 export const lambda = (config: LambdaConfig): aws.AwsResourceGroup => {
