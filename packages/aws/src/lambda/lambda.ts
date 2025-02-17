@@ -3,6 +3,10 @@ import * as std from "@notation/std.iac";
 import crypto from "crypto";
 import path from "path";
 
+// Re-export to prevent inference issues
+export type LambdaResourceGroup = aws.AwsResourceGroup;
+export type LambdaIacConfig = aws.lambda.LambdaFunctionConfig;
+
 type LambdaConfig = {
   id?: string;
   handler: string;
@@ -10,10 +14,10 @@ type LambdaConfig = {
     type: "file" | "zip";
     path: string;
   };
-  runtime?: aws.lambda.LambdaFunctionConfig["Runtime"];
+  runtime?: LambdaIacConfig["Runtime"];
 };
 
-export const lambda = (config: LambdaConfig): aws.AwsResourceGroup => {
+export const lambda = (config: LambdaConfig): LambdaResourceGroup => {
   const functionGroup = new aws.AwsResourceGroup("Lambda", { config });
   const filePath = config.code.path;
 
