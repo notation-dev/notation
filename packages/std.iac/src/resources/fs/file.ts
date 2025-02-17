@@ -30,6 +30,7 @@ export const fileSchema = fileResource.defineSchema({
     valueType: z.instanceof(Buffer),
     propertyType: "computed",
     presence: "required",
+    hidden: true,
   },
 } as const);
 

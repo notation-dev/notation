@@ -37,6 +37,7 @@ export const zipSchema = zipResource.defineSchema({
     valueType: z.instanceof(Buffer),
     propertyType: "computed",
     presence: "required",
+    hidden: true,
   },
 } as const);
 

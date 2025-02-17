@@ -94,7 +94,7 @@ export const TestResource2 = resource<TestSchema>({
 export const testResourceOutput = {
   primaryKey: "0",
   requiredParam: "name",
-  hiddenParam: "",
+  hiddenParam: "hidden",
   volatileComputed: "",
   intrinsicParam: true,
 };
